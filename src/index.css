@@ -180,6 +180,15 @@
   input, textarea, select {
     font-size: 16px !important; /* Prevents zoom on Android */
   }
+
+  /* Ultra-fast touch response on mobile */
+  @media (pointer: coarse) {
+    button, a, [role="button"] {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+  }
 }
 
 @layer utilities {
@@ -366,11 +375,12 @@
     min-width: 44px;
   }
 
-  /* Snappy button interactions - optimized for Android */
+  /* Snappy button interactions - optimized for mobile */
   .btn-snappy {
-    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.1s ease,
-                background-color 0.1s ease;
+    transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.06s ease,
+                background-color 0.06s ease,
+                opacity 0.06s ease;
     will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -382,14 +392,15 @@
   }
 
   .btn-snappy:active {
-    transform: scale(0.96) translateZ(0);
-    transition-duration: 0.05s;
+    transform: scale(0.95) translateZ(0);
+    opacity: 0.9;
+    transition-duration: 0.02s;
   }
 
-  /* Faster card interactions - optimized for Android */
+  /* Faster card interactions - optimized for mobile */
   .card-snappy {
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.15s ease;
+    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.08s ease;
     will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -397,23 +408,55 @@
   }
 
   .card-snappy:hover {
-    transform: translateY(-6px) translateZ(0);
+    transform: translateY(-4px) translateZ(0);
   }
 
   .card-snappy:active {
-    transform: translateY(-2px) translateZ(0);
-    transition-duration: 0.05s;
+    transform: scale(0.98) translateZ(0);
+    transition-duration: 0.02s;
   }
 
-  /* Mobile-specific fast tap response */
+  /* Ultra-fast link feedback */
+  .link-snappy {
+    transition: color 0.05s ease, opacity 0.05s ease;
+  }
+
+  .link-snappy:active {
+    opacity: 0.7;
+    transition-duration: 0.02s;
+  }
+
+  /* Mobile-specific ultra-fast tap response */
   @media (pointer: coarse) {
     .btn-snappy, .card-snappy, button, a {
-      transition-duration: 0.08s !important;
+      transition-duration: 0.04s !important;
     }
     
     .btn-snappy:active, .card-snappy:active {
-      transition-duration: 0.03s !important;
+      transition-duration: 0.02s !important;
     }
+
+    /* Instant visual feedback for taps */
+    button:active, a:active, [role="button"]:active {
+      opacity: 0.85;
+      transform: scale(0.97);
+    }
+  }
+
+  /* iOS safe area support */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Smooth momentum scrolling container */
+  .scroll-smooth-mobile {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
   }
 }
 
