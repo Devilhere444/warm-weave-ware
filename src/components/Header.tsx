@@ -33,31 +33,23 @@ export default function Header() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-background/95 backdrop-blur-md shadow-lg py-3"
-          : "bg-foreground/20 backdrop-blur-md py-4"
+          : "bg-background/80 backdrop-blur-md border-b border-border/50 py-4"
       }`}
     >
       <div className="container mx-auto px-4 lg:px-8">
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105 ${
-              scrolled ? "bg-primary" : "bg-white/20 backdrop-blur-md"
-            }`}>
-              <span className={`font-display text-xl font-bold ${
-                scrolled ? "text-primary-foreground" : "text-white"
-              }`}>
+            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+              <span className="font-display text-xl font-bold text-primary-foreground">
                 L
               </span>
             </div>
             <div className="flex flex-col">
-              <span className={`font-display text-xl font-bold tracking-wide transition-colors ${
-                scrolled ? "text-foreground" : "text-white"
-              }`}>
+              <span className="font-display text-xl font-bold tracking-wide text-foreground transition-colors">
                 Litho Art Press
               </span>
-              <span className={`text-xs font-body tracking-widest uppercase transition-colors ${
-                scrolled ? "text-muted-foreground" : "text-white/70"
-              }`}>
+              <span className="text-xs font-body tracking-widest uppercase text-muted-foreground transition-colors">
                 Bihar • Since 1985
               </span>
             </div>
@@ -71,19 +63,15 @@ export default function Header() {
                 to={link.path}
                 className={`relative font-elegant text-lg tracking-wide transition-all duration-300 px-3 py-2 rounded-lg ${
                   location.pathname === link.path
-                    ? scrolled 
-                      ? "text-primary bg-primary/10" 
-                      : "text-white bg-white/20"
-                    : scrolled 
-                      ? "text-foreground hover:text-primary hover:bg-primary/5" 
-                      : "text-white/90 hover:text-white hover:bg-white/15"
+                    ? "text-primary bg-primary/10"
+                    : "text-foreground hover:text-primary hover:bg-primary/5"
                 }`}
               >
                 {link.name}
                 {location.pathname === link.path && (
                   <motion.div
                     layoutId="underline"
-                    className={`absolute -bottom-0.5 left-3 right-3 h-0.5 ${scrolled ? "bg-primary" : "bg-white"}`}
+                    className="absolute -bottom-0.5 left-3 right-3 h-0.5 bg-primary"
                   />
                 )}
               </Link>
@@ -93,11 +81,7 @@ export default function Header() {
               <Button
                 variant="outline"
                 size="sm"
-                className={`font-elegant tracking-wide transition-all ${
-                  scrolled 
-                    ? "border-primary text-primary hover:bg-primary hover:text-primary-foreground" 
-                    : "border-white/30 text-white hover:bg-white/10"
-                }`}
+                className="font-elegant tracking-wide border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
               >
                 Admin
               </Button>
@@ -107,7 +91,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`lg:hidden p-2 ${scrolled ? "text-foreground" : "text-white"}`}
+            className="lg:hidden p-2 text-foreground"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>

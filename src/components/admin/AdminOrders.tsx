@@ -61,6 +61,39 @@ export default function AdminOrders() {
 
   useEffect(() => {
     fetchOrders();
+    
+    // Set up realtime subscription
+    const channel = supabase
+      .channel('admin-orders')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'quote_requests'
+        },
+        (payload) => {
+          console.log('Order change received:', payload);
+          if (payload.eventType === 'INSERT') {
+            const newOrder = payload.new as QuoteRequest;
+            setOrders((prev) => [newOrder, ...prev]);
+            toast.success(`New order received from ${newOrder.name || newOrder.email}!`);
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedOrder = payload.new as QuoteRequest;
+            setOrders((prev) =>
+              prev.map((o) => (o.id === updatedOrder.id ? updatedOrder : o))
+            );
+          } else if (payload.eventType === 'DELETE') {
+            const deletedOrder = payload.old as QuoteRequest;
+            setOrders((prev) => prev.filter((o) => o.id !== deletedOrder.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchOrders = async () => {
