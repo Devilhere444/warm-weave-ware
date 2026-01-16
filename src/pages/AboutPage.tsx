@@ -4,10 +4,10 @@ import Footer from "@/components/Footer";
 import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog } from "lucide-react";
 
 const timeline = [
-  { year: "1985", title: "Foundation", description: "Litho Art Press was established in Patna, Bihar with a vision to bring premium printing to the region." },
-  { year: "1995", title: "Expansion", description: "Expanded operations with new machinery and doubled our production capacity." },
-  { year: "2005", title: "ISO Certification", description: "Achieved ISO 9001 certification for quality management systems." },
-  { year: "2015", title: "Digital Integration", description: "Integrated cutting-edge digital printing technology while preserving traditional techniques." },
+  { year: "1965", title: "Foundation", description: "Litho Art Press was established in Patna, Bihar with a vision to bring premium printing to the region." },
+  { year: "1975", title: "Expansion", description: "Expanded operations with new machinery and doubled our production capacity." },
+  { year: "1985", title: "ISO Certification", description: "Achieved ISO 9001 certification for quality management systems." },
+  { year: "2005", title: "Digital Integration", description: "Integrated cutting-edge digital printing technology while preserving traditional techniques." },
   { year: "2023", title: "Industry Leader", description: "Recognized as one of Bihar's leading printing presses with nationwide clientele." },
 ];
 
@@ -49,7 +49,7 @@ export default function AboutPage() {
             <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Crafting Excellence
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                Since 1985
+                Since 1965
               </span>
             </h1>
             <p className="text-muted-foreground font-body text-lg">

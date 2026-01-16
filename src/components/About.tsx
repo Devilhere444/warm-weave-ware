@@ -126,7 +126,7 @@ export default function About() {
               transition={{ delay: 0.2 }}
               className="text-muted-foreground font-body-regular leading-relaxed text-lg"
             >
-              Founded in 1985 in the heart of Bihar, Litho Art Press has grown
+              Founded in 1965 in the heart of Bihar, Litho Art Press has grown
               from a modest printing workshop to one of the region's most
               respected printing houses. Our commitment to quality,
               craftsmanship, and customer satisfaction remains unwavering.
@@ -285,7 +285,7 @@ export default function About() {
                     }}
                   >
                     <span className="font-display-extrabold text-xl text-primary-foreground">
-                      38
+                      61
                     </span>
                   </div>
                   <div>

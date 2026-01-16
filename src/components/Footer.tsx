@@ -98,7 +98,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-background/70 font-body-regular text-sm leading-relaxed">
-              {settings.footer_text || "Crafting premium printing solutions with a perfect blend of tradition and technology since 1985."}
+              {settings.footer_text || "Crafting premium printing solutions with a perfect blend of tradition and technology since 1965."}
             </p>
             
             {/* Social Links */}
