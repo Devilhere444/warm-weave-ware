@@ -18,6 +18,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminDashboard from "@/components/admin/AdminDashboard";
+import AdminOrders from "@/components/admin/AdminOrders";
+import AdminCustomers from "@/components/admin/AdminCustomers";
+import AdminSettings from "@/components/admin/AdminSettings";
 
 const sidebarLinks = [
   { name: "Dashboard", icon: BarChart3, id: "dashboard" },
@@ -195,39 +198,9 @@ export default function Admin() {
           >
             {activeTab === "dashboard" && <AdminDashboard />}
             {activeTab === "products" && <AdminProducts />}
-            {activeTab === "orders" && (
-              <div className="bg-card p-8 rounded-xl border border-border text-center">
-                <Box className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Orders Coming Soon
-                </h3>
-                <p className="text-muted-foreground font-body">
-                  Order management functionality will be available soon.
-                </p>
-              </div>
-            )}
-            {activeTab === "customers" && (
-              <div className="bg-card p-8 rounded-xl border border-border text-center">
-                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Customers Coming Soon
-                </h3>
-                <p className="text-muted-foreground font-body">
-                  Customer management functionality will be available soon.
-                </p>
-              </div>
-            )}
-            {activeTab === "settings" && (
-              <div className="bg-card p-8 rounded-xl border border-border text-center">
-                <Settings className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  Settings Coming Soon
-                </h3>
-                <p className="text-muted-foreground font-body">
-                  Settings functionality will be available soon.
-                </p>
-              </div>
-            )}
+            {activeTab === "orders" && <AdminOrders />}
+            {activeTab === "customers" && <AdminCustomers />}
+            {activeTab === "settings" && <AdminSettings />}
           </motion.div>
         </div>
       </main>

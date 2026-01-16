@@ -33,7 +33,7 @@ export default function Header() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-background/95 backdrop-blur-md shadow-lg py-3"
-          : "bg-transparent py-6"
+          : "bg-foreground/20 backdrop-blur-md py-4"
       }`}
     >
       <div className="container mx-auto px-4 lg:px-8">
@@ -69,17 +69,21 @@ export default function Header() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative font-elegant text-lg tracking-wide transition-colors ${
+                className={`relative font-elegant text-lg tracking-wide transition-all duration-300 px-3 py-2 rounded-lg ${
                   location.pathname === link.path
-                    ? scrolled ? "text-primary" : "text-white"
-                    : scrolled ? "text-foreground hover:text-primary" : "text-white/80 hover:text-white"
+                    ? scrolled 
+                      ? "text-primary bg-primary/10" 
+                      : "text-white bg-white/20"
+                    : scrolled 
+                      ? "text-foreground hover:text-primary hover:bg-primary/5" 
+                      : "text-white/90 hover:text-white hover:bg-white/15"
                 }`}
               >
                 {link.name}
                 {location.pathname === link.path && (
                   <motion.div
                     layoutId="underline"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent"
+                    className={`absolute -bottom-0.5 left-3 right-3 h-0.5 ${scrolled ? "bg-primary" : "bg-white"}`}
                   />
                 )}
               </Link>
