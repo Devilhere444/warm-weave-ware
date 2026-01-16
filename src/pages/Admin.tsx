@@ -36,23 +36,54 @@ export default function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const checkAdminRole = async (userId: string) => {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+      
+      if (error || !data) {
+        toast.error("Access denied. Admin privileges required.");
+        await supabase.auth.signOut();
+        navigate("/auth");
+        return false;
+      }
+      return true;
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null);
-        setLoading(false);
         if (!session?.user) {
+          setLoading(false);
           navigate("/auth");
+        } else {
+          // Defer Supabase call to prevent deadlock
+          setTimeout(() => {
+            checkAdminRole(session.user.id).then((hasAccess) => {
+              setIsAdmin(hasAccess);
+              setLoading(false);
+            });
+          }, 0);
         }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-      setLoading(false);
       if (!session?.user) {
+        setLoading(false);
         navigate("/auth");
+      } else {
+        checkAdminRole(session.user.id).then((hasAccess) => {
+          setIsAdmin(hasAccess);
+          setLoading(false);
+        });
       }
     });
 
@@ -71,6 +102,10 @@ export default function Admin() {
         <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
       </div>
     );
+  }
+
+  if (!isAdmin) {
+    return null;
   }
 
   return (
