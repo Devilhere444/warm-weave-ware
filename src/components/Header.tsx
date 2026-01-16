@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import CartIcon from "@/components/CartIcon";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -22,6 +23,7 @@ export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { settings } = useSiteSettings();
+  const haptic = useHapticFeedback();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -185,7 +187,10 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              haptic.triggerLight();
+              setIsOpen(!isOpen);
+            }}
             className="lg:hidden p-2 text-foreground touch-target btn-snappy"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
