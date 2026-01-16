@@ -64,6 +64,7 @@ const values = [
 
 export default function AboutPage() {
   const timelineRef = useRef<HTMLDivElement>(null);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const timelineItemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -97,6 +98,19 @@ export default function AboutPage() {
       block: 'center' 
     });
   };
+
+  // Scroll mobile nav to keep active item visible
+  useEffect(() => {
+    if (mobileNavRef.current) {
+      const activeButton = mobileNavRef.current.children[activeIndex] as HTMLElement;
+      if (activeButton) {
+        const navRect = mobileNavRef.current.getBoundingClientRect();
+        const buttonRect = activeButton.getBoundingClientRect();
+        const scrollLeft = activeButton.offsetLeft - (navRect.width / 2) + (buttonRect.width / 2);
+        mobileNavRef.current.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      }
+    }
+  }, [activeIndex]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,7 +170,62 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          {/* Sticky Timeline Navigation */}
+          {/* Mobile Timeline Navigation */}
+          <div className="lg:hidden sticky top-20 z-20 mb-8 -mx-4 px-4">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-card/90 backdrop-blur-xl border border-border rounded-xl p-3 shadow-lg"
+            >
+              {/* Scrollable container */}
+              <div 
+                ref={mobileNavRef}
+                className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {timeline.map((item, index) => (
+                  <button
+                    key={item.year}
+                    onClick={() => scrollToItem(index)}
+                    className={`flex-shrink-0 snap-center px-4 py-2 rounded-lg transition-all duration-200 touch-manipulation ${
+                      activeIndex === index 
+                        ? 'bg-primary text-primary-foreground shadow-md' 
+                        : 'bg-muted/50 text-muted-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <span className="font-display font-semibold text-sm block">
+                      {item.year}
+                    </span>
+                    <span className={`text-[10px] font-body block transition-opacity ${
+                      activeIndex === index ? 'opacity-90' : 'opacity-60'
+                    }`}>
+                      {item.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              
+              {/* Progress dots */}
+              <div className="flex justify-center gap-1.5 mt-2">
+                {timeline.map((_, index) => (
+                  <motion.div
+                    key={index}
+                    className={`h-1 rounded-full transition-all duration-300 ${
+                      activeIndex === index 
+                        ? 'w-4 bg-primary' 
+                        : 'w-1.5 bg-muted-foreground/30'
+                    }`}
+                    animate={{ 
+                      scale: activeIndex === index ? 1 : 0.8,
+                      opacity: activeIndex === index ? 1 : 0.5
+                    }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Desktop Sticky Timeline Navigation */}
           <div className="hidden lg:block sticky top-24 z-20 mb-12">
             <motion.div 
               initial={{ opacity: 0, y: -20 }}
