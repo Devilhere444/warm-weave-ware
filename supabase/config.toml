@@ -2,3 +2,9 @@ project_id = "cpqpqozisucisvxvnryi"
 
 [functions.send-quote-notification]
 verify_jwt = true
+
+[functions.send-verification-email]
+verify_jwt = false
+
+[functions.verify-email]
+verify_jwt = false

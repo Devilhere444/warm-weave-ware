@@ -106,30 +106,29 @@ export default function Cart() {
 
       if (itemsError) throw itemsError;
 
-      // Send notification email via edge function
+      // Send verification email (no auth required)
       try {
-        await supabase.functions.invoke("send-quote-notification", {
+        const { data, error: emailError } = await supabase.functions.invoke("send-verification-email", {
           body: {
             quoteId: quoteRequest.id,
+            email: formData.email,
             customerName: formData.name,
-            customerEmail: formData.email,
-            items: items.map((i) => ({
-              title: i.productTitle,
-              quantity: i.quantity,
-              finish: i.finishOption,
-              paper: i.paperOption,
-            })),
           },
         });
+
+        if (emailError) {
+          console.error("Verification email failed:", emailError);
+          // Still clear cart - quote is saved
+        }
       } catch (emailError) {
-        console.error("Email notification failed:", emailError);
+        console.error("Verification email failed:", emailError);
         // Don't fail the whole request if email fails
       }
 
       clearCart();
       toast({
-        title: "Quote Request Submitted!",
-        description: "We'll get back to you within 24 hours with a detailed quote.",
+        title: "Check Your Email!",
+        description: "We've sent a verification link to complete your quote request.",
       });
       navigate("/");
     } catch (error: any) {
@@ -358,7 +357,7 @@ export default function Cart() {
                     </Button>
 
                     <p className="text-xs text-center text-muted-foreground font-body">
-                      We'll respond within 24 hours
+                      You'll receive a verification email to confirm your request
                     </p>
                   </form>
                 </div>

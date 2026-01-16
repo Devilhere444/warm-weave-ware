@@ -32,6 +32,44 @@ export type Database = {
         }
         Relationships: []
       }
+      email_verification_tokens: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          quote_request_id: string
+          token: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          quote_request_id: string
+          token: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          quote_request_id?: string
+          token?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_verification_tokens_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_views: {
         Row: {
           created_at: string
@@ -149,6 +187,7 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          email_verified: boolean
           id: string
           name: string | null
           notes: string | null
@@ -160,6 +199,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          email_verified?: boolean
           id?: string
           name?: string | null
           notes?: string | null
@@ -171,6 +211,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          email_verified?: boolean
           id?: string
           name?: string | null
           notes?: string | null
