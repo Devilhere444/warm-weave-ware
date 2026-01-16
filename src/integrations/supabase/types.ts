@@ -138,11 +138,50 @@ export type Database = {
           },
         ]
       }
+      product_specifications: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          product_id: string
+          spec_label: string
+          spec_value: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          product_id: string
+          spec_label: string
+          spec_value: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          product_id?: string
+          spec_label?: string
+          spec_value?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_specifications_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string | null
           created_at: string
           description: string | null
+          full_description: string | null
           id: string
           image_url: string | null
           is_featured: boolean | null
@@ -158,6 +197,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          full_description?: string | null
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
@@ -173,6 +213,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          full_description?: string | null
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
