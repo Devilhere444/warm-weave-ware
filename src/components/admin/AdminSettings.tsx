@@ -42,7 +42,9 @@ export default function AdminSettings() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings>({});
   const [savingSettings, setSavingSettings] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const faviconInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchData();
@@ -203,6 +205,91 @@ export default function AdminSettings() {
     } catch (error: any) {
       console.error("Error removing logo:", error);
       toast.error("Failed to remove logo");
+    }
+  };
+
+  const handleFaviconUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 1MB for favicon)
+    if (file.size > 1 * 1024 * 1024) {
+      toast.error("Favicon must be less than 1MB");
+      return;
+    }
+
+    setUploadingFavicon(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `favicon-${Date.now()}.${fileExt}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from('logos')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) {
+        console.error("Upload error:", uploadError);
+        toast.error("Failed to upload favicon: " + uploadError.message);
+        return;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('logos')
+        .getPublicUrl(fileName);
+
+      // Update site settings
+      updateSetting('favicon_url', publicUrl);
+      
+      // Save to database
+      const { error: updateError } = await supabase
+        .from("site_settings")
+        .upsert({ key: 'favicon_url', value: publicUrl }, { onConflict: 'key' });
+
+      if (updateError) {
+        console.error("Error saving favicon URL:", updateError);
+        toast.error("Failed to save favicon URL");
+        return;
+      }
+
+      toast.success("Favicon uploaded successfully!");
+    } catch (error: any) {
+      console.error("Error uploading favicon:", error);
+      toast.error("Failed to upload favicon");
+    } finally {
+      setUploadingFavicon(false);
+      if (faviconInputRef.current) {
+        faviconInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveFavicon = async () => {
+    try {
+      updateSetting('favicon_url', '');
+      
+      const { error } = await supabase
+        .from("site_settings")
+        .update({ value: '' })
+        .eq("key", "favicon_url");
+
+      if (error) {
+        console.error("Error removing favicon:", error);
+        toast.error("Failed to remove favicon");
+        return;
+      }
+
+      toast.success("Favicon removed");
+    } catch (error: any) {
+      console.error("Error removing favicon:", error);
+      toast.error("Failed to remove favicon");
     }
   };
 
@@ -455,6 +542,79 @@ export default function AdminSettings() {
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2">
                   PNG, JPG or SVG recommended
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Favicon Upload */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.025 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Image className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">Favicon</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Upload your browser tab icon (max 1MB, 32x32 or 64x64 recommended)
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-6">
+              {siteSettings.favicon_url ? (
+                <div className="relative group">
+                  <img
+                    src={siteSettings.favicon_url}
+                    alt="Current favicon"
+                    className="w-16 h-16 object-contain rounded-lg border border-border bg-background"
+                  />
+                  <button
+                    onClick={handleRemoveFavicon}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/50">
+                  <Image className="w-6 h-6 text-muted-foreground" />
+                </div>
+              )}
+              <div>
+                <input
+                  ref={faviconInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFaviconUpload}
+                  className="hidden"
+                  id="favicon-upload"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => faviconInputRef.current?.click()}
+                  disabled={uploadingFavicon}
+                  className="gap-2"
+                >
+                  {uploadingFavicon ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      {siteSettings.favicon_url ? 'Change Favicon' : 'Upload Favicon'}
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground mt-2">
+                  PNG, ICO or SVG recommended
                 </p>
               </div>
             </div>
