@@ -193,6 +193,20 @@ export default function About() {
           >
             <div className="relative">
               
+              {/* Corner Decorative Lines */}
+              <div className="absolute -top-8 -left-8 w-24 h-24">
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-primary/40 to-transparent" />
+                <div className="absolute top-0 left-0 h-full w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />
+              </div>
+              <div className="absolute -bottom-8 -right-8 w-24 h-24">
+                <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-l from-primary/40 to-transparent" />
+                <div className="absolute bottom-0 right-0 h-full w-[2px] bg-gradient-to-t from-primary/40 to-transparent" />
+              </div>
+
+              {/* Geometric Shapes */}
+              <div className="absolute -top-6 right-1/4 w-8 h-8 border border-primary/20 rotate-45" />
+              <div className="absolute -bottom-4 left-1/3 w-6 h-6 border border-accent/25 rotate-12" />
+              
               {/* Glowing Orbs */}
               <motion.div
                 className="absolute -top-10 -right-10 w-32 h-32 bg-primary/30 rounded-full blur-3xl"
@@ -204,6 +218,18 @@ export default function About() {
                 animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               />
+
+              {/* Dotted Pattern Accents */}
+              <div className="absolute -right-12 top-1/4 flex flex-col gap-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-primary/30" />
+                ))}
+              </div>
+              <div className="absolute -left-10 bottom-1/4 flex flex-col gap-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-1.5 h-1.5 rounded-full bg-accent/30" />
+                ))}
+              </div>
 
               {/* Main Image with Parallax */}
               <motion.div 
@@ -291,7 +317,7 @@ export default function About() {
                 </div>
               </motion.div>
 
-              {/* Decorative Elements */}
+              {/* Decorative Circles */}
               <div className="absolute -top-4 -left-4 w-20 h-20 border-2 border-primary/20 rounded-full" />
               <motion.div 
                 className="absolute top-1/2 -right-8 w-4 h-4 bg-primary rounded-full"
@@ -303,6 +329,10 @@ export default function About() {
                 animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
                 transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
               />
+
+              {/* Plus Signs */}
+              <div className="absolute -top-12 left-1/4 text-primary/20 text-2xl font-light">+</div>
+              <div className="absolute -bottom-10 right-1/4 text-accent/25 text-xl font-light">+</div>
             </div>
           </motion.div>
         </div>
