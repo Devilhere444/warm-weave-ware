@@ -42,11 +42,19 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center transition-all duration-300 group-hover:scale-105">
-              <span className="font-display text-xl font-bold text-primary-foreground">
-                {settings.site_name.charAt(0)}
-              </span>
-            </div>
+            {settings.logo_url ? (
+              <img 
+                src={settings.logo_url} 
+                alt={settings.site_name} 
+                className="w-12 h-12 object-contain rounded-lg transition-all duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+                <span className="font-display text-xl font-bold text-primary-foreground">
+                  {settings.site_name.charAt(0)}
+                </span>
+              </div>
+            )}
             <div className="flex flex-col">
               <span className="font-display text-xl font-bold tracking-wide text-foreground transition-colors">
                 {settings.site_name}
