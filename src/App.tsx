@@ -19,6 +19,8 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Cart = lazy(() => import("./pages/Cart"));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -51,6 +53,8 @@ const App = () => (
               <Route path="/admin" element={<Admin />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
