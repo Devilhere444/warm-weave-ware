@@ -157,7 +157,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ ...snappyTransition, delay: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
             className="relative hidden lg:block"
           >
             <div className="relative">
@@ -171,52 +171,36 @@ export default function Hero() {
                     { icon: Sparkles, label: "Specialty", desc: "Unique finishes", href: "/products?category=Invitations" },
                   ].map((item, index) => (
                     <Link to={item.href} key={index}>
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ ...snappyTransition, delay: 0.4 + index * 0.1 }}
-                        whileHover={{ 
-                          scale: 1.05, 
-                          y: -5,
-                          transition: { type: "spring", stiffness: 400, damping: 20 }
+                      <div
+                        className="relative overflow-hidden bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md rounded-2xl p-4 lg:p-5 border border-white/20 cursor-pointer group touch-target gpu-accelerated transition-all duration-200 ease-out hover:scale-[1.03] hover:-translate-y-1 active:scale-[0.98]"
+                        style={{ 
+                          animationDelay: `${0.4 + index * 0.1}s`,
+                          transform: 'translateZ(0)'
                         }}
-                        whileTap={{ scale: 0.98 }}
-                        className="relative overflow-hidden bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md rounded-2xl p-4 lg:p-5 border border-white/20 cursor-pointer group touch-target"
                       >
-                        {/* Animated gradient background on hover */}
-                        <motion.div 
-                          className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        />
+                        {/* Gradient background on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                         
-                        {/* Shimmer effect on hover */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                        {/* Shimmer effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-out" />
                         
-                        {/* Icon with glow effect */}
-                        <motion.div
-                          whileHover={{ rotate: [0, -10, 10, 0] }}
-                          transition={{ duration: 0.5 }}
-                          className="relative z-10"
-                        >
-                          <div className="absolute inset-0 bg-white/30 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          <item.icon className="w-8 h-8 lg:w-9 lg:h-9 text-white mb-3 relative z-10 group-hover:text-primary-foreground transition-colors duration-300" />
-                        </motion.div>
+                        {/* Icon */}
+                        <div className="relative z-10 mb-3">
+                          <item.icon className="w-8 h-8 lg:w-9 lg:h-9 text-white group-hover:text-primary-foreground transition-colors duration-200" />
+                        </div>
                         
-                        <h3 className="font-display-semibold text-base lg:text-lg text-white relative z-10 group-hover:text-primary-foreground transition-colors duration-300">
+                        <h3 className="font-display-semibold text-base lg:text-lg text-white relative z-10 group-hover:text-primary-foreground transition-colors duration-200">
                           {item.label}
                         </h3>
-                        <p className="text-xs lg:text-sm text-white/70 font-body-regular mt-1 relative z-10 group-hover:text-white/90 transition-colors duration-300">
+                        <p className="text-xs lg:text-sm text-white/70 font-body-regular mt-1 relative z-10 group-hover:text-white/90 transition-colors duration-200">
                           {item.desc}
                         </p>
                         
                         {/* Arrow indicator */}
-                        <motion.div 
-                          className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          initial={{ x: -10 }}
-                          whileHover={{ x: 0 }}
-                        >
+                        <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-1 group-hover:translate-x-0">
                           <ArrowRight className="w-4 h-4 text-white/80" />
-                        </motion.div>
-                      </motion.div>
+                        </div>
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -225,18 +209,12 @@ export default function Hero() {
               {/* Floating Shipping Badge */}
               <motion.div 
                 className="absolute -top-4 -right-4 z-30"
-                initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ ...snappyTransition, delay: 0.8 }}
-                whileHover={{ scale: 1.05, y: -2 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.8 }}
               >
-                <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-orange-500 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-white/20">
-                  <motion.div
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
-                  >
-                    <Truck className="w-5 h-5" />
-                  </motion.div>
+                <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-orange-500 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-white/20 hover:scale-105 transition-transform duration-200">
+                  <Truck className="w-5 h-5 animate-[bounce_2s_ease-in-out_infinite]" style={{ animationDuration: '2s' }} />
                   <span className="text-sm font-display-semibold">Shipping All Over India</span>
                 </div>
               </motion.div>
