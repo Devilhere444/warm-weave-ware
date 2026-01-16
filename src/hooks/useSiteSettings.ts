@@ -16,6 +16,7 @@ export interface SiteSettings {
   hero_subtitle: string;
   about_text: string;
   footer_text: string;
+  logo_url: string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -32,7 +33,8 @@ const defaultSettings: SiteSettings = {
   hero_title: "Where Art Meets Precision Printing",
   hero_subtitle: "Bihar's premier lithographic printing press, delivering unparalleled quality in book printing, packaging, and commercial print solutions.",
   about_text: "",
-  footer_text: "Quality printing services for all your needs"
+  footer_text: "Quality printing services for all your needs",
+  logo_url: ""
 };
 
 export function useSiteSettings() {

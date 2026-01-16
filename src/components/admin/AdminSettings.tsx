@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { 
   Plus, Trash2, Mail, Shield, UserPlus, Save, 
   Building, Phone, Globe, MessageCircle, Clock,
-  FileText, Type, Image
+  FileText, Type, Image, Upload, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,8 @@ export default function AdminSettings() {
   // Site settings
   const [siteSettings, setSiteSettings] = useState<SiteSettings>({});
   const [savingSettings, setSavingSettings] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchData();
@@ -117,6 +119,91 @@ export default function AdminSettings() {
 
   const updateSetting = (key: string, value: string) => {
     setSiteSettings(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be less than 2MB");
+      return;
+    }
+
+    setUploadingLogo(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `logo-${Date.now()}.${fileExt}`;
+
+      // Upload to storage
+      const { error: uploadError } = await supabase.storage
+        .from('logos')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) {
+        console.error("Upload error:", uploadError);
+        toast.error("Failed to upload logo: " + uploadError.message);
+        return;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('logos')
+        .getPublicUrl(fileName);
+
+      // Update site settings
+      updateSetting('logo_url', publicUrl);
+      
+      // Save to database
+      const { error: updateError } = await supabase
+        .from("site_settings")
+        .upsert({ key: 'logo_url', value: publicUrl }, { onConflict: 'key' });
+
+      if (updateError) {
+        console.error("Error saving logo URL:", updateError);
+        toast.error("Failed to save logo URL");
+        return;
+      }
+
+      toast.success("Logo uploaded successfully!");
+    } catch (error: any) {
+      console.error("Error uploading logo:", error);
+      toast.error("Failed to upload logo");
+    } finally {
+      setUploadingLogo(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      updateSetting('logo_url', '');
+      
+      const { error } = await supabase
+        .from("site_settings")
+        .update({ value: '' })
+        .eq("key", "logo_url");
+
+      if (error) {
+        console.error("Error removing logo:", error);
+        toast.error("Failed to remove logo");
+        return;
+      }
+
+      toast.success("Logo removed");
+    } catch (error: any) {
+      console.error("Error removing logo:", error);
+      toast.error("Failed to remove logo");
+    }
   };
 
   const handleAddEmail = async () => {
@@ -301,10 +388,83 @@ export default function AdminSettings() {
 
         {/* Website Settings */}
         <TabsContent value="website" className="space-y-6">
+          {/* Logo Upload */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Image className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">Logo</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Upload your website logo (max 2MB)
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-6">
+              {siteSettings.logo_url ? (
+                <div className="relative group">
+                  <img
+                    src={siteSettings.logo_url}
+                    alt="Current logo"
+                    className="w-24 h-24 object-contain rounded-lg border border-border bg-background"
+                  />
+                  <button
+                    onClick={handleRemoveLogo}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-24 h-24 rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/50">
+                  <Image className="w-8 h-8 text-muted-foreground" />
+                </div>
+              )}
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                  id="logo-upload"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingLogo}
+                  className="gap-2"
+                >
+                  {uploadingLogo ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      {siteSettings.logo_url ? 'Change Logo' : 'Upload Logo'}
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground mt-2">
+                  PNG, JPG or SVG recommended
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Branding */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
             className="bg-card p-6 rounded-xl border border-border"
           >
             <div className="flex items-center gap-3 mb-6">
