@@ -1,4 +1,4 @@
 project_id = "cpqpqozisucisvxvnryi"
 
 [functions.send-quote-notification]
-verify_jwt = false
+verify_jwt = true
