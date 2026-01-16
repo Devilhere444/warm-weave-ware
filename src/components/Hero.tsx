@@ -54,9 +54,9 @@ export default function Hero() {
       <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/40 to-transparent blur-[100px] opacity-30 gpu-accelerated animate-pulse-slow" />
       <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/30 to-transparent blur-[120px] opacity-25 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
 
-      {/* Floating Geometric Shapes - CSS animations */}
-      <div className="hidden md:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/25 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
-      <div className="hidden md:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-white/20 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
+      {/* Floating Geometric Shapes - CSS animations - Desktop only */}
+      <div className="hidden lg:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/25 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
+      <div className="hidden lg:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-white/20 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
       <div className="hidden lg:block absolute top-1/3 right-[8%] w-14 h-14 bg-white/15 rounded-xl rotate-45 backdrop-blur-sm gpu-accelerated animate-float" style={{ animationDelay: '1s' }} />
 
       <motion.div 
