@@ -39,7 +39,7 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-block text-sm font-elegant tracking-widest uppercase text-primary"
+              className="inline-block text-sm font-display-light tracking-widest uppercase text-primary"
             >
               About Litho Art Press
             </motion.span>
@@ -49,10 +49,10 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="font-display text-3xl md:text-4xl font-bold text-foreground leading-tight"
+              className="font-display-bold text-3xl md:text-4xl text-foreground leading-tight"
             >
               A Heritage of
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Printing Excellence</span>
+              <span className="block font-display-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Printing Excellence</span>
             </motion.h2>
 
             <motion.p
@@ -60,7 +60,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="text-muted-foreground font-body leading-relaxed text-lg"
+              className="text-muted-foreground font-body-regular leading-relaxed text-lg"
             >
               Founded in 1985 in the heart of Bihar, Litho Art Press has grown
               from a modest printing workshop to one of the region's most
@@ -73,7 +73,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
-              className="text-muted-foreground font-body leading-relaxed"
+              className="text-muted-foreground font-body-regular leading-relaxed"
             >
               We blend time-honored lithographic techniques with cutting-edge
               digital technology to deliver prints that speak volumes about your
@@ -102,10 +102,10 @@ export default function About() {
                     <feature.icon className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-display font-semibold text-foreground mb-1">
+                    <h4 className="font-display-semibold text-foreground mb-1">
                       {feature.title}
                     </h4>
-                    <p className="text-sm text-muted-foreground font-body">
+                    <p className="text-sm text-muted-foreground font-body-regular">
                       {feature.description}
                     </p>
                   </div>
@@ -143,15 +143,15 @@ export default function About() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                    <span className="font-display text-2xl font-bold text-primary-foreground">
+                    <span className="font-display-extrabold text-2xl text-primary-foreground">
                       38
                     </span>
                   </div>
                   <div>
-                    <p className="font-display text-lg font-semibold text-foreground">
+                    <p className="font-display-semibold text-lg text-foreground">
                       Years of
                     </p>
-                    <p className="text-muted-foreground font-elegant">
+                    <p className="text-muted-foreground font-display-light">
                       Excellence
                     </p>
                   </div>

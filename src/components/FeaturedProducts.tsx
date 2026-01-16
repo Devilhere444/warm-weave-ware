@@ -79,7 +79,7 @@ export default function FeaturedProducts() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block text-sm font-body font-medium tracking-[0.2em] uppercase text-primary mb-4"
+            className="inline-block text-sm font-body-semibold tracking-[0.2em] uppercase text-primary mb-4"
           >
             Our Expertise
           </motion.span>
@@ -88,7 +88,7 @@ export default function FeaturedProducts() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6"
+            className="font-display-bold text-4xl md:text-5xl lg:text-6xl text-foreground mb-6"
           >
             <span className="text-gradient-primary">Featured</span> Products
           </motion.h2>
@@ -97,7 +97,7 @@ export default function FeaturedProducts() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-muted-foreground font-body text-lg max-w-2xl mx-auto"
+            className="text-muted-foreground font-body-regular text-lg max-w-2xl mx-auto"
           >
             Discover our range of premium printing solutions crafted with
             precision and excellence.
@@ -123,7 +123,7 @@ export default function FeaturedProducts() {
               <Button
                 size="lg"
                 variant="outline"
-                className="group font-display font-medium tracking-wide text-lg px-10 py-6 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300"
+                className="group font-display-semibold tracking-wide text-lg px-10 py-6 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300"
               >
                 View All Products
                 <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1.5" />
