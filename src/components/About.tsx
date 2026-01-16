@@ -289,7 +289,12 @@ export default function About() {
                 className="absolute -top-4 -right-4 bg-card p-4 rounded-xl shadow-xl border border-border"
               >
                 <div className="flex items-center gap-3">
-                  <Star className="w-8 h-8 text-primary fill-primary/20" />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Star className="w-8 h-8 text-primary fill-primary/20" />
+                  </motion.div>
                   <div>
                     <p className="font-display-bold text-2xl text-foreground">5000+</p>
                     <p className="text-xs text-muted-foreground font-body-medium">Projects Done</p>
