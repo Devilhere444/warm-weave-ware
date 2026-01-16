@@ -180,15 +180,6 @@
   input, textarea, select {
     font-size: 16px !important; /* Prevents zoom on Android */
   }
-
-  /* Ultra-fast touch response on mobile */
-  @media (pointer: coarse) {
-    button, a, [role="button"] {
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-  }
 }
 
 @layer utilities {
@@ -375,12 +366,11 @@
     min-width: 44px;
   }
 
-  /* Snappy button interactions - optimized for mobile */
+  /* Snappy button interactions - optimized for Android */
   .btn-snappy {
-    transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.06s ease,
-                background-color 0.06s ease,
-                opacity 0.06s ease;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.1s ease,
+                background-color 0.1s ease;
     will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -392,15 +382,14 @@
   }
 
   .btn-snappy:active {
-    transform: scale(0.95) translateZ(0);
-    opacity: 0.9;
-    transition-duration: 0.02s;
+    transform: scale(0.96) translateZ(0);
+    transition-duration: 0.05s;
   }
 
-  /* Faster card interactions - optimized for mobile */
+  /* Faster card interactions - optimized for Android */
   .card-snappy {
-    transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.08s ease;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.15s ease;
     will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -408,67 +397,24 @@
   }
 
   .card-snappy:hover {
-    transform: translateY(-4px) translateZ(0);
+    transform: translateY(-6px) translateZ(0);
   }
 
   .card-snappy:active {
-    transform: scale(0.98) translateZ(0);
-    transition-duration: 0.02s;
+    transform: translateY(-2px) translateZ(0);
+    transition-duration: 0.05s;
   }
 
-  /* Ultra-fast link feedback */
-  .link-snappy {
-    transition: color 0.05s ease, opacity 0.05s ease;
-  }
-
-  .link-snappy:active {
-    opacity: 0.7;
-    transition-duration: 0.02s;
-  }
-
-  /* Mobile-specific ultra-fast tap response */
+  /* Mobile-specific fast tap response */
   @media (pointer: coarse) {
     .btn-snappy, .card-snappy, button, a {
-      transition-duration: 0.04s !important;
+      transition-duration: 0.08s !important;
     }
     
     .btn-snappy:active, .card-snappy:active {
-      transition-duration: 0.02s !important;
-    }
-
-    /* Instant visual feedback for taps */
-    button:active, a:active, [role="button"]:active {
-      opacity: 0.85;
-      transform: scale(0.97);
+      transition-duration: 0.03s !important;
     }
   }
-
-  /* iOS safe area support */
-  .safe-area-top {
-    padding-top: env(safe-area-inset-top);
-  }
-
-  .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  /* Smooth momentum scrolling container */
-  .scroll-smooth-mobile {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    overscroll-behavior-y: contain;
-  }
-}
-
-/* Snappy interactions for all devices */
-button, a, [role="button"], .interactive {
-  transition-duration: 0.08s !important;
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1) !important;
-}
-
-button:active, a:active, [role="button"]:active, .interactive:active {
-  transition-duration: 0.02s !important;
-  transform: scale(0.97);
 }
 
 /* Reduced motion preferences */
@@ -565,30 +511,4 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(18 60% 50%);
-}
-
-/* Marquee animation for scrolling badges */
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 20s linear infinite;
-}
-
-/* Pause marquee on hover for accessibility */
-.animate-marquee:hover {
-  animation-play-state: paused;
-}
-
-/* Respect reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
-  }
 }

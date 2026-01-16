@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import CartIcon from "@/components/CartIcon";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
-import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -23,7 +22,6 @@ export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { settings } = useSiteSettings();
-  const haptic = useHapticFeedback();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,8 +61,8 @@ export default function Header() {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 safe-area-top transition-all duration-200 ${
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-background/95 backdrop-blur-md shadow-lg py-2"
           : "bg-background/80 backdrop-blur-md border-b border-border/50 py-3"
@@ -187,10 +185,7 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => {
-              haptic.triggerLight();
-              setIsOpen(!isOpen);
-            }}
+            onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden p-2 text-foreground touch-target btn-snappy"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
@@ -205,24 +200,21 @@ export default function Header() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+              transition={{ duration: 0.3 }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="py-4 space-y-1 safe-area-bottom">
+              <div className="py-6 space-y-2">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.name}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.03, duration: 0.1 }}
+                    transition={{ delay: index * 0.05 }}
                   >
                     <Link
                       to={link.path}
-                      onClick={() => {
-                        haptic.triggerLight();
-                        setIsOpen(false);
-                      }}
-                      className={`block font-body-medium text-lg tracking-wide py-3.5 px-3 rounded-xl touch-target transition-all duration-75 active:scale-[0.98] ${
+                      onClick={() => setIsOpen(false)}
+                      className={`block font-body-medium text-lg tracking-wide py-3 px-2 rounded-lg touch-target ${
                         location.pathname === link.path
                           ? "text-primary bg-primary/10"
                           : "text-foreground active:bg-muted/50"

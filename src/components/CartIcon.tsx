@@ -2,21 +2,12 @@ import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
-import { hapticFeedback } from "@/hooks/useHapticFeedback";
 
 export default function CartIcon() {
   const { itemCount } = useCart();
 
-  const handleClick = () => {
-    hapticFeedback('light');
-  };
-
   return (
-    <Link 
-      to="/cart" 
-      className="relative p-2 hover:bg-secondary/50 rounded-full transition-colors"
-      onClick={handleClick}
-    >
+    <Link to="/cart" className="relative p-2 hover:bg-secondary/50 rounded-full transition-colors">
       <ShoppingCart className="w-5 h-5 text-foreground" />
       <AnimatePresence>
         {itemCount > 0 && (
