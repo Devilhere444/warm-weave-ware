@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProductCard from "./ProductCard";
+import { useRef } from "react";
 
 const featuredProducts = [
   {
@@ -10,7 +11,7 @@ const featuredProducts = [
     title: "Premium Book Printing",
     description:
       "High-quality hardcover and softcover book printing with premium paper stock and binding options.",
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=80",
+    image: "https://images.unsplash.com/photo-544716278-ca5e3f4abd8c?w=800&q=80",
     category: "Books",
   },
   {
@@ -40,63 +41,94 @@ const featuredProducts = [
 ];
 
 export default function FeaturedProducts() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+
   return (
-    <section className="py-24 bg-secondary/30">
-      <div className="container mx-auto px-4 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
+    <section ref={sectionRef} className="relative py-28 overflow-hidden">
+      {/* Animated Background */}
+      <motion.div 
+        style={{ y: backgroundY }}
+        className="absolute inset-0 bg-sand-pattern"
+      />
+      
+      {/* Decorative Elements */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 0.15, scale: 1 }}
+        viewport={{ once: true }}
+        className="absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/30 blur-[100px]"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 0.1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+        className="absolute bottom-20 left-10 w-96 h-96 rounded-full bg-accent/20 blur-[120px]"
+      />
+
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
+        {/* Header with Stagger Animation */}
+        <div className="text-center mb-20">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-block text-sm font-elegant tracking-widest uppercase text-accent mb-4"
+            className="inline-block text-sm font-body font-medium tracking-[0.2em] uppercase text-primary mb-4"
           >
             Our Expertise
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6"
+            className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6"
           >
-            Featured Products
+            <span className="text-gradient-primary">Featured</span> Products
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-muted-foreground font-body max-w-2xl mx-auto"
+            className="text-muted-foreground font-body text-lg max-w-2xl mx-auto"
           >
             Discover our range of premium printing solutions crafted with
             precision and excellence.
           </motion.p>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* Products Grid with Staggered Animation */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {featuredProducts.map((product, index) => (
             <ProductCard key={product.id} {...product} index={index} />
           ))}
         </div>
 
-        {/* CTA */}
+        {/* CTA with Hover Effect */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center"
         >
           <Link to="/products">
-            <Button
-              size="lg"
-              variant="outline"
-              className="group font-elegant tracking-wide text-lg px-8 border-2"
-            >
-              View All Products
-              <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </Button>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="group font-display font-medium tracking-wide text-lg px-10 py-6 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300"
+              >
+                View All Products
+                <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1.5" />
+              </Button>
+            </motion.div>
           </Link>
         </motion.div>
       </div>

@@ -54,7 +54,7 @@ export default function Header() {
               }`}>
                 Litho Art Press
               </span>
-              <span className={`text-xs font-elegant tracking-widest uppercase transition-colors ${
+              <span className={`text-xs font-body tracking-widest uppercase transition-colors ${
                 scrolled ? "text-muted-foreground" : "text-white/70"
               }`}>
                 Bihar • Since 1985
