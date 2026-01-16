@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import { Award, CheckCircle, Users, Zap } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Award, CheckCircle, Users, Zap, Printer, BookOpen, Palette, Star } from "lucide-react";
+import { useRef } from "react";
 
 const features = [
   {
@@ -28,10 +29,64 @@ const features = [
   },
 ];
 
+const floatingIcons = [
+  { icon: Printer, delay: 0, x: "10%", y: "20%" },
+  { icon: BookOpen, delay: 0.5, x: "85%", y: "15%" },
+  { icon: Palette, delay: 1, x: "75%", y: "70%" },
+  { icon: Star, delay: 1.5, x: "15%", y: "75%" },
+];
+
 export default function About() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
+  const imageRotate = useTransform(scrollYProgress, [0, 1], [-3, 3]);
+
   return (
-    <section className="py-24 bg-muted/30">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section ref={sectionRef} className="py-24 bg-muted/30 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <motion.div 
+        style={{ y: backgroundY }}
+        className="absolute inset-0 opacity-30"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.15),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--accent)/0.1),transparent_50%)]" />
+      </motion.div>
+
+      {/* Floating Icons */}
+      {floatingIcons.map((item, index) => (
+        <motion.div
+          key={index}
+          className="absolute hidden lg:block"
+          style={{ left: item.x, top: item.y }}
+          initial={{ opacity: 0, scale: 0 }}
+          whileInView={{ opacity: 0.15, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: item.delay, duration: 0.5 }}
+        >
+          <motion.div
+            animate={{ 
+              y: [0, -15, 0],
+              rotate: [0, 5, -5, 0]
+            }}
+            transition={{ 
+              repeat: Infinity, 
+              duration: 4 + index, 
+              ease: "easeInOut",
+              delay: item.delay 
+            }}
+          >
+            <item.icon className="w-16 h-16 text-primary/40" strokeWidth={1} />
+          </motion.div>
+        </motion.div>
+      ))}
+
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Content */}
           <div className="space-y-8">
@@ -49,10 +104,18 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="font-display-bold text-3xl md:text-4xl text-foreground leading-tight"
+              className="font-display-bold text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight"
             >
               A Heritage of
-              <span className="block font-display-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Printing Excellence</span>
+              <motion.span 
+                className="block font-display-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-500 to-accent"
+                initial={{ backgroundPosition: "0% 50%" }}
+                animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                style={{ backgroundSize: "200% auto" }}
+              >
+                Printing Excellence
+              </motion.span>
             </motion.h2>
 
             <motion.p
@@ -92,15 +155,20 @@ export default function About() {
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  className="flex gap-4"
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  className="flex gap-4 p-3 rounded-xl hover:bg-card/50 transition-colors duration-300 cursor-default"
                 >
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <motion.div 
+                    className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center"
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.5 }}
+                  >
                     <feature.icon className="w-6 h-6 text-primary" />
-                  </div>
+                  </motion.div>
                   <div>
                     <h4 className="font-display-semibold text-foreground mb-1">
                       {feature.title}
@@ -114,7 +182,7 @@ export default function About() {
             </motion.div>
           </div>
 
-          {/* Right - Visual */}
+          {/* Right - Visual with Outstanding Animations */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -123,30 +191,75 @@ export default function About() {
             className="relative"
           >
             <div className="relative">
-              {/* Main Image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img
+              {/* Animated Ring */}
+              <motion.div
+                className="absolute -inset-8 rounded-3xl border-2 border-dashed border-primary/20"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              />
+              
+              {/* Glowing Orbs */}
+              <motion.div
+                className="absolute -top-10 -right-10 w-32 h-32 bg-primary/30 rounded-full blur-3xl"
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute -bottom-10 -left-10 w-40 h-40 bg-accent/25 rounded-full blur-3xl"
+                animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              />
+
+              {/* Main Image with Parallax */}
+              <motion.div 
+                style={{ scale: imageScale, rotate: imageRotate }}
+                className="relative rounded-2xl overflow-hidden shadow-2xl"
+              >
+                <motion.img
                   src="https://images.unsplash.com/photo-1588412079929-790b9f593d8e?w=800&q=80"
                   alt="Printing Press"
                   className="w-full aspect-[4/5] object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.5 }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
-              </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent" />
+                
+                {/* Animated Overlay Pattern */}
+                <motion.div 
+                  className="absolute inset-0 opacity-10"
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(
+                      45deg,
+                      transparent,
+                      transparent 10px,
+                      hsl(var(--primary)) 10px,
+                      hsl(var(--primary)) 11px
+                    )`
+                  }}
+                  animate={{ backgroundPosition: ["0px 0px", "20px 20px"] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                />
+              </motion.div>
 
-              {/* Floating Card */}
+              {/* Floating Stats Cards */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.8, x: -20 }}
+                whileInView={{ opacity: 1, scale: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}
-                className="absolute -bottom-6 -left-6 bg-card p-6 rounded-xl shadow-xl border border-border"
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="absolute -bottom-6 -left-6 bg-card p-5 rounded-xl shadow-xl border border-border"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                    <span className="font-display-extrabold text-2xl text-primary-foreground">
+                  <motion.div 
+                    className="w-14 h-14 bg-gradient-to-br from-primary to-orange-500 rounded-full flex items-center justify-center"
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <span className="font-display-extrabold text-xl text-primary-foreground">
                       38
                     </span>
-                  </div>
+                  </motion.div>
                   <div>
                     <p className="font-display-semibold text-lg text-foreground">
                       Years of
@@ -158,8 +271,41 @@ export default function About() {
                 </div>
               </motion.div>
 
-              {/* Decorative */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-2xl" />
+              {/* Second Floating Card */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, x: 20 }}
+                whileInView={{ opacity: 1, scale: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="absolute -top-4 -right-4 bg-card p-4 rounded-xl shadow-xl border border-border"
+              >
+                <div className="flex items-center gap-3">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Star className="w-8 h-8 text-primary fill-primary/20" />
+                  </motion.div>
+                  <div>
+                    <p className="font-display-bold text-2xl text-foreground">5000+</p>
+                    <p className="text-xs text-muted-foreground font-body-medium">Projects Done</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Decorative Elements */}
+              <div className="absolute -top-4 -left-4 w-20 h-20 border-2 border-primary/20 rounded-full" />
+              <motion.div 
+                className="absolute top-1/2 -right-8 w-4 h-4 bg-primary rounded-full"
+                animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <motion.div 
+                className="absolute bottom-1/3 -left-6 w-3 h-3 bg-accent rounded-full"
+                animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+              />
             </div>
           </motion.div>
         </div>

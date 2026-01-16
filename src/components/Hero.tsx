@@ -230,10 +230,10 @@ export default function Hero() {
                 transition={{ ...snappyTransition, delay: 0.8 }}
                 whileHover={{ scale: 1.05, y: -2 }}
               >
-                <div className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-white/20">
+                <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-orange-500 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-white/20">
                   <motion.div
-                    animate={{ x: [0, 3, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
                   >
                     <Truck className="w-5 h-5" />
                   </motion.div>
