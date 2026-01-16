@@ -569,7 +569,7 @@ export default function ProductDetails() {
                       <SelectTrigger>
                         <SelectValue placeholder="Select finish" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper" sideOffset={4}>
                         {finishOptions.map((option) => (
                           <SelectItem key={option} value={option}>
                             {option}
@@ -588,7 +588,7 @@ export default function ProductDetails() {
                       <SelectTrigger>
                         <SelectValue placeholder="Select paper" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper" sideOffset={4}>
                         {paperOptions.map((option) => (
                           <SelectItem key={option} value={option}>
                             {option}
@@ -607,7 +607,7 @@ export default function ProductDetails() {
                       <SelectTrigger>
                         <SelectValue placeholder="Select binding" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent position="popper" sideOffset={4}>
                         {bindingOptions.map((option) => (
                           <SelectItem key={option} value={option}>
                             {option}
