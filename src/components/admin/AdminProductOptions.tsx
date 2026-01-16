@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Trash2, Save, Loader2, Palette, FileText, BookOpen, GripVertical } from "lucide-react";
+import { Plus, Trash2, Save, Loader2, Palette, FileText, BookOpen, GripVertical, Clock, Hash, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,10 @@ interface Product {
   id: string;
   title: string;
   category: string | null;
+  min_quantity: number | null;
+  max_quantity: number | null;
+  lead_time: string | null;
+  price_range: string | null;
 }
 
 interface ProductOption {
@@ -32,6 +36,13 @@ interface ProductOption {
   option_type: string;
   option_value: string;
   display_order: number;
+}
+
+interface ProductSettings {
+  min_quantity: number;
+  max_quantity: number | null;
+  lead_time: string;
+  price_range: string;
 }
 
 const OPTION_TYPES = [
@@ -46,6 +57,13 @@ export default function AdminProductOptions() {
   const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [productSettings, setProductSettings] = useState<ProductSettings>({
+    min_quantity: 1,
+    max_quantity: null,
+    lead_time: "",
+    price_range: "",
+  });
   const [newOptions, setNewOptions] = useState<{ [key: string]: string }>({
     finish: "",
     paper: "",
@@ -66,7 +84,7 @@ export default function AdminProductOptions() {
     try {
       const { data, error } = await supabase
         .from("products")
-        .select("id, title, category")
+        .select("id, title, category, min_quantity, max_quantity, lead_time, price_range")
         .order("title");
 
       if (error) throw error;
@@ -74,6 +92,7 @@ export default function AdminProductOptions() {
       
       if (data && data.length > 0) {
         setSelectedProduct(data[0].id);
+        updateProductSettingsFromData(data[0]);
       }
     } catch (error: any) {
       console.error("Error fetching products:", error);
@@ -83,8 +102,23 @@ export default function AdminProductOptions() {
     }
   };
 
+  const updateProductSettingsFromData = (product: Product) => {
+    setProductSettings({
+      min_quantity: product.min_quantity || 1,
+      max_quantity: product.max_quantity || null,
+      lead_time: product.lead_time || "",
+      price_range: product.price_range || "",
+    });
+  };
+
   const fetchProductOptions = async (productId: string) => {
     try {
+      // Update settings from product data
+      const selectedProd = products.find(p => p.id === productId);
+      if (selectedProd) {
+        updateProductSettingsFromData(selectedProd);
+      }
+
       const { data, error } = await supabase
         .from("product_options")
         .select("*")
@@ -97,6 +131,39 @@ export default function AdminProductOptions() {
     } catch (error: any) {
       console.error("Error fetching options:", error);
       toast.error("Failed to load product options");
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    if (!selectedProduct) return;
+    
+    setSavingSettings(true);
+    try {
+      const { error } = await supabase
+        .from("products")
+        .update({
+          min_quantity: productSettings.min_quantity,
+          max_quantity: productSettings.max_quantity,
+          lead_time: productSettings.lead_time || null,
+          price_range: productSettings.price_range || null,
+        })
+        .eq("id", selectedProduct);
+
+      if (error) throw error;
+
+      // Update local products state
+      setProducts(prev => prev.map(p => 
+        p.id === selectedProduct 
+          ? { ...p, ...productSettings }
+          : p
+      ));
+
+      toast.success("Product settings saved!");
+    } catch (error: any) {
+      console.error("Error saving settings:", error);
+      toast.error("Failed to save settings: " + error.message);
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -277,7 +344,102 @@ export default function AdminProductOptions() {
         )}
       </motion.div>
 
-      {/* Options Management */}
+      {/* Pricing & Quantity Settings */}
+      {selectedProduct && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-card p-6 rounded-xl border border-border"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-display text-lg font-semibold">Pricing & Quantity Settings</h2>
+            <Button
+              onClick={handleSaveSettings}
+              disabled={savingSettings}
+              size="sm"
+            >
+              {savingSettings ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
+              Save Settings
+            </Button>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Hash className="w-4 h-4 text-primary" />
+                Min Quantity
+              </Label>
+              <Input
+                type="number"
+                min={1}
+                value={productSettings.min_quantity}
+                onChange={(e) => setProductSettings(prev => ({
+                  ...prev,
+                  min_quantity: parseInt(e.target.value) || 1
+                }))}
+                placeholder="1"
+              />
+              <p className="text-xs text-muted-foreground">Minimum order quantity</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Hash className="w-4 h-4 text-primary" />
+                Max Quantity
+              </Label>
+              <Input
+                type="number"
+                min={1}
+                value={productSettings.max_quantity || ""}
+                onChange={(e) => setProductSettings(prev => ({
+                  ...prev,
+                  max_quantity: e.target.value ? parseInt(e.target.value) : null
+                }))}
+                placeholder="No limit"
+              />
+              <p className="text-xs text-muted-foreground">Leave empty for no limit</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary" />
+                Lead Time
+              </Label>
+              <Input
+                value={productSettings.lead_time}
+                onChange={(e) => setProductSettings(prev => ({
+                  ...prev,
+                  lead_time: e.target.value
+                }))}
+                placeholder="e.g., 7-14 business days"
+              />
+              <p className="text-xs text-muted-foreground">Estimated delivery time</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-primary" />
+                Price Range
+              </Label>
+              <Input
+                value={productSettings.price_range}
+                onChange={(e) => setProductSettings(prev => ({
+                  ...prev,
+                  price_range: e.target.value
+                }))}
+                placeholder="e.g., Starting from ₹150/copy"
+              />
+              <p className="text-xs text-muted-foreground">Display price text</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {selectedProduct && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
