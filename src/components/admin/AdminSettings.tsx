@@ -12,7 +12,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminProductOptions from "./AdminProductOptions";
-import { BrandExtractor } from "./BrandExtractor";
 
 interface AdminEmail {
   id: string;
@@ -626,15 +625,6 @@ export default function AdminSettings() {
                 </p>
               </div>
             </div>
-          </motion.div>
-
-          {/* Brand Extractor */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.035 }}
-          >
-            <BrandExtractor />
           </motion.div>
 
           {/* Branding */}
