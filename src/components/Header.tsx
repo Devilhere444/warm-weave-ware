@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import CartIcon from "@/components/CartIcon";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -83,6 +84,7 @@ export default function Header() {
                 )}
               </Link>
             ))}
+            <CartIcon />
             <Link to="/admin">
               <Button
                 variant="outline"
