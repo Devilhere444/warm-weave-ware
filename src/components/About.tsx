@@ -30,7 +30,7 @@ const features = [
 
 export default function About() {
   return (
-    <section className="py-24 bg-marble-pattern">
+    <section className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Content */}
@@ -39,7 +39,7 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-block text-sm font-elegant tracking-widest uppercase text-accent"
+              className="inline-block text-sm font-elegant tracking-widest uppercase text-primary"
             >
               About Litho Art Press
             </motion.span>
@@ -49,10 +49,10 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="font-display text-4xl md:text-5xl font-bold text-foreground leading-tight"
+              className="font-display text-3xl md:text-4xl font-bold text-foreground leading-tight"
             >
               A Heritage of
-              <span className="text-gradient-primary block">Printing Excellence</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Printing Excellence</span>
             </motion.h2>
 
             <motion.p
@@ -142,8 +142,8 @@ export default function About() {
                 className="absolute -bottom-6 -left-6 bg-card p-6 rounded-xl shadow-xl border border-border"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center">
-                    <span className="font-display text-2xl font-bold text-accent-foreground">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                    <span className="font-display text-2xl font-bold text-primary-foreground">
                       38
                     </span>
                   </div>
@@ -159,7 +159,7 @@ export default function About() {
               </motion.div>
 
               {/* Decorative */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-accent/20 rounded-full blur-2xl" />
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-2xl" />
             </div>
           </motion.div>
         </div>

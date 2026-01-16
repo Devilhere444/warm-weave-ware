@@ -9,6 +9,13 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    projectType: "",
+    message: ""
+  });
   const { settings } = useSiteSettings();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -20,14 +27,40 @@ export default function ContactSection() {
     
     toast.success("Thank you! We'll get back to you soon.");
     setIsSubmitting(false);
-    (e.target as HTMLFormElement).reset();
+    setFormData({ name: "", email: "", phone: "", projectType: "", message: "" });
   };
 
+  const handleWhatsAppQuote = () => {
+    const whatsappNumber = settings.whatsapp_number?.replace(/\D/g, '') || '';
+    if (!whatsappNumber) {
+      toast.error("WhatsApp number not configured");
+      return;
+    }
+
+    // Build the quote message
+    const message = encodeURIComponent(
+      `Hi! I'd like to request a quote.\n\n` +
+      `Name: ${formData.name || 'Not provided'}\n` +
+      `Email: ${formData.email || 'Not provided'}\n` +
+      `Phone: ${formData.phone || 'Not provided'}\n` +
+      `Project Type: ${formData.projectType || 'Not specified'}\n\n` +
+      `Message:\n${formData.message || 'No message provided'}`
+    );
+
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+  };
+
+  // Address from plus code GHRC+88 Katihar, Bihar
+  const address = "Katihar, Bihar 854105, India";
+  const mapQuery = encodeURIComponent("GHRC+88 Katihar, Bihar");
+
   const contactInfo = [
-    settings.contact_address && {
+    {
       icon: MapPin,
       title: "Visit Us",
-      content: settings.contact_address,
+      content: address,
+      href: `https://www.google.com/maps/search/?api=1&query=${mapQuery}`,
+      external: true,
     },
     settings.contact_phone && {
       icon: Phone,
@@ -56,7 +89,7 @@ export default function ContactSection() {
   ].filter(Boolean);
 
   return (
-    <section className="py-24 bg-secondary/30">
+    <section className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Left - Contact Info */}
@@ -65,7 +98,7 @@ export default function ContactSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-block text-sm font-elegant tracking-widest uppercase text-accent"
+              className="inline-block text-sm font-elegant tracking-widest uppercase text-primary"
             >
               Get In Touch
             </motion.span>
@@ -75,10 +108,10 @@ export default function ContactSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="font-display text-4xl md:text-5xl font-bold text-foreground"
+              className="font-display text-3xl md:text-4xl font-bold text-foreground"
             >
               Let's Create
-              <span className="text-gradient-primary block">Something Beautiful</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Something Beautiful</span>
             </motion.h2>
 
             <motion.p
@@ -149,6 +182,8 @@ export default function ContactSection() {
                     required
                     placeholder="John Doe"
                     className="font-body"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -160,6 +195,8 @@ export default function ContactSection() {
                     type="email"
                     placeholder="john@example.com"
                     className="font-body"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
               </div>
@@ -171,6 +208,8 @@ export default function ContactSection() {
                 <Input
                   placeholder="+91 98765 43210"
                   className="font-body"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 />
               </div>
 
@@ -181,6 +220,8 @@ export default function ContactSection() {
                 <Input
                   placeholder="e.g., Book Printing, Packaging"
                   className="font-body"
+                  value={formData.projectType}
+                  onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
                 />
               </div>
 
@@ -193,24 +234,38 @@ export default function ContactSection() {
                   placeholder="Tell us about your project..."
                   rows={4}
                   className="font-body resize-none"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 />
               </div>
 
-              <Button
-                type="submit"
-                size="lg"
-                disabled={isSubmitting}
-                className="w-full bg-primary hover:bg-primary/90 font-elegant tracking-wide text-lg"
-              >
-                {isSubmitting ? (
-                  "Sending..."
-                ) : (
-                  <>
-                    Send Message
-                    <Send className="ml-2 w-5 h-5" />
-                  </>
-                )}
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={isSubmitting}
+                  className="flex-1 bg-primary hover:bg-primary/90 font-elegant tracking-wide"
+                >
+                  {isSubmitting ? (
+                    "Sending..."
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="ml-2 w-5 h-5" />
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={handleWhatsAppQuote}
+                  className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white font-elegant tracking-wide"
+                >
+                  <MessageCircle className="mr-2 w-5 h-5" />
+                  Quote via WhatsApp
+                </Button>
+              </div>
             </form>
           </motion.div>
         </div>
