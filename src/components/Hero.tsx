@@ -86,6 +86,67 @@ export default function Hero() {
         background: 'radial-gradient(ellipse at center, transparent 40%, hsl(25 40% 20% / 0.15) 100%)'
       }} />
 
+      {/* Animated Sun Rays Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none gpu-accelerated">
+        {/* Sun source glow */}
+        <div className="absolute -top-20 right-[15%] w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-yellow-200/40 via-orange-300/20 to-transparent blur-[60px] animate-pulse-slow" />
+        
+        {/* Light rays container */}
+        <div className="absolute -top-[200px] right-[5%] w-[800px] h-[800px] md:w-[1200px] md:h-[1200px] animate-rays-rotate" style={{ transformOrigin: 'top center' }}>
+          {/* Individual rays */}
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute top-0 left-1/2 h-full origin-top"
+              style={{
+                width: '2px',
+                transform: `translateX(-50%) rotate(${i * 30}deg)`,
+                background: `linear-gradient(to bottom, 
+                  hsl(40 80% 70% / ${0.15 - i * 0.008}) 0%, 
+                  hsl(35 70% 60% / ${0.08 - i * 0.004}) 40%, 
+                  transparent 70%
+                )`,
+              }}
+            />
+          ))}
+          {/* Wider accent rays */}
+          {[0, 45, 90, 135].map((angle, i) => (
+            <div
+              key={`wide-${i}`}
+              className="absolute top-0 left-1/2 h-full origin-top"
+              style={{
+                width: '40px',
+                transform: `translateX(-50%) rotate(${angle + 15}deg)`,
+                background: `linear-gradient(to bottom, 
+                  hsl(38 75% 65% / 0.06) 0%, 
+                  hsl(35 60% 55% / 0.03) 35%, 
+                  transparent 60%
+                )`,
+                filter: 'blur(8px)',
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Secondary subtle rays from left */}
+        <div className="hidden md:block absolute -top-[150px] left-[10%] w-[600px] h-[600px] animate-rays-rotate-slow opacity-50" style={{ transformOrigin: 'top center' }}>
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute top-0 left-1/2 h-full origin-top"
+              style={{
+                width: '1px',
+                transform: `translateX(-50%) rotate(${i * 45 + 10}deg)`,
+                background: `linear-gradient(to bottom, 
+                  hsl(45 70% 75% / 0.1) 0%, 
+                  transparent 50%
+                )`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
       {/* Simplified Orbs - CSS animations for better performance */}
       <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/40 to-transparent blur-[100px] opacity-35 gpu-accelerated animate-pulse-slow" />
       <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/30 to-transparent blur-[120px] opacity-30 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
