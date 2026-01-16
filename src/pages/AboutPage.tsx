@@ -1,59 +1,14 @@
-import { motion, useScroll, useTransform, AnimatePresence, type PanInfo } from "framer-motion";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog, ChevronLeft, ChevronRight } from "lucide-react";
-import { useHapticFeedback } from "@/hooks/useHapticFeedback";
+import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog } from "lucide-react";
 
 const timeline = [
-  { 
-    year: "1965", 
-    title: "Foundation", 
-    description: "Litho Art Press was established in Katihar, Bihar with a vision to bring premium printing to the region.",
-    image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80"
-  },
-  { 
-    year: "1975", 
-    title: "Expansion", 
-    description: "Expanded operations with new machinery and doubled our production capacity.",
-    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&q=80"
-  },
-  { 
-    year: "1985", 
-    title: "Regional Growth", 
-    description: "Extended our services across nearby Bihar regions, building strong partnerships with local businesses.",
-    image: "https://images.unsplash.com/photo-1553484771-371a605b060b?w=400&q=80"
-  },
-  { 
-    year: "1995", 
-    title: "Quality Excellence", 
-    description: "Implemented rigorous quality control systems and earned recognition for outstanding print quality.",
-    image: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?w=400&q=80"
-  },
-  { 
-    year: "2005", 
-    title: "Digital Integration", 
-    description: "Integrated cutting-edge digital printing technology while preserving traditional techniques.",
-    image: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=400&q=80"
-  },
-  { 
-    year: "2015", 
-    title: "Nationwide Reach", 
-    description: "Expanded delivery network to serve customers across all of India with reliable shipping.",
-    image: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&q=80"
-  },
-  { 
-    year: "2020", 
-    title: "1 Lakh+ Milestone", 
-    description: "Celebrated the milestone of completing over 1 Lakh printing projects for our valued customers.",
-    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&q=80"
-  },
-  { 
-    year: "2024", 
-    title: "Industry Leader", 
-    description: "Recognized as one of Bihar's leading printing presses with nationwide clientele and 61+ years of excellence.",
-    image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&q=80"
-  },
+  { year: "1965", title: "Foundation", description: "Litho Art Press was established in Patna, Bihar with a vision to bring premium printing to the region." },
+  { year: "1975", title: "Expansion", description: "Expanded operations with new machinery and doubled our production capacity." },
+  { year: "1985", title: "ISO Certification", description: "Achieved ISO 9001 certification for quality management systems." },
+  { year: "2005", title: "Digital Integration", description: "Integrated cutting-edge digital printing technology while preserving traditional techniques." },
+  { year: "2023", title: "Industry Leader", description: "Recognized as one of Bihar's leading printing presses with nationwide clientele." },
 ];
 
 const values = [
@@ -64,113 +19,6 @@ const values = [
 ];
 
 export default function AboutPage() {
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const mobileNavRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const timelineItemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const haptic = useHapticFeedback();
-
-  // Track which timeline item is in view
-  useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    
-    timelineItemRefs.current.forEach((ref, index) => {
-      if (ref) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                setActiveIndex(index);
-              }
-            });
-          },
-          { threshold: 0.5, rootMargin: "-20% 0px -40% 0px" }
-        );
-        observer.observe(ref);
-        observers.push(observer);
-      }
-    });
-
-    return () => observers.forEach((obs) => obs.disconnect());
-  }, []);
-
-  const scrollToItem = (index: number) => {
-    timelineItemRefs.current[index]?.scrollIntoView({ 
-      behavior: 'smooth', 
-      block: 'center' 
-    });
-  };
-
-  // Scroll mobile nav to keep active item visible
-  useEffect(() => {
-    if (mobileNavRef.current) {
-      const activeButton = mobileNavRef.current.children[activeIndex] as HTMLElement;
-      if (activeButton) {
-        const navRect = mobileNavRef.current.getBoundingClientRect();
-        const buttonRect = activeButton.getBoundingClientRect();
-        const scrollLeft = activeButton.offsetLeft - (navRect.width / 2) + (buttonRect.width / 2);
-        mobileNavRef.current.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-      }
-    }
-  }, [activeIndex]);
-
-  // Swipe handlers for mobile with haptic feedback
-  const handleDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const swipeThreshold = 50;
-    const velocityThreshold = 300;
-    
-    if (info.offset.x < -swipeThreshold || info.velocity.x < -velocityThreshold) {
-      // Swiped left - go to next
-      if (activeIndex < timeline.length - 1) {
-        const nextIndex = activeIndex + 1;
-        haptic.triggerLight();
-        setActiveIndex(nextIndex);
-        scrollToItem(nextIndex);
-      } else {
-        // At the end - provide feedback
-        haptic.triggerWarning();
-      }
-    } else if (info.offset.x > swipeThreshold || info.velocity.x > velocityThreshold) {
-      // Swiped right - go to previous
-      if (activeIndex > 0) {
-        const prevIndex = activeIndex - 1;
-        haptic.triggerLight();
-        setActiveIndex(prevIndex);
-        scrollToItem(prevIndex);
-      } else {
-        // At the beginning - provide feedback
-        haptic.triggerWarning();
-      }
-    }
-  }, [activeIndex, scrollToItem, haptic]);
-
-  const goToNext = () => {
-    if (activeIndex < timeline.length - 1) {
-      const nextIndex = activeIndex + 1;
-      haptic.triggerLight();
-      setActiveIndex(nextIndex);
-      scrollToItem(nextIndex);
-    } else {
-      haptic.triggerWarning();
-    }
-  };
-
-  const goToPrev = () => {
-    if (activeIndex > 0) {
-      const prevIndex = activeIndex - 1;
-      haptic.triggerLight();
-      setActiveIndex(prevIndex);
-      scrollToItem(prevIndex);
-    } else {
-      haptic.triggerWarning();
-    }
-  };
-
-  const handleYearClick = (index: number) => {
-    haptic.triggerSelection();
-    scrollToItem(index);
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -213,7 +61,7 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline */}
-      <section className="py-20 relative">
+      <section className="py-20">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -229,168 +77,7 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          {/* Mobile Timeline Navigation with Swipe */}
-          <div className="lg:hidden sticky top-20 z-20 mb-8 -mx-4 px-4">
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-card/90 backdrop-blur-xl border border-border rounded-xl p-3 shadow-lg"
-            >
-              {/* Swipe indicator */}
-              <motion.div
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
-                onDragEnd={handleDragEnd}
-                className="relative cursor-grab active:cursor-grabbing touch-pan-y"
-              >
-                {/* Current item display */}
-                <div className="flex items-center justify-between gap-4 px-2 py-2">
-                  <button
-                    onClick={goToPrev}
-                    disabled={activeIndex === 0}
-                    className={`p-2 rounded-full transition-all duration-200 ${
-                      activeIndex === 0 
-                        ? 'opacity-30 cursor-not-allowed' 
-                        : 'bg-muted hover:bg-primary/20 active:scale-95'
-                    }`}
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeIndex}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.15 }}
-                      className="flex-1 text-center"
-                    >
-                      <span className="font-display font-bold text-2xl text-primary block">
-                        {timeline[activeIndex].year}
-                      </span>
-                      <span className="text-sm font-body text-foreground">
-                        {timeline[activeIndex].title}
-                      </span>
-                    </motion.div>
-                  </AnimatePresence>
-                  
-                  <button
-                    onClick={goToNext}
-                    disabled={activeIndex === timeline.length - 1}
-                    className={`p-2 rounded-full transition-all duration-200 ${
-                      activeIndex === timeline.length - 1 
-                        ? 'opacity-30 cursor-not-allowed' 
-                        : 'bg-muted hover:bg-primary/20 active:scale-95'
-                    }`}
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-                
-                {/* Swipe hint */}
-                <p className="text-[10px] text-muted-foreground text-center mt-1 font-body">
-                  Swipe or tap arrows to navigate
-                </p>
-              </motion.div>
-              
-              {/* Scrollable year pills */}
-              <div 
-                ref={mobileNavRef}
-                className="flex gap-2 overflow-x-auto pt-3 pb-1 scrollbar-hide snap-x snap-mandatory touch-pan-x"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                {timeline.map((item, index) => (
-                  <button
-                    key={item.year}
-                    onClick={() => handleYearClick(index)}
-                    className={`flex-shrink-0 snap-center px-3 py-1.5 rounded-full transition-all duration-200 touch-manipulation ${
-                      activeIndex === index 
-                        ? 'bg-primary text-primary-foreground shadow-md scale-105' 
-                        : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-                    }`}
-                  >
-                    <span className="font-display font-semibold text-xs">
-                      {item.year}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              
-              {/* Progress bar */}
-              <div className="mt-2 h-1 bg-muted rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-                  animate={{ width: `${((activeIndex + 1) / timeline.length) * 100}%` }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Desktop Sticky Timeline Navigation */}
-          <div className="hidden lg:block sticky top-24 z-20 mb-12">
-            <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-4 shadow-lg max-w-4xl mx-auto"
-            >
-              <div className="flex items-center justify-between gap-2">
-                {timeline.map((item, index) => (
-                  <button
-                    key={item.year}
-                    onClick={() => handleYearClick(index)}
-                    className="relative flex-1 group"
-                  >
-                    <div className="flex flex-col items-center gap-1">
-                      <motion.div
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                          activeIndex === index 
-                            ? 'bg-primary scale-125' 
-                            : 'bg-muted-foreground/30 group-hover:bg-primary/50'
-                        }`}
-                        layoutId="timeline-dot"
-                      />
-                      <span className={`text-xs font-display font-semibold transition-colors duration-300 ${
-                        activeIndex === index ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
-                      }`}>
-                        {item.year}
-                      </span>
-                      <span className={`text-[10px] font-body transition-all duration-300 ${
-                        activeIndex === index 
-                          ? 'text-foreground opacity-100' 
-                          : 'text-muted-foreground opacity-0 group-hover:opacity-70'
-                      }`}>
-                        {item.title}
-                      </span>
-                    </div>
-                    
-                    {/* Active indicator line */}
-                    {activeIndex === index && (
-                      <motion.div
-                        layoutId="active-indicator"
-                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full"
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
-              
-              {/* Progress bar */}
-              <div className="mt-4 h-1 bg-muted rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${((activeIndex + 1) / timeline.length) * 100}%` }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              </div>
-            </motion.div>
-          </div>
-
-          <div className="relative" ref={timelineRef}>
+          <div className="relative">
             {/* Timeline Line */}
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-border hidden lg:block" />
 
@@ -398,58 +85,28 @@ export default function AboutPage() {
               {timeline.map((item, index) => (
                 <motion.div
                   key={item.year}
-                  ref={(el) => (timelineItemRefs.current[index] = el)}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
+                  transition={{ delay: index * 0.1 }}
                   className={`flex flex-col lg:flex-row items-center gap-8 ${
                     index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
                   }`}
                 >
                   <div className={`flex-1 ${index % 2 === 0 ? "lg:text-right" : "lg:text-left"}`}>
-                    <motion.div 
-                      className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300"
-                      whileHover={{ y: -5 }}
-                    >
-                      {/* Image */}
-                      <div className="relative h-40 overflow-hidden">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
-                        <span className="absolute bottom-3 left-4 text-3xl font-display font-bold text-primary drop-shadow-lg">
-                          {item.year}
-                        </span>
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="p-5">
-                        <h3 className="font-display text-xl font-semibold text-foreground">
-                          {item.title}
-                        </h3>
-                        <p className="text-muted-foreground font-body mt-2 text-sm leading-relaxed">
-                          {item.description}
-                        </p>
-                      </div>
-                    </motion.div>
+                    <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+                      <span className="text-2xl font-display font-bold text-primary">
+                        {item.year}
+                      </span>
+                      <h3 className="font-display text-xl font-semibold text-foreground mt-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-muted-foreground font-body mt-2">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                  
-                  {/* Timeline dot */}
-                  <div className="relative">
-                    <motion.div 
-                      className="w-5 h-5 rounded-full bg-primary border-4 border-background shadow-lg z-10"
-                      whileInView={{ scale: [0, 1.2, 1] }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.08 + 0.2 }}
-                    />
-                    <div className="absolute top-1/2 -translate-y-1/2 w-8 h-0.5 bg-primary/30 hidden lg:block" 
-                      style={{ [index % 2 === 0 ? 'right' : 'left']: '100%' }} 
-                    />
-                  </div>
-                  
+                  <div className="w-4 h-4 rounded-full bg-primary border-4 border-background shadow-lg z-10" />
                   <div className="flex-1 hidden lg:block" />
                 </motion.div>
               ))}

@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, type Transition } from "framer-motion";
-import { ArrowRight, Sparkles, BookOpen, Package, FileText, Truck, Trophy, MapPin } from "lucide-react";
+import { ArrowRight, Sparkles, BookOpen, Package, FileText, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
@@ -54,9 +54,9 @@ export default function Hero() {
       <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/40 to-transparent blur-[100px] opacity-30 gpu-accelerated animate-pulse-slow" />
       <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/30 to-transparent blur-[120px] opacity-25 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
 
-      {/* Floating Geometric Shapes - CSS animations - Desktop only */}
-      <div className="hidden lg:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/25 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
-      <div className="hidden lg:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-white/20 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
+      {/* Floating Geometric Shapes - CSS animations */}
+      <div className="hidden md:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/25 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
+      <div className="hidden md:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-white/20 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
       <div className="hidden lg:block absolute top-1/3 right-[8%] w-14 h-14 bg-white/15 rounded-xl rotate-45 backdrop-blur-sm gpu-accelerated animate-float" style={{ animationDelay: '1s' }} />
 
       <motion.div 
@@ -66,108 +66,17 @@ export default function Hero() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="space-y-5 md:space-y-8">
-            {/* Desktop Badges */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={snappyTransition}
-              className="hidden md:flex flex-wrap items-center justify-center lg:justify-start gap-3"
+              className="flex items-center gap-3"
             >
-              {/* Excellence Badge */}
               <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/25 touch-target">
-                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <Sparkles className="w-4 h-4 text-white" />
                 <span className="text-sm font-body-medium text-white/90 tracking-widest uppercase">
                   Excellence Since 1965
                 </span>
-              </div>
-              
-              {/* Serving Badge */}
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ ...snappyTransition, delay: 0.1 }}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/30 to-accent/30 backdrop-blur-md rounded-full border border-white/20 touch-target"
-              >
-                <MapPin className="w-4 h-4 text-green-400" />
-                <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                  Proudly Serving Katihar, Bihar & All Over India
-                </span>
-              </motion.div>
-              
-              {/* Projects Badge */}
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ ...snappyTransition, delay: 0.2 }}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/30 to-orange-500/30 backdrop-blur-md rounded-full border border-white/20 touch-target"
-              >
-                <Trophy className="w-4 h-4 text-amber-300" />
-                <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                  50,000+ Projects Completed
-                </span>
-              </motion.div>
-            </motion.div>
-
-            {/* Mobile Marquee Badges */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={snappyTransition}
-              className="md:hidden overflow-hidden relative"
-            >
-              {/* Gradient masks for smooth fade */}
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-primary/80 to-transparent z-10 pointer-events-none" />
-              <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-primary/80 to-transparent z-10 pointer-events-none" />
-              
-              {/* Scrolling container */}
-              <div className="flex animate-marquee">
-                {/* First set of badges */}
-                <div className="flex gap-3 shrink-0 pr-3">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/25 whitespace-nowrap">
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
-                    <span className="text-sm font-body-medium text-white/90 tracking-wide uppercase">
-                      Excellence Since 1965
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/30 to-accent/30 backdrop-blur-md rounded-full border border-white/20 whitespace-nowrap">
-                    <MapPin className="w-4 h-4 text-green-400" />
-                    <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                      Proudly Serving Katihar, Bihar & All Over India
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/30 to-orange-500/30 backdrop-blur-md rounded-full border border-white/20 whitespace-nowrap">
-                    <Trophy className="w-4 h-4 text-amber-300" />
-                    <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                      50,000+ Projects Completed
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Duplicate set for seamless loop */}
-                <div className="flex gap-3 shrink-0 pr-3">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/25 whitespace-nowrap">
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
-                    <span className="text-sm font-body-medium text-white/90 tracking-wide uppercase">
-                      Excellence Since 1965
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/30 to-accent/30 backdrop-blur-md rounded-full border border-white/20 whitespace-nowrap">
-                    <MapPin className="w-4 h-4 text-green-400" />
-                    <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                      Proudly Serving Katihar, Bihar & All Over India
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/30 to-orange-500/30 backdrop-blur-md rounded-full border border-white/20 whitespace-nowrap">
-                    <Trophy className="w-4 h-4 text-amber-300" />
-                    <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                      50,000+ Projects Completed
-                    </span>
-                  </div>
-                </div>
               </div>
             </motion.div>
 
@@ -226,7 +135,7 @@ export default function Hero() {
             >
               {[
                 { value: "61+", label: "Years Experience" },
-                { value: "50k+", label: "Projects Completed" },
+                { value: "1 Lakh+", label: "Projects Completed" },
                 { value: "100%", label: "Client Satisfaction" },
               ].map((stat, index) => (
                 <div 
@@ -307,24 +216,6 @@ export default function Hero() {
                 <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-orange-500 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-white/20 hover:scale-105 transition-transform duration-200">
                   <Truck className="w-5 h-5 animate-[bounce_2s_ease-in-out_infinite]" style={{ animationDuration: '2s' }} />
                   <span className="text-sm font-display-semibold">Shipping All Over India</span>
-                </div>
-              </motion.div>
-
-              {/* Floating Projects Badge */}
-              <motion.div 
-                className="absolute -bottom-4 -left-4 z-30"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 1 }}
-              >
-                <div className="flex items-center gap-3 bg-white/95 backdrop-blur-sm text-foreground px-5 py-3 rounded-2xl shadow-xl border border-border/50 hover:scale-105 transition-transform duration-200">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center">
-                    <Trophy className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-display-bold text-foreground">50k+</div>
-                    <div className="text-xs text-muted-foreground font-body-medium">Projects Done</div>
-                  </div>
                 </div>
               </motion.div>
 
