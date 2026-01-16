@@ -103,7 +103,7 @@ export default function Hero() {
               >
                 <Trophy className="w-4 h-4 text-amber-300" />
                 <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                  1 Lakh+ Projects Completed
+                  50,000+ Projects Completed
                 </span>
               </motion.div>
             </motion.div>
@@ -140,7 +140,7 @@ export default function Hero() {
                   <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/30 to-orange-500/30 backdrop-blur-md rounded-full border border-white/20 whitespace-nowrap">
                     <Trophy className="w-4 h-4 text-amber-300" />
                     <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                      1 Lakh+ Projects Completed
+                      50,000+ Projects Completed
                     </span>
                   </div>
                 </div>
@@ -164,7 +164,7 @@ export default function Hero() {
                   <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/30 to-orange-500/30 backdrop-blur-md rounded-full border border-white/20 whitespace-nowrap">
                     <Trophy className="w-4 h-4 text-amber-300" />
                     <span className="text-sm font-body-medium text-white/90 tracking-wide">
-                      1 Lakh+ Projects Completed
+                      50,000+ Projects Completed
                     </span>
                   </div>
                 </div>
@@ -226,7 +226,7 @@ export default function Hero() {
             >
               {[
                 { value: "61+", label: "Years Experience" },
-                { value: "1 Lakh+", label: "Projects Completed" },
+                { value: "50k+", label: "Projects Completed" },
                 { value: "100%", label: "Client Satisfaction" },
               ].map((stat, index) => (
                 <div 
