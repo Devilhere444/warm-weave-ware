@@ -1,9 +1,6 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { 
-  BookOpen, Package, FileText, Stamp, Printer, 
-  Gift, CreditCard, Palette, ArrowRight, Sparkles
-} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, Sparkles } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,49 +10,49 @@ const services = [
     id: "book-printing",
     title: "Book Printing",
     description: "Premium quality book printing for publishers, authors, and educational institutions.",
-    icon: BookOpen,
     features: ["Offset & Digital", "Custom Binding", "Premium Paper"],
     gradient: "from-blue-500 to-indigo-600",
+    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&q=80",
   },
   {
     id: "packaging",
     title: "Packaging",
     description: "Custom packaging that protects your products and elevates your brand.",
-    icon: Package,
     features: ["Custom Design", "Eco-Friendly", "Food-Grade"],
     gradient: "from-amber-500 to-orange-600",
+    image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?w=600&q=80",
   },
   {
     id: "commercial",
     title: "Commercial",
     description: "High-volume commercial printing for businesses and marketing.",
-    icon: Printer,
     features: ["Fast Turnaround", "Large Format", "Bulk Orders"],
     gradient: "from-emerald-500 to-teal-600",
+    image: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=600&q=80",
   },
   {
     id: "stationery",
     title: "Stationery",
     description: "Professional business stationery and corporate identity materials.",
-    icon: FileText,
     features: ["Letterheads", "Business Cards", "Envelopes"],
     gradient: "from-violet-500 to-purple-600",
+    image: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?w=600&q=80",
   },
   {
     id: "invitations",
     title: "Invitations",
     description: "Beautifully crafted wedding invitations and special occasion cards.",
-    icon: Gift,
     features: ["Foil Stamping", "Embossing", "Custom Design"],
     gradient: "from-pink-500 to-rose-600",
+    image: "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80",
   },
   {
     id: "labels",
     title: "Labels & Stickers",
     description: "Custom labels and stickers for products and promotional use.",
-    icon: Stamp,
     features: ["Die-Cut", "Waterproof", "Roll Labels"],
     gradient: "from-cyan-500 to-sky-600",
+    image: "https://images.unsplash.com/photo-1635405074683-96d6921a2a68?w=600&q=80",
   },
 ];
 
@@ -68,6 +65,20 @@ const processSteps = [
 ];
 
 export default function Services() {
+  const navigate = useNavigate();
+
+  const handleExplore = (serviceId: string) => {
+    navigate(`/products?category=${serviceId}`);
+  };
+
+  const handleGetQuote = () => {
+    navigate('/contact');
+  };
+
+  const handleViewProducts = () => {
+    navigate('/products');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -109,26 +120,31 @@ export default function Services() {
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/contact">
-                <Button size="lg" className="font-elegant gap-2 rounded-full px-8">
-                  Get a Quote
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-              <Link to="/products">
-                <Button size="lg" variant="outline" className="font-elegant rounded-full px-8">
-                  View Products
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="font-elegant gap-2 rounded-full px-8"
+                onClick={handleGetQuote}
+              >
+                Get a Quote
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="font-elegant rounded-full px-8"
+                onClick={handleViewProducts}
+              >
+                View Products
+              </Button>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Services Grid - Bento Style */}
+      {/* Services Grid with Images */}
       <section className="py-16">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, index) => (
               <motion.div
                 key={service.id}
@@ -136,29 +152,31 @@ export default function Services() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className={`group relative bg-card rounded-3xl border border-border overflow-hidden hover:shadow-2xl transition-all duration-500 ${
-                  index === 0 ? "md:row-span-2" : ""
-                }`}
+                className="group relative bg-card rounded-3xl border border-border overflow-hidden hover:shadow-2xl transition-all duration-500 cursor-pointer"
+                onClick={() => handleExplore(service.id)}
               >
-                {/* Gradient Background */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-t ${service.gradient} opacity-40`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                </div>
                 
-                <div className={`p-6 ${index === 0 ? "h-full flex flex-col" : ""}`}>
-                  {/* Icon */}
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                    <service.icon className="w-7 h-7 text-white" />
-                  </div>
-                  
+                <div className="p-6 -mt-8 relative z-10">
                   <h3 className="font-display text-xl font-semibold text-foreground mb-2">
                     {service.title}
                   </h3>
                   
-                  <p className="text-muted-foreground font-elegant text-sm leading-relaxed mb-4 flex-grow">
+                  <p className="text-muted-foreground font-elegant text-sm leading-relaxed mb-4">
                     {service.description}
                   </p>
                   
                   {/* Features */}
-                  <div className="flex flex-wrap gap-2 mb-5">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {service.features.map((feature, i) => (
                       <span
                         key={i}
@@ -169,13 +187,16 @@ export default function Services() {
                     ))}
                   </div>
 
-                  <Link 
-                    to={`/products?category=${service.id}`}
-                    className="inline-flex items-center justify-between w-full px-3 py-2 text-sm font-elegant text-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors group/btn"
+                  <button 
+                    className="inline-flex items-center gap-2 text-sm font-elegant text-primary hover:text-primary/80 transition-colors group/btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleExplore(service.id);
+                    }}
                   >
-                    Explore
+                    Explore Products
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -255,24 +276,22 @@ export default function Services() {
                 Get a free quote today and experience the quality that has made us Bihar's trusted printing partner.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link to="/contact">
-                  <Button 
-                    size="lg" 
-                    variant="secondary"
-                    className="font-elegant text-lg px-8 rounded-full"
-                  >
-                    Request a Quote
-                  </Button>
-                </Link>
-                <Link to="/products">
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    className="font-elegant text-lg px-8 rounded-full bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-                  >
-                    Browse Products
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  variant="secondary"
+                  className="font-elegant text-lg px-8 rounded-full"
+                  onClick={handleGetQuote}
+                >
+                  Request a Quote
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="font-elegant text-lg px-8 rounded-full bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                  onClick={handleViewProducts}
+                >
+                  Browse Products
+                </Button>
               </div>
             </div>
           </motion.div>
