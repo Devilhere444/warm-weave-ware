@@ -111,17 +111,21 @@ export default function Footer() {
             </h4>
             <ul className="space-y-4">
               {[
-                "Book Printing",
-                "Packaging Design",
-                "Business Stationery",
-                "Wedding Cards",
-                "Promotional Materials",
+                { name: "Book Printing", path: "/products?category=book-printing" },
+                { name: "Packaging Design", path: "/products?category=packaging" },
+                { name: "Business Stationery", path: "/products?category=stationery" },
+                { name: "Wedding Cards", path: "/products?category=invitations" },
+                { name: "Commercial Printing", path: "/products?category=commercial" },
+                { name: "Labels & Stickers", path: "/products?category=labels" },
               ].map((service) => (
-                <li
-                  key={service}
-                  className="text-background/70 font-body hover:text-background transition-colors cursor-default"
-                >
-                  {service}
+                <li key={service.name}>
+                  <Link
+                    to={service.path}
+                    className="group flex items-center gap-2 text-background/70 hover:text-background transition-colors font-body"
+                  >
+                    <span>{service.name}</span>
+                    <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
                 </li>
               ))}
             </ul>
