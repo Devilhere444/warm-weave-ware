@@ -98,7 +98,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-background/70 font-body-regular text-sm leading-relaxed">
-              {settings.footer_text || "Crafting premium printing solutions with a perfect blend of tradition and technology since 1965. Over 1 Lakh+ projects delivered."}
+              {settings.footer_text || "Crafting premium printing solutions with a perfect blend of tradition and technology since 1965. Proudly serving Katihar and nearby Bihar regions, and across all over India. Over 1 Lakh+ projects delivered."}
             </p>
             
             {/* Social Links */}
