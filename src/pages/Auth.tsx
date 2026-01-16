@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, User, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,42 +14,67 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkAdminAndRedirect = async (userId: string) => {
-      const { data } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .eq('role', 'admin')
-        .maybeSingle();
-      
-      if (data) {
-        navigate("/admin");
-      } else {
-        // User is logged in but not admin - sign them out
-        await supabase.auth.signOut();
-        toast.error("Access denied. Admin privileges required.");
+      try {
+        const { data } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId)
+          .eq('role', 'admin')
+          .maybeSingle();
+        
+        if (!isMounted) return;
+
+        if (data) {
+          navigate("/admin", { replace: true });
+        } else {
+          // User is logged in but not admin - sign them out
+          await supabase.auth.signOut();
+          toast.error("Access denied. Admin privileges required.");
+        }
+      } catch (error) {
+        console.error("Error checking admin role:", error);
+      } finally {
+        if (isMounted) {
+          setIsCheckingAuth(false);
+        }
       }
     };
 
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      
+      if (session?.user) {
+        checkAdminAndRedirect(session.user.id);
+      } else {
+        setIsCheckingAuth(false);
+      }
+    });
+
+    // Listen for auth changes (but don't trigger on initial load)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (session?.user) {
-          setTimeout(() => {
-            checkAdminAndRedirect(session.user.id);
-          }, 0);
+        if (!isMounted) return;
+        
+        // Only handle sign-in events, not initial session
+        if (event === 'SIGNED_IN' && session?.user) {
+          checkAdminAndRedirect(session.user.id);
+        } else if (event === 'SIGNED_OUT') {
+          setIsCheckingAuth(false);
         }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        checkAdminAndRedirect(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,17 +109,38 @@ export default function Auth() {
     }
   };
 
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 wood-grain-bg">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
+      
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative"
       >
+        {/* Back Button */}
+        <a 
+          href="/" 
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 font-elegant transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to website
+        </a>
+
         <div className="bg-card p-8 rounded-2xl shadow-xl border border-border">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mx-auto mb-4">
               {isSignUp ? (
                 <User className="w-8 h-8 text-primary-foreground" />
               ) : (
@@ -104,10 +150,10 @@ export default function Auth() {
               )}
             </div>
             <h1 className="font-display text-2xl font-bold text-foreground">
-              {isSignUp ? "Create Account" : "Admin Panel"}
+              {isSignUp ? "Create Account" : "Welcome Back"}
             </h1>
             <p className="text-muted-foreground font-elegant mt-1">
-              {isSignUp ? "Register to request admin access" : "Litho Art Press"}
+              {isSignUp ? "Register for an account" : "Sign in to continue"}
             </p>
           </div>
 
@@ -123,7 +169,7 @@ export default function Auth() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@lithoartpress.com"
+                  placeholder="you@example.com"
                   className="pl-10 font-body"
                   required
                 />
@@ -160,26 +206,21 @@ export default function Auth() {
               disabled={isLoading}
               className="w-full bg-primary hover:bg-primary/90 font-elegant tracking-wide"
             >
-              {isLoading ? "Please wait..." : isSignUp ? "Create Account" : "Login"}
+              {isLoading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
             </Button>
           </form>
 
-          <div className="text-center mt-6 space-y-3">
+          <div className="text-center mt-6">
             <button
               type="button"
               onClick={() => {
                 setIsSignUp(!isSignUp);
                 setPassword("");
               }}
-              className="text-sm text-accent hover:underline font-body"
+              className="text-sm text-primary hover:underline font-body"
             >
-              {isSignUp ? "Already have an account? Login" : "Need an account? Sign up"}
+              {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
             </button>
-            <p className="text-sm text-muted-foreground font-body">
-              <a href="/" className="text-accent hover:underline">
-                ← Back to website
-              </a>
-            </p>
           </div>
         </div>
       </motion.div>
