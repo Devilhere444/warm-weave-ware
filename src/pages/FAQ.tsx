@@ -17,7 +17,7 @@ const faqs = [
       },
       {
         q: "How long have you been in business?",
-        a: "Litho Art Press has been serving customers since 1965 - that's over 61 years of experience in the printing industry. We've grown from a small workshop to one of Bihar's leading printing presses."
+        a: "Litho Art Press has been serving customers since 1965 - that's over 61 years of experience in the printing industry with more than 1 Lakh+ projects completed. We've grown from a small workshop to one of Bihar's leading printing presses."
       },
       {
         q: "Do you serve customers outside Bihar?",
