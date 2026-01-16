@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, Phone, Send, MessageCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { settings } = useSiteSettings();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,6 +22,38 @@ export default function ContactSection() {
     setIsSubmitting(false);
     (e.target as HTMLFormElement).reset();
   };
+
+  const contactInfo = [
+    settings.contact_address && {
+      icon: MapPin,
+      title: "Visit Us",
+      content: settings.contact_address,
+    },
+    settings.contact_phone && {
+      icon: Phone,
+      title: "Call Us",
+      content: settings.contact_phone,
+      href: `tel:${settings.contact_phone.replace(/\s/g, '')}`,
+    },
+    settings.whatsapp_number && {
+      icon: MessageCircle,
+      title: "WhatsApp",
+      content: "Chat with us",
+      href: `https://wa.me/${settings.whatsapp_number.replace(/\D/g, '')}`,
+      external: true,
+    },
+    settings.contact_email && {
+      icon: Mail,
+      title: "Email Us",
+      content: settings.contact_email,
+      href: `mailto:${settings.contact_email}`,
+    },
+    settings.business_hours && {
+      icon: Clock,
+      title: "Business Hours",
+      content: settings.business_hours,
+    },
+  ].filter(Boolean);
 
   return (
     <section className="py-24 bg-secondary/30">
@@ -66,23 +100,7 @@ export default function ContactSection() {
               transition={{ delay: 0.3 }}
               className="space-y-6 pt-6"
             >
-              {[
-                {
-                  icon: MapPin,
-                  title: "Visit Us",
-                  content: "Industrial Area, Patna, Bihar 800001",
-                },
-                {
-                  icon: Phone,
-                  title: "Call Us",
-                  content: "+91 98765 43210",
-                },
-                {
-                  icon: Mail,
-                  title: "Email Us",
-                  content: "info@lithoartpress.com",
-                },
-              ].map((item, index) => (
+              {contactInfo.map((item: any, index) => (
                 <div key={index} className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-5 h-5 text-primary" />
@@ -91,9 +109,20 @@ export default function ContactSection() {
                     <h4 className="font-display font-semibold text-foreground">
                       {item.title}
                     </h4>
-                    <p className="text-muted-foreground font-body">
-                      {item.content}
-                    </p>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        rel={item.external ? "noopener noreferrer" : undefined}
+                        className="text-muted-foreground font-body hover:text-primary transition-colors"
+                      >
+                        {item.content}
+                      </a>
+                    ) : (
+                      <p className="text-muted-foreground font-body">
+                        {item.content}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}

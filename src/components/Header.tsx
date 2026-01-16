@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import CartIcon from "@/components/CartIcon";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -16,6 +17,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { settings } = useSiteSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,15 +44,15 @@ export default function Header() {
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center transition-all duration-300 group-hover:scale-105">
               <span className="font-display text-xl font-bold text-primary-foreground">
-                L
+                {settings.site_name.charAt(0)}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="font-display text-xl font-bold tracking-wide text-foreground transition-colors">
-                Litho Art Press
+                {settings.site_name}
               </span>
               <span className="text-xs font-body tracking-widest uppercase text-muted-foreground transition-colors">
-                Bihar • Since 1985
+                {settings.site_tagline || "Bihar • Since 1985"}
               </span>
             </div>
           </Link>

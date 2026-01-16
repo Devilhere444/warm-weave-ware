@@ -1,8 +1,17 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Phone, ArrowUpRight, Heart } from "lucide-react";
+import { Mail, MapPin, Phone, ArrowUpRight, Heart, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function Footer() {
+  const { settings } = useSiteSettings();
+
+  const socialLinks = [
+    { name: "facebook", url: settings.facebook_url },
+    { name: "twitter", url: settings.twitter_url },
+    { name: "instagram", url: settings.instagram_url },
+  ].filter(s => s.url);
+
   return (
     <footer className="relative bg-foreground text-background overflow-hidden">
       {/* Decorative Background */}
@@ -23,38 +32,41 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <span className="font-display text-xl font-bold text-white">
-                  L
+                  {settings.site_name.charAt(0)}
                 </span>
               </div>
               <div>
                 <span className="font-display text-xl font-bold block text-background">
-                  Litho Art Press
+                  {settings.site_name}
                 </span>
                 <span className="text-xs text-background/60 font-body tracking-widest uppercase">
-                  Bihar
+                  {settings.site_tagline || "Bihar"}
                 </span>
               </div>
             </div>
             <p className="text-background/70 font-body text-sm leading-relaxed">
-              Crafting premium printing solutions with a perfect blend of
-              tradition and technology since 1985.
+              {settings.footer_text || "Crafting premium printing solutions with a perfect blend of tradition and technology since 1985."}
             </p>
             
             {/* Social Links */}
-            <div className="flex gap-3">
-              {['facebook', 'twitter', 'instagram', 'linkedin'].map((social, index) => (
-                <motion.a
-                  key={social}
-                  href={`#${social}`}
-                  whileHover={{ scale: 1.1, y: -3 }}
-                  className="w-10 h-10 rounded-lg bg-background/10 hover:bg-primary flex items-center justify-center transition-colors"
-                >
-                  <span className="text-xs font-display font-bold text-background capitalize">
-                    {social.charAt(0).toUpperCase()}
-                  </span>
-                </motion.a>
-              ))}
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex gap-3">
+                {socialLinks.map((social) => (
+                  <motion.a
+                    key={social.name}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.1, y: -3 }}
+                    className="w-10 h-10 rounded-lg bg-background/10 hover:bg-primary flex items-center justify-center transition-colors"
+                  >
+                    <span className="text-xs font-display font-bold text-background capitalize">
+                      {social.name.charAt(0).toUpperCase()}
+                    </span>
+                  </motion.a>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Quick Links */}
@@ -126,48 +138,72 @@ export default function Footer() {
               Contact Us
             </h4>
             <ul className="space-y-5">
-              <li>
-                <motion.a 
-                  href="#" 
-                  whileHover={{ x: 5 }}
-                  className="flex items-start gap-4 group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
-                    <MapPin className="w-5 h-5 text-background" />
-                  </div>
-                  <span className="text-background/70 font-body text-sm pt-2 group-hover:text-background transition-colors">
-                    Industrial Area, Patna, Bihar 800001, India
-                  </span>
-                </motion.a>
-              </li>
-              <li>
-                <motion.a 
-                  href="tel:+919876543210"
-                  whileHover={{ x: 5 }}
-                  className="flex items-center gap-4 group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
-                    <Phone className="w-5 h-5 text-background" />
-                  </div>
-                  <span className="text-background/70 hover:text-background transition-colors font-body text-sm group-hover:text-background">
-                    +91 98765 43210
-                  </span>
-                </motion.a>
-              </li>
-              <li>
-                <motion.a 
-                  href="mailto:info@lithoartpress.com"
-                  whileHover={{ x: 5 }}
-                  className="flex items-center gap-4 group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
-                    <Mail className="w-5 h-5 text-background" />
-                  </div>
-                  <span className="text-background/70 hover:text-background transition-colors font-body text-sm group-hover:text-background">
-                    info@lithoartpress.com
-                  </span>
-                </motion.a>
-              </li>
+              {settings.contact_address && (
+                <li>
+                  <motion.a 
+                    href="#" 
+                    whileHover={{ x: 5 }}
+                    className="flex items-start gap-4 group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
+                      <MapPin className="w-5 h-5 text-background" />
+                    </div>
+                    <span className="text-background/70 font-body text-sm pt-2 group-hover:text-background transition-colors">
+                      {settings.contact_address}
+                    </span>
+                  </motion.a>
+                </li>
+              )}
+              {settings.contact_phone && (
+                <li>
+                  <motion.a 
+                    href={`tel:${settings.contact_phone.replace(/\s/g, '')}`}
+                    whileHover={{ x: 5 }}
+                    className="flex items-center gap-4 group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
+                      <Phone className="w-5 h-5 text-background" />
+                    </div>
+                    <span className="text-background/70 hover:text-background transition-colors font-body text-sm group-hover:text-background">
+                      {settings.contact_phone}
+                    </span>
+                  </motion.a>
+                </li>
+              )}
+              {settings.whatsapp_number && (
+                <li>
+                  <motion.a 
+                    href={`https://wa.me/${settings.whatsapp_number.replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ x: 5 }}
+                    className="flex items-center gap-4 group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500 transition-colors">
+                      <MessageCircle className="w-5 h-5 text-background" />
+                    </div>
+                    <span className="text-background/70 hover:text-background transition-colors font-body text-sm group-hover:text-background">
+                      WhatsApp
+                    </span>
+                  </motion.a>
+                </li>
+              )}
+              {settings.contact_email && (
+                <li>
+                  <motion.a 
+                    href={`mailto:${settings.contact_email}`}
+                    whileHover={{ x: 5 }}
+                    className="flex items-center gap-4 group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
+                      <Mail className="w-5 h-5 text-background" />
+                    </div>
+                    <span className="text-background/70 hover:text-background transition-colors font-body text-sm group-hover:text-background">
+                      {settings.contact_email}
+                    </span>
+                  </motion.a>
+                </li>
+              )}
             </ul>
           </motion.div>
         </div>
@@ -180,7 +216,7 @@ export default function Footer() {
           className="border-t border-background/15 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
         >
           <p className="text-background/50 text-sm font-body flex items-center gap-1">
-            © 2024 Litho Art Press. Made with 
+            © {new Date().getFullYear()} {settings.site_name}. Made with 
             <Heart className="w-4 h-4 text-accent fill-accent" /> 
             in Bihar
           </p>
