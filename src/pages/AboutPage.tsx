@@ -4,14 +4,54 @@ import Footer from "@/components/Footer";
 import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog } from "lucide-react";
 
 const timeline = [
-  { year: "1965", title: "Foundation", description: "Litho Art Press was established in Katihar, Bihar with a vision to bring premium printing to the region." },
-  { year: "1975", title: "Expansion", description: "Expanded operations with new machinery and doubled our production capacity." },
-  { year: "1985", title: "Regional Growth", description: "Extended our services across nearby Bihar regions, building strong partnerships with local businesses." },
-  { year: "1995", title: "Quality Excellence", description: "Implemented rigorous quality control systems and earned recognition for outstanding print quality." },
-  { year: "2005", title: "Digital Integration", description: "Integrated cutting-edge digital printing technology while preserving traditional techniques." },
-  { year: "2015", title: "Nationwide Reach", description: "Expanded delivery network to serve customers across all of India with reliable shipping." },
-  { year: "2020", title: "1 Lakh+ Milestone", description: "Celebrated the milestone of completing over 1 Lakh printing projects for our valued customers." },
-  { year: "2024", title: "Industry Leader", description: "Recognized as one of Bihar's leading printing presses with nationwide clientele and 61+ years of excellence." },
+  { 
+    year: "1965", 
+    title: "Foundation", 
+    description: "Litho Art Press was established in Katihar, Bihar with a vision to bring premium printing to the region.",
+    image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80"
+  },
+  { 
+    year: "1975", 
+    title: "Expansion", 
+    description: "Expanded operations with new machinery and doubled our production capacity.",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&q=80"
+  },
+  { 
+    year: "1985", 
+    title: "Regional Growth", 
+    description: "Extended our services across nearby Bihar regions, building strong partnerships with local businesses.",
+    image: "https://images.unsplash.com/photo-1553484771-371a605b060b?w=400&q=80"
+  },
+  { 
+    year: "1995", 
+    title: "Quality Excellence", 
+    description: "Implemented rigorous quality control systems and earned recognition for outstanding print quality.",
+    image: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?w=400&q=80"
+  },
+  { 
+    year: "2005", 
+    title: "Digital Integration", 
+    description: "Integrated cutting-edge digital printing technology while preserving traditional techniques.",
+    image: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=400&q=80"
+  },
+  { 
+    year: "2015", 
+    title: "Nationwide Reach", 
+    description: "Expanded delivery network to serve customers across all of India with reliable shipping.",
+    image: "https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&q=80"
+  },
+  { 
+    year: "2020", 
+    title: "1 Lakh+ Milestone", 
+    description: "Celebrated the milestone of completing over 1 Lakh printing projects for our valued customers.",
+    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&q=80"
+  },
+  { 
+    year: "2024", 
+    title: "Industry Leader", 
+    description: "Recognized as one of Bihar's leading printing presses with nationwide clientele and 61+ years of excellence.",
+    image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&q=80"
+  },
 ];
 
 const values = [
@@ -91,25 +131,54 @@ export default function AboutPage() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.08 }}
                   className={`flex flex-col lg:flex-row items-center gap-8 ${
                     index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
                   }`}
                 >
                   <div className={`flex-1 ${index % 2 === 0 ? "lg:text-right" : "lg:text-left"}`}>
-                    <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
-                      <span className="text-2xl font-display font-bold text-primary">
-                        {item.year}
-                      </span>
-                      <h3 className="font-display text-xl font-semibold text-foreground mt-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-muted-foreground font-body mt-2">
-                        {item.description}
-                      </p>
-                    </div>
+                    <motion.div 
+                      className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300"
+                      whileHover={{ y: -5 }}
+                    >
+                      {/* Image */}
+                      <div className="relative h-40 overflow-hidden">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+                        <span className="absolute bottom-3 left-4 text-3xl font-display font-bold text-primary drop-shadow-lg">
+                          {item.year}
+                        </span>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="p-5">
+                        <h3 className="font-display text-xl font-semibold text-foreground">
+                          {item.title}
+                        </h3>
+                        <p className="text-muted-foreground font-body mt-2 text-sm leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    </motion.div>
                   </div>
-                  <div className="w-4 h-4 rounded-full bg-primary border-4 border-background shadow-lg z-10" />
+                  
+                  {/* Timeline dot */}
+                  <div className="relative">
+                    <motion.div 
+                      className="w-5 h-5 rounded-full bg-primary border-4 border-background shadow-lg z-10"
+                      whileInView={{ scale: [0, 1.2, 1] }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.08 + 0.2 }}
+                    />
+                    <div className="absolute top-1/2 -translate-y-1/2 w-8 h-0.5 bg-primary/30 hidden lg:block" 
+                      style={{ [index % 2 === 0 ? 'right' : 'left']: '100%' }} 
+                    />
+                  </div>
+                  
                   <div className="flex-1 hidden lg:block" />
                 </motion.div>
               ))}
