@@ -17,6 +17,7 @@ export interface SiteSettings {
   about_text: string;
   footer_text: string;
   logo_url: string;
+  favicon_url: string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -34,7 +35,8 @@ const defaultSettings: SiteSettings = {
   hero_subtitle: "Bihar's premier lithographic printing press, delivering unparalleled quality in book printing, packaging, and commercial print solutions.",
   about_text: "",
   footer_text: "Quality printing services for all your needs",
-  logo_url: ""
+  logo_url: "",
+  favicon_url: ""
 };
 
 export function useSiteSettings() {
