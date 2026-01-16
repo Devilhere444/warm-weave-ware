@@ -1,7 +1,9 @@
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ProductCard from "./ProductCard";
+import { useRef } from "react";
 
 const featuredProducts = [
   {
@@ -39,51 +41,96 @@ const featuredProducts = [
 ];
 
 export default function FeaturedProducts() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
   return (
-    <section className="relative py-16 md:py-28 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-sand-pattern" />
+    <section ref={sectionRef} className="relative py-28 overflow-hidden">
+      {/* Animated Background */}
+      <motion.div 
+        style={{ y: backgroundY }}
+        className="absolute inset-0 bg-sand-pattern"
+      />
       
       {/* Decorative Elements */}
-      <div className="absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/20 blur-[100px] opacity-15" />
-      <div className="absolute bottom-20 left-10 w-96 h-96 rounded-full bg-accent/15 blur-[120px] opacity-10" />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 0.15, scale: 1 }}
+        viewport={{ once: true }}
+        className="absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/30 blur-[100px]"
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 0.1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+        className="absolute bottom-20 left-10 w-96 h-96 rounded-full bg-accent/20 blur-[120px]"
+      />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-10 md:mb-20">
-          <span className="inline-block text-xs md:text-sm font-body-semibold tracking-[0.15em] md:tracking-[0.2em] uppercase text-primary mb-3 md:mb-4">
+        {/* Header with Stagger Animation */}
+        <div className="text-center mb-20">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-block text-sm font-body-semibold tracking-[0.2em] uppercase text-primary mb-4"
+          >
             Our Expertise
-          </span>
-          <h2 className="font-display-bold text-2xl sm:text-3xl md:text-5xl lg:text-6xl text-foreground mb-4 md:mb-6 leading-tight">
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="font-display-bold text-4xl md:text-5xl lg:text-6xl text-foreground mb-6"
+          >
             <span className="text-gradient-primary">Featured</span> Products
-          </h2>
-          <p className="text-muted-foreground font-body-regular text-sm md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-muted-foreground font-body-regular text-lg max-w-2xl mx-auto"
+          >
             Discover our range of premium printing solutions crafted with
             precision and excellence.
-          </p>
+          </motion.p>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8 mb-10 md:mb-16">
+        {/* Products Grid with Staggered Animation */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           {featuredProducts.map((product, index) => (
             <ProductCard key={product.id} {...product} index={index} />
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="text-center">
+        {/* CTA with Hover Effect */}
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center"
+        >
           <Link to="/products">
-            <Button
-              size="lg"
-              variant="outline"
-              className="group font-display-semibold tracking-wide text-sm md:text-lg px-6 md:px-10 py-5 md:py-6 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-200 btn-snappy touch-target"
-            >
-              View All Products
-              <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:translate-x-1" />
-            </Button>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="group font-display-semibold tracking-wide text-lg px-10 py-6 border-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300"
+              >
+                View All Products
+                <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1.5" />
+              </Button>
+            </motion.div>
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

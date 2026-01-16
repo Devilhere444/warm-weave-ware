@@ -1,6 +1,32 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Phone, Heart, MessageCircle } from "lucide-react";
+import { Mail, MapPin, Phone, ArrowUpRight, Heart, MessageCircle, Sparkles } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: "spring" as const, stiffness: 300, damping: 24 }
+  }
+};
+
+const linkHoverVariants: Variants = {
+  initial: { x: 0 },
+  hover: { x: 8, transition: { type: "spring" as const, stiffness: 400, damping: 20 } }
+};
 
 export default function Footer() {
   const { settings } = useSiteSettings();
@@ -13,13 +39,27 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-foreground text-background overflow-hidden">
-      {/* Decorative Background */}
+      {/* Animated Decorative Background */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-accent blur-[120px]" />
+        <motion.div 
+          className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary blur-[150px]"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.1, 0.05]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-accent blur-[120px]"
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.05, 0.08, 0.05]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
       </div>
 
-      {/* Pattern Overlay */}
+      {/* Subtle Pattern Overlay */}
       <div 
         className="absolute inset-0 opacity-[0.02]"
         style={{
@@ -28,192 +68,283 @@ export default function Footer() {
         }}
       />
 
-      <div className="container mx-auto px-4 lg:px-8 py-12 md:py-20 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
+      <motion.div 
+        className="container mx-auto px-4 lg:px-8 py-20 relative z-10"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1 space-y-4 md:space-y-6">
-            <div className="flex items-center gap-2 md:gap-3 group">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="font-display-bold text-lg md:text-xl text-white">
+          <motion.div variants={itemVariants} className="space-y-6">
+            <div className="flex items-center gap-3 group">
+              <motion.div 
+                className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"
+                whileHover={{ rotate: [0, -10, 10, 0], scale: 1.05 }}
+                transition={{ duration: 0.5 }}
+              >
+                <span className="font-display-bold text-xl text-white">
                   {settings.site_name.charAt(0)}
                 </span>
-              </div>
+              </motion.div>
               <div>
-                <span className="font-display-bold text-lg md:text-xl block text-background">
+                <span className="font-display-bold text-xl block text-background">
                   {settings.site_name}
                 </span>
-                <span className="text-[10px] md:text-xs text-background/60 font-body-medium tracking-widest uppercase">
+                <span className="text-xs text-background/60 font-body-medium tracking-widest uppercase">
                   {settings.site_tagline || "Bihar"}
                 </span>
               </div>
             </div>
-            <p className="text-background/70 font-body-regular text-xs md:text-sm leading-relaxed">
+            <p className="text-background/70 font-body-regular text-sm leading-relaxed">
               {settings.footer_text || "Crafting premium printing solutions with a perfect blend of tradition and technology since 1965. Proudly serving Katihar and nearby Bihar regions, and across all over India. Over 1 Lakh+ projects delivered."}
             </p>
             
             {/* Social Links */}
             {socialLinks.length > 0 && (
-              <div className="flex gap-2 md:gap-3">
-                {socialLinks.map((social) => (
-                  <a
+              <div className="flex gap-3">
+                {socialLinks.map((social, index) => (
+                  <motion.a
                     key={social.name}
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-background/10 hover:bg-primary flex items-center justify-center transition-colors touch-target"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.5 + index * 0.1, type: "spring" }}
+                    whileHover={{ scale: 1.15, y: -5, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-10 h-10 rounded-lg bg-background/10 hover:bg-primary flex items-center justify-center transition-colors"
                   >
                     <span className="text-xs font-display-bold text-background capitalize">
                       {social.name.charAt(0).toUpperCase()}
                     </span>
-                  </a>
+                  </motion.a>
                 ))}
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Quick Links */}
-          <div>
-            <h4 className="font-display-semibold text-base md:text-lg mb-4 md:mb-6 text-background">
+          <motion.div variants={itemVariants}>
+            <h4 className="font-display-semibold text-lg mb-6 text-background flex items-center gap-2">
               Quick Links
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              >
+                <Sparkles className="w-4 h-4 text-primary" />
+              </motion.div>
             </h4>
-            <ul className="space-y-2.5 md:space-y-4">
+            <ul className="space-y-4">
               {[
                 { name: "Home", path: "/" },
                 { name: "Products", path: "/products" },
                 { name: "About Us", path: "/about" },
                 { name: "FAQ", path: "/faq" },
                 { name: "Contact", path: "/contact" },
-              ].map((link) => (
-                <li key={link.path}>
-                  <Link 
-                    to={link.path}
-                    className="text-background/70 hover:text-background transition-colors font-body-regular text-sm md:text-base"
-                  >
-                    {link.name}
+              ].map((link, index) => (
+                <motion.li 
+                  key={link.path}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + index * 0.05 }}
+                >
+                  <Link to={link.path}>
+                    <motion.div
+                      className="group flex items-center gap-2 text-background/70 hover:text-background transition-colors font-body-regular"
+                      variants={linkHoverVariants}
+                      initial="initial"
+                      whileHover="hover"
+                    >
+                      <span className="relative">
+                        {link.name}
+                        <motion.span 
+                          className="absolute bottom-0 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-300"
+                        />
+                      </span>
+                      <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-1 group-hover:translate-y-0" />
+                    </motion.div>
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Services */}
-          <div>
-            <h4 className="font-display-semibold text-base md:text-lg mb-4 md:mb-6 text-background">
+          <motion.div variants={itemVariants}>
+            <h4 className="font-display-semibold text-lg mb-6 text-background">
               Our Services
             </h4>
-            <ul className="space-y-2.5 md:space-y-4">
+            <ul className="space-y-4">
               {[
                 { name: "Book Printing", path: "/products?category=book-printing" },
-                { name: "Packaging", path: "/products?category=packaging" },
-                { name: "Stationery", path: "/products?category=stationery" },
+                { name: "Packaging Design", path: "/products?category=packaging" },
+                { name: "Business Stationery", path: "/products?category=stationery" },
                 { name: "Wedding Cards", path: "/products?category=invitations" },
-                { name: "Commercial", path: "/products?category=commercial" },
-              ].map((service) => (
-                <li key={service.name}>
-                  <Link 
-                    to={service.path}
-                    className="text-background/70 hover:text-background transition-colors font-body-regular text-sm md:text-base"
-                  >
-                    {service.name}
+                { name: "Commercial Printing", path: "/products?category=commercial" },
+                { name: "Labels & Stickers", path: "/products?category=labels" },
+              ].map((service, index) => (
+                <motion.li 
+                  key={service.name}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.35 + index * 0.05 }}
+                >
+                  <Link to={service.path}>
+                    <motion.div
+                      className="group flex items-center gap-2 text-background/70 hover:text-background transition-colors font-body-regular"
+                      variants={linkHoverVariants}
+                      initial="initial"
+                      whileHover="hover"
+                    >
+                      <span className="relative">
+                        {service.name}
+                        <motion.span 
+                          className="absolute bottom-0 left-0 w-0 h-px bg-accent group-hover:w-full transition-all duration-300"
+                        />
+                      </span>
+                      <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-1 group-hover:translate-y-0" />
+                    </motion.div>
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Contact */}
-          <div className="col-span-2 md:col-span-1">
-            <h4 className="font-display-semibold text-base md:text-lg mb-4 md:mb-6 text-background">
+          <motion.div variants={itemVariants}>
+            <h4 className="font-display-semibold text-lg mb-6 text-background">
               Contact Us
             </h4>
-            <ul className="space-y-3 md:space-y-5">
+            <ul className="space-y-5">
               {settings.contact_address && (
                 <li>
-                  <a 
+                  <motion.a 
                     href="#" 
-                    className="flex items-start gap-3 md:gap-4 group"
+                    className="flex items-start gap-4 group"
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   >
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
-                      <MapPin className="w-4 h-4 md:w-5 md:h-5 text-background" />
-                    </div>
-                    <span className="text-background/70 font-body-regular text-xs md:text-sm pt-1 md:pt-2 group-hover:text-background transition-colors">
+                    <motion.div 
+                      className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors"
+                      whileHover={{ rotate: 10 }}
+                    >
+                      <MapPin className="w-5 h-5 text-background" />
+                    </motion.div>
+                    <span className="text-background/70 font-body-regular text-sm pt-2 group-hover:text-background transition-colors">
                       {settings.contact_address}
                     </span>
-                  </a>
+                  </motion.a>
                 </li>
               )}
               {settings.contact_phone && (
                 <li>
-                  <a 
+                  <motion.a 
                     href={`tel:${settings.contact_phone.replace(/\s/g, '')}`}
-                    className="flex items-center gap-3 md:gap-4 group"
+                    className="flex items-center gap-4 group"
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   >
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
-                      <Phone className="w-4 h-4 md:w-5 md:h-5 text-background" />
-                    </div>
-                    <span className="text-background/70 font-body-regular text-xs md:text-sm group-hover:text-background transition-colors">
+                    <motion.div 
+                      className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors"
+                      whileHover={{ rotate: 10 }}
+                    >
+                      <Phone className="w-5 h-5 text-background" />
+                    </motion.div>
+                    <span className="text-background/70 font-body-regular text-sm group-hover:text-background transition-colors">
                       {settings.contact_phone}
                     </span>
-                  </a>
+                  </motion.a>
                 </li>
               )}
               {settings.whatsapp_number && (
                 <li>
-                  <a 
+                  <motion.a 
                     href={`https://wa.me/${settings.whatsapp_number.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 md:gap-4 group"
+                    className="flex items-center gap-4 group"
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   >
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500 transition-colors">
-                      <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-background" />
-                    </div>
-                    <span className="text-background/70 font-body-regular text-xs md:text-sm group-hover:text-background transition-colors">
+                    <motion.div 
+                      className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500 transition-colors"
+                      whileHover={{ rotate: 10 }}
+                    >
+                      <MessageCircle className="w-5 h-5 text-background" />
+                    </motion.div>
+                    <span className="text-background/70 font-body-regular text-sm group-hover:text-background transition-colors">
                       WhatsApp
                     </span>
-                  </a>
+                  </motion.a>
                 </li>
               )}
               {settings.contact_email && (
                 <li>
-                  <a 
+                  <motion.a 
                     href={`mailto:${settings.contact_email}`}
-                    className="flex items-center gap-3 md:gap-4 group"
+                    className="flex items-center gap-4 group"
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   >
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors">
-                      <Mail className="w-4 h-4 md:w-5 md:h-5 text-background" />
-                    </div>
-                    <span className="text-background/70 font-body-regular text-xs md:text-sm group-hover:text-background transition-colors">
+                    <motion.div 
+                      className="w-10 h-10 rounded-lg bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors"
+                      whileHover={{ rotate: 10 }}
+                    >
+                      <Mail className="w-5 h-5 text-background" />
+                    </motion.div>
+                    <span className="text-background/70 font-body-regular text-sm group-hover:text-background transition-colors">
                       {settings.contact_email}
                     </span>
-                  </a>
+                  </motion.a>
                 </li>
               )}
             </ul>
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-background/15 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-background/50 text-xs md:text-sm font-body-regular flex items-center gap-1">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="border-t border-background/15 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p className="text-background/50 text-sm font-body-regular flex items-center gap-1">
             © {new Date().getFullYear()} {settings.site_name}. Made with 
-            <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent fill-accent" />
+            <motion.span
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              <Heart className="w-4 h-4 text-accent fill-accent" />
+            </motion.span>
             in Bihar
           </p>
-          <div className="flex gap-4 md:gap-6">
+          <div className="flex gap-6">
             <Link to="/privacy">
-              <span className="text-background/50 hover:text-background text-xs md:text-sm font-body-medium transition-colors">
+              <motion.span 
+                className="text-background/50 hover:text-background text-sm font-body-medium transition-colors inline-block"
+                whileHover={{ y: -2 }}
+              >
                 Privacy Policy
-              </span>
+              </motion.span>
             </Link>
             <Link to="/terms">
-              <span className="text-background/50 hover:text-background text-xs md:text-sm font-body-medium transition-colors">
+              <motion.span 
+                className="text-background/50 hover:text-background text-sm font-body-medium transition-colors inline-block"
+                whileHover={{ y: -2 }}
+              >
                 Terms of Service
-              </span>
+              </motion.span>
             </Link>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </footer>
   );
 }
