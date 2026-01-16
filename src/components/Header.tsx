@@ -90,10 +90,10 @@ export default function Header() {
               </div>
             )}
             <div className="flex flex-col">
-              <span className="font-display text-xl font-bold tracking-wide text-primary">
+              <span className="font-display-bold text-xl tracking-wide text-primary">
                 {settings.site_name.split(' ')[0]} <span className="text-foreground">{settings.site_name.split(' ').slice(1).join(' ')}</span>
               </span>
-              <span className="text-[10px] font-body tracking-[0.2em] uppercase text-muted-foreground">
+              <span className="text-[10px] font-body-medium tracking-[0.2em] uppercase text-muted-foreground">
                 PRESS
               </span>
             </div>
@@ -105,9 +105,9 @@ export default function Header() {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`relative font-elegant text-sm tracking-wide transition-all duration-300 px-4 py-2 rounded-lg ${
+                className={`relative font-body-medium text-sm tracking-wide transition-all duration-300 px-4 py-2 rounded-lg ${
                   location.pathname === link.path
-                    ? "text-primary font-medium"
+                    ? "text-primary"
                     : "text-foreground hover:text-primary"
                 }`}
               >
@@ -129,7 +129,7 @@ export default function Header() {
               variant="ghost"
               size="sm"
               onClick={handleCall}
-              className="font-elegant text-sm gap-2 text-foreground hover:text-primary"
+              className="font-body-medium text-sm gap-2 text-foreground hover:text-primary"
             >
               <Phone className="w-4 h-4" />
               Call
@@ -139,7 +139,7 @@ export default function Header() {
             <Button
               size="sm"
               onClick={handleWhatsApp}
-              className="font-elegant text-sm gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-full px-4"
+              className="font-body-semibold text-sm gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-full px-4"
             >
               <MessageCircle className="w-4 h-4" />
               WhatsApp
@@ -153,7 +153,7 @@ export default function Header() {
               <Button
                 variant="outline"
                 size="sm"
-                className="font-elegant text-sm gap-2 border-border text-foreground hover:bg-muted"
+                className="font-body-medium text-sm gap-2 border-border text-foreground hover:bg-muted"
               >
                 <LogIn className="w-4 h-4" />
                 Login
@@ -164,19 +164,18 @@ export default function Header() {
             <Link to="/auth">
               <Button
                 size="sm"
-                className="font-elegant text-sm gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5"
+                className="font-display-semibold text-sm gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5"
               >
                 Register
               </Button>
             </Link>
 
-            {/* Admin Button (only if logged in) */}
             {isLoggedIn && (
               <Link to="/admin">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="font-elegant text-sm gap-1 text-muted-foreground hover:text-primary"
+                  className="font-body-medium text-sm gap-1 text-muted-foreground hover:text-primary"
                 >
                   <Shield className="w-4 h-4" />
                 </Button>
@@ -215,7 +214,7 @@ export default function Header() {
                     <Link
                       to={link.path}
                       onClick={() => setIsOpen(false)}
-                      className={`block font-elegant text-lg tracking-wide py-3 px-2 rounded-lg touch-target ${
+                      className={`block font-body-medium text-lg tracking-wide py-3 px-2 rounded-lg touch-target ${
                         location.pathname === link.path
                           ? "text-primary bg-primary/10"
                           : "text-foreground active:bg-muted/50"
@@ -233,7 +232,7 @@ export default function Header() {
                       variant="outline"
                       size="sm"
                       onClick={() => { handleCall(); setIsOpen(false); }}
-                      className="flex-1 font-elegant gap-2"
+                      className="flex-1 font-body-medium gap-2"
                     >
                       <Phone className="w-4 h-4" />
                       Call
@@ -241,7 +240,7 @@ export default function Header() {
                     <Button
                       size="sm"
                       onClick={() => { handleWhatsApp(); setIsOpen(false); }}
-                      className="flex-1 font-elegant gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white"
+                      className="flex-1 font-body-semibold gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white"
                     >
                       <MessageCircle className="w-4 h-4" />
                       WhatsApp
@@ -250,13 +249,13 @@ export default function Header() {
                   
                   <div className="flex gap-2">
                     <Link to="/auth" onClick={() => setIsOpen(false)} className="flex-1">
-                      <Button variant="outline" className="w-full font-elegant gap-2">
+                      <Button variant="outline" className="w-full font-body-medium gap-2">
                         <LogIn className="w-4 h-4" />
                         Login
                       </Button>
                     </Link>
                     <Link to="/auth" onClick={() => setIsOpen(false)} className="flex-1">
-                      <Button className="w-full font-elegant gap-2 bg-primary">
+                      <Button className="w-full font-display-semibold gap-2 bg-primary">
                         Register
                       </Button>
                     </Link>
@@ -266,7 +265,7 @@ export default function Header() {
                     <Link to="/admin" onClick={() => setIsOpen(false)}>
                       <Button
                         variant="outline"
-                        className="w-full font-elegant tracking-wide gap-2"
+                        className="w-full font-body-medium tracking-wide gap-2"
                       >
                         <Shield className="w-4 h-4" />
                         Admin Panel
