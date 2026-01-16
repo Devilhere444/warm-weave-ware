@@ -6,7 +6,7 @@ import printingPressImage from "@/assets/printing-press.jpg";
 const features = [
   {
     icon: Award,
-    title: "61+ Years Legacy",
+    title: "38+ Years Legacy",
     description:
       "Trusted by generations of businesses across Bihar and beyond.",
   },

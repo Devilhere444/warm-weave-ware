@@ -138,26 +138,17 @@ export default function Hero() {
                 { value: "5000+", label: "Projects Completed" },
                 { value: "100%", label: "Client Satisfaction" },
               ].map((stat, index) => (
-                <motion.div 
+                <div 
                   key={index} 
                   className="text-center card-snappy"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
-                  whileHover={{ scale: 1.05, y: -2 }}
                 >
-                  <motion.div 
-                    className="font-display-bold text-2xl sm:text-3xl md:text-4xl text-white"
-                    initial={{ scale: 0.5 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.6 + index * 0.1, type: "spring", stiffness: 200 }}
-                  >
+                  <div className="font-display-bold text-2xl sm:text-3xl md:text-4xl text-white">
                     {stat.value}
-                  </motion.div>
+                  </div>
                   <div className="text-xs sm:text-sm text-white/70 font-body-medium mt-1">
                     {stat.label}
                   </div>
-                </motion.div>
+                </div>
               ))}
             </motion.div>
           </div>
