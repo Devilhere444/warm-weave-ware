@@ -1,8 +1,8 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence, type PanInfo } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog } from "lucide-react";
+import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog, ChevronLeft, ChevronRight } from "lucide-react";
 
 const timeline = [
   { 
@@ -112,6 +112,44 @@ export default function AboutPage() {
     }
   }, [activeIndex]);
 
+  // Swipe handlers for mobile
+  const handleDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const swipeThreshold = 50;
+    const velocityThreshold = 300;
+    
+    if (info.offset.x < -swipeThreshold || info.velocity.x < -velocityThreshold) {
+      // Swiped left - go to next
+      if (activeIndex < timeline.length - 1) {
+        const nextIndex = activeIndex + 1;
+        setActiveIndex(nextIndex);
+        scrollToItem(nextIndex);
+      }
+    } else if (info.offset.x > swipeThreshold || info.velocity.x > velocityThreshold) {
+      // Swiped right - go to previous
+      if (activeIndex > 0) {
+        const prevIndex = activeIndex - 1;
+        setActiveIndex(prevIndex);
+        scrollToItem(prevIndex);
+      }
+    }
+  }, [activeIndex, scrollToItem]);
+
+  const goToNext = () => {
+    if (activeIndex < timeline.length - 1) {
+      const nextIndex = activeIndex + 1;
+      setActiveIndex(nextIndex);
+      scrollToItem(nextIndex);
+    }
+  };
+
+  const goToPrev = () => {
+    if (activeIndex > 0) {
+      const prevIndex = activeIndex - 1;
+      setActiveIndex(prevIndex);
+      scrollToItem(prevIndex);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -170,57 +208,102 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          {/* Mobile Timeline Navigation */}
+          {/* Mobile Timeline Navigation with Swipe */}
           <div className="lg:hidden sticky top-20 z-20 mb-8 -mx-4 px-4">
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-card/90 backdrop-blur-xl border border-border rounded-xl p-3 shadow-lg"
             >
-              {/* Scrollable container */}
+              {/* Swipe indicator */}
+              <motion.div
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={handleDragEnd}
+                className="relative cursor-grab active:cursor-grabbing touch-pan-y"
+              >
+                {/* Current item display */}
+                <div className="flex items-center justify-between gap-4 px-2 py-2">
+                  <button
+                    onClick={goToPrev}
+                    disabled={activeIndex === 0}
+                    className={`p-2 rounded-full transition-all duration-200 ${
+                      activeIndex === 0 
+                        ? 'opacity-30 cursor-not-allowed' 
+                        : 'bg-muted hover:bg-primary/20 active:scale-95'
+                    }`}
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeIndex}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex-1 text-center"
+                    >
+                      <span className="font-display font-bold text-2xl text-primary block">
+                        {timeline[activeIndex].year}
+                      </span>
+                      <span className="text-sm font-body text-foreground">
+                        {timeline[activeIndex].title}
+                      </span>
+                    </motion.div>
+                  </AnimatePresence>
+                  
+                  <button
+                    onClick={goToNext}
+                    disabled={activeIndex === timeline.length - 1}
+                    className={`p-2 rounded-full transition-all duration-200 ${
+                      activeIndex === timeline.length - 1 
+                        ? 'opacity-30 cursor-not-allowed' 
+                        : 'bg-muted hover:bg-primary/20 active:scale-95'
+                    }`}
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                {/* Swipe hint */}
+                <p className="text-[10px] text-muted-foreground text-center mt-1 font-body">
+                  Swipe or tap arrows to navigate
+                </p>
+              </motion.div>
+              
+              {/* Scrollable year pills */}
               <div 
                 ref={mobileNavRef}
-                className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+                className="flex gap-2 overflow-x-auto pt-3 pb-1 scrollbar-hide snap-x snap-mandatory touch-pan-x"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {timeline.map((item, index) => (
                   <button
                     key={item.year}
                     onClick={() => scrollToItem(index)}
-                    className={`flex-shrink-0 snap-center px-4 py-2 rounded-lg transition-all duration-200 touch-manipulation ${
+                    className={`flex-shrink-0 snap-center px-3 py-1.5 rounded-full transition-all duration-200 touch-manipulation ${
                       activeIndex === index 
-                        ? 'bg-primary text-primary-foreground shadow-md' 
+                        ? 'bg-primary text-primary-foreground shadow-md scale-105' 
                         : 'bg-muted/50 text-muted-foreground hover:bg-muted'
                     }`}
                   >
-                    <span className="font-display font-semibold text-sm block">
+                    <span className="font-display font-semibold text-xs">
                       {item.year}
-                    </span>
-                    <span className={`text-[10px] font-body block transition-opacity ${
-                      activeIndex === index ? 'opacity-90' : 'opacity-60'
-                    }`}>
-                      {item.title}
                     </span>
                   </button>
                 ))}
               </div>
               
-              {/* Progress dots */}
-              <div className="flex justify-center gap-1.5 mt-2">
-                {timeline.map((_, index) => (
-                  <motion.div
-                    key={index}
-                    className={`h-1 rounded-full transition-all duration-300 ${
-                      activeIndex === index 
-                        ? 'w-4 bg-primary' 
-                        : 'w-1.5 bg-muted-foreground/30'
-                    }`}
-                    animate={{ 
-                      scale: activeIndex === index ? 1 : 0.8,
-                      opacity: activeIndex === index ? 1 : 0.5
-                    }}
-                  />
-                ))}
+              {/* Progress bar */}
+              <div className="mt-2 h-1 bg-muted rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                  animate={{ width: `${((activeIndex + 1) / timeline.length) * 100}%` }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
               </div>
             </motion.div>
           </div>
