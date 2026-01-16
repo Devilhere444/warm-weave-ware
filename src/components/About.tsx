@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, CheckCircle, Users, Zap, Printer, BookOpen, Palette, Star } from "lucide-react";
 import { useRef } from "react";
+import printingPressImage from "@/assets/printing-press.jpg";
 
 const features = [
   {
@@ -191,11 +192,16 @@ export default function About() {
             className="relative"
           >
             <div className="relative">
-              {/* Animated Ring */}
+              {/* Animated Floating Frame */}
               <motion.div
-                className="absolute -inset-8 rounded-3xl border-2 border-dashed border-primary/20"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                className="absolute -inset-4 rounded-3xl border-2 border-primary/20"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute -inset-8 rounded-3xl border border-accent/15"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
               />
               
               {/* Glowing Orbs */}
@@ -212,11 +218,13 @@ export default function About() {
 
               {/* Main Image with Parallax */}
               <motion.div 
-                style={{ scale: imageScale, rotate: imageRotate }}
+                style={{ scale: imageScale }}
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                 className="relative rounded-2xl overflow-hidden shadow-2xl"
               >
                 <motion.img
-                  src="https://images.unsplash.com/photo-1588412079929-790b9f593d8e?w=800&q=80"
+                  src={printingPressImage}
                   alt="Printing Press"
                   className="w-full aspect-[4/5] object-cover"
                   whileHover={{ scale: 1.05 }}
