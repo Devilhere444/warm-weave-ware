@@ -1,11 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 
-const categories = ["All", "Books", "Packaging", "Stationery", "Invitations", "Commercial"];
+// Map service IDs to product categories
+const categoryMapping: Record<string, string> = {
+  "book-printing": "Books",
+  "packaging": "Packaging",
+  "commercial": "Commercial",
+  "stationery": "Stationery",
+  "invitations": "Invitations",
+  "labels": "Labels",
+};
+
+const categories = ["All", "Books", "Packaging", "Stationery", "Invitations", "Commercial", "Labels"];
 
 const allProducts = [
   {
@@ -92,10 +103,51 @@ const allProducts = [
     image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&q=80",
     category: "Invitations",
   },
+  {
+    id: "13",
+    title: "Product Labels",
+    description: "Custom die-cut labels and stickers for branding and product identification.",
+    image: "https://images.unsplash.com/photo-1635405074683-96d6921a2a68?w=800&q=80",
+    category: "Labels",
+  },
+  {
+    id: "14",
+    title: "Roll Labels",
+    description: "High-volume roll labels for industrial and retail applications.",
+    image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=80",
+    category: "Labels",
+  },
 ];
 
 export default function Products() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("All");
+
+  // Read category from URL on mount and when URL changes
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) {
+      // Map the service ID to the category name
+      const mappedCategory = categoryMapping[categoryParam];
+      if (mappedCategory && categories.includes(mappedCategory)) {
+        setActiveCategory(mappedCategory);
+      }
+    }
+  }, [searchParams]);
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    // Update URL when category changes
+    if (category === "All") {
+      setSearchParams({});
+    } else {
+      // Find the service ID for this category
+      const serviceId = Object.entries(categoryMapping).find(([, cat]) => cat === category)?.[0];
+      if (serviceId) {
+        setSearchParams({ category: serviceId });
+      }
+    }
+  };
 
   const filteredProducts = activeCategory === "All"
     ? allProducts
@@ -106,19 +158,19 @@ export default function Products() {
       <Header />
 
       {/* Hero */}
-      <section className="pt-32 pb-16 bg-secondary/30">
+      <section className="pt-32 pb-16 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <span className="inline-block text-sm font-elegant tracking-widest uppercase text-accent mb-4">
+            <span className="inline-block text-sm font-elegant tracking-widest uppercase text-primary mb-4">
               Our Collection
             </span>
-            <h1 className="font-display text-5xl md:text-6xl font-bold text-foreground mb-6">
+            <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
               Premium Print
-              <span className="text-gradient-gold block">Solutions</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Solutions</span>
             </h1>
             <p className="text-muted-foreground font-body text-lg">
               Explore our comprehensive range of printing services, each crafted
@@ -136,7 +188,7 @@ export default function Products() {
               <Button
                 key={category}
                 variant={activeCategory === category ? "default" : "outline"}
-                onClick={() => setActiveCategory(category)}
+                onClick={() => handleCategoryChange(category)}
                 className="font-elegant tracking-wide"
               >
                 {category}
