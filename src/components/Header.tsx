@@ -91,7 +91,8 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-foreground"
+            className="lg:hidden p-2 text-foreground touch-target btn-snappy"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -107,21 +108,21 @@ export default function Header() {
               transition={{ duration: 0.3 }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="py-6 space-y-4">
+              <div className="py-6 space-y-2">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.path}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.05 }}
                   >
                     <Link
                       to={link.path}
                       onClick={() => setIsOpen(false)}
-                      className={`block font-elegant text-lg tracking-wide py-2 ${
+                      className={`block font-elegant text-lg tracking-wide py-3 px-2 rounded-lg touch-target ${
                         location.pathname === link.path
-                          ? "text-primary"
-                          : "text-foreground"
+                          ? "text-primary bg-primary/10"
+                          : "text-foreground active:bg-muted/50"
                       }`}
                     >
                       {link.name}
