@@ -187,11 +187,11 @@ export default function Hero() {
         </svg>
       </div>
 
-      {/* Scroll Indicator - Desktop only */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-white/60">
+      {/* Scroll Indicator - All devices */}
+      <div className="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-white/70">
         <span className="text-xs font-body-medium uppercase tracking-widest">Scroll</span>
-        <div className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center p-2">
-          <div className="w-1 h-2 bg-white/60 rounded-full" />
+        <div className="w-6 h-10 rounded-full border-2 border-white/40 flex items-start justify-center p-2">
+          <div className="w-1.5 h-2.5 bg-white/70 rounded-full animate-bounce" />
         </div>
       </div>
     </section>
