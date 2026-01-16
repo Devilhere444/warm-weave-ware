@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { hapticFeedback } from "@/hooks/useHapticFeedback";
 
 interface ProductCardProps {
   id: string;
@@ -19,6 +20,10 @@ export default function ProductCard({
   category,
   index,
 }: ProductCardProps) {
+  const handleClick = () => {
+    hapticFeedback('light');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -26,7 +31,7 @@ export default function ProductCard({
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.4, delay: index * 0.08, ease: [0.34, 1.56, 0.64, 1] }}
     >
-      <Link to={`/products/${id}`} className="group block">
+      <Link to={`/products/${id}`} className="group block" onClick={handleClick}>
         <div className="relative overflow-hidden rounded-2xl bg-card border border-border shadow-sm card-snappy gpu-accelerated hover:shadow-xl hover:border-primary/20">
           {/* Image Container */}
           <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
