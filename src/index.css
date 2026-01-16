@@ -537,4 +537,35 @@ html {
   .animate-marquee {
     animation: none;
   }
+  .animate-rays-rotate,
+  .animate-rays-rotate-slow {
+    animation: none;
+  }
+}
+
+/* Sun rays rotation animations */
+@keyframes rays-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes rays-rotate-slow {
+  0% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(10deg);
+  }
+}
+
+.animate-rays-rotate {
+  animation: rays-rotate 12s ease-in-out infinite alternate;
+}
+
+.animate-rays-rotate-slow {
+  animation: rays-rotate-slow 18s ease-in-out infinite alternate;
 }
