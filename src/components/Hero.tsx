@@ -3,6 +3,7 @@ import { ArrowRight, Sparkles, BookOpen, Package, FileText, Award } from "lucide
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 // Snappy spring-like transition
 const snappyTransition: Transition = {
@@ -13,6 +14,7 @@ const snappyTransition: Transition = {
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
+  const { settings } = useSiteSettings();
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"]
@@ -21,6 +23,11 @@ export default function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+
+  // Split hero title for styling
+  const heroTitleParts = settings.hero_title.split(" ");
+  const firstPart = heroTitleParts.slice(0, Math.ceil(heroTitleParts.length / 2)).join(" ");
+  const secondPart = heroTitleParts.slice(Math.ceil(heroTitleParts.length / 2)).join(" ");
 
   return (
     <section ref={containerRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -79,9 +86,9 @@ export default function Hero() {
               transition={{ ...snappyTransition, delay: 0.1 }}
               className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1]"
             >
-              Where Art Meets
+              {firstPart}
               <span className="block mt-2 lg:mt-3 text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-foreground to-orange-200">
-                Precision Printing
+                {secondPart}
               </span>
             </motion.h1>
 
@@ -91,9 +98,7 @@ export default function Hero() {
               transition={{ ...snappyTransition, delay: 0.2 }}
               className="text-base sm:text-lg text-white/85 font-body leading-relaxed max-w-lg"
             >
-              Bihar's premier lithographic printing press, delivering 
-              unparalleled quality in book printing, packaging, and commercial 
-              print solutions that leave lasting impressions.
+              {settings.hero_subtitle}
             </motion.p>
 
             <motion.div
