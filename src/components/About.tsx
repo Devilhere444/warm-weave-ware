@@ -30,7 +30,7 @@ const features = [
 
 export default function About() {
   return (
-    <section className="py-24 bg-muted/30 relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-muted/30 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.15),transparent_50%)]" />
@@ -38,21 +38,21 @@ export default function About() {
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left - Content */}
-          <div className="space-y-8">
-            <span className="inline-block text-sm font-display-light tracking-widest uppercase text-primary">
+          <div className="space-y-5 md:space-y-8">
+            <span className="inline-block text-xs md:text-sm font-display-light tracking-widest uppercase text-primary">
               About Litho Art Press
             </span>
 
-            <h2 className="font-display-bold text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight">
+            <h2 className="font-display-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground leading-tight">
               A Heritage of
               <span className="block font-display-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-500 to-accent">
                 Printing Excellence
               </span>
             </h2>
 
-            <p className="text-muted-foreground font-body-regular leading-relaxed text-lg">
+            <p className="text-muted-foreground font-body-regular leading-relaxed text-base md:text-lg">
               Founded in 1965 in the heart of Bihar, Litho Art Press has grown
               from a modest printing workshop to one of the region's most
               respected printing houses. Proudly serving Katihar and nearby Bihar regions, 
@@ -60,7 +60,7 @@ export default function About() {
               craftsmanship, and customer satisfaction remains unwavering.
             </p>
 
-            <p className="text-muted-foreground font-body-regular leading-relaxed">
+            <p className="text-muted-foreground font-body-regular leading-relaxed text-sm md:text-base">
               We blend time-honored lithographic techniques with cutting-edge
               digital technology to deliver prints that speak volumes about your
               brand. Every project, whether a single business card or a
@@ -68,20 +68,20 @@ export default function About() {
             </p>
 
             {/* Features Grid */}
-            <div className="grid sm:grid-cols-2 gap-6 pt-6">
+            <div className="grid grid-cols-2 gap-4 md:gap-6 pt-4 md:pt-6">
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="flex gap-4 p-3 rounded-xl hover:bg-card/50 transition-colors duration-200 cursor-default"
+                  className="flex gap-3 md:gap-4 p-2 md:p-3 rounded-xl hover:bg-card/50 transition-colors duration-200 cursor-default"
                 >
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                  <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <feature.icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-display-semibold text-foreground mb-1">
+                    <h4 className="font-display-semibold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
                       {feature.title}
                     </h4>
-                    <p className="text-sm text-muted-foreground font-body-regular">
+                    <p className="text-xs md:text-sm text-muted-foreground font-body-regular leading-snug">
                       {feature.description}
                     </p>
                   </div>
