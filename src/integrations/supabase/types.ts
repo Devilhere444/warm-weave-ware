@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_emails: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string | null
@@ -47,6 +65,89 @@ export type Database = {
           price?: number | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      quote_request_items: {
+        Row: {
+          binding_option: string | null
+          created_at: string
+          finish_option: string | null
+          id: string
+          paper_option: string | null
+          product_id: string
+          product_title: string
+          quantity: number
+          quote_request_id: string
+          special_requirements: string | null
+        }
+        Insert: {
+          binding_option?: string | null
+          created_at?: string
+          finish_option?: string | null
+          id?: string
+          paper_option?: string | null
+          product_id: string
+          product_title: string
+          quantity?: number
+          quote_request_id: string
+          special_requirements?: string | null
+        }
+        Update: {
+          binding_option?: string | null
+          created_at?: string
+          finish_option?: string | null
+          id?: string
+          paper_option?: string | null
+          product_id?: string
+          product_title?: string
+          quantity?: number
+          quote_request_id?: string
+          special_requirements?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_request_items_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_requests: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          notes: string | null
+          phone: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }

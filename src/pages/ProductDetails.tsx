@@ -1,9 +1,10 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, Package, Truck, Shield, Clock, Plus, Minus } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Check, Package, Truck, Shield, Clock, Plus, Minus, ShoppingCart } from "lucide-react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import RelatedProducts from "@/components/RelatedProducts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
 
 // Extended product data with specifications
 const productsData: Record<string, {
@@ -278,8 +280,19 @@ const productsData: Record<string, {
   },
 };
 
+// All products array for related products
+const allProductsArray = Object.values(productsData).map((p) => ({
+  id: p.id,
+  title: p.title,
+  description: p.description,
+  image: p.image,
+  category: p.category,
+}));
+
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [selectedFinish, setSelectedFinish] = useState("");
   const [selectedPaper, setSelectedPaper] = useState("");
@@ -287,6 +300,13 @@ export default function ProductDetails() {
   const [notes, setNotes] = useState("");
 
   const product = id ? productsData[id] : null;
+
+  // Set initial quantity to min quantity
+  useEffect(() => {
+    if (product) {
+      setQuantity(product.minQuantity);
+    }
+  }, [product]);
 
   if (!product) {
     return (
@@ -312,12 +332,27 @@ export default function ProductDetails() {
     setQuantity(newQty);
   };
 
-  const handleSubmitQuote = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Quote Request Submitted!",
-      description: `We'll get back to you within 24 hours with a detailed quote for ${quantity} units of ${product.title}.`,
+  const handleAddToCart = () => {
+    addItem({
+      productId: product.id,
+      productTitle: product.title,
+      productImage: product.image,
+      category: product.category,
+      quantity,
+      finishOption: selectedFinish,
+      paperOption: selectedPaper,
+      bindingOption: selectedBinding,
+      specialRequirements: notes,
     });
+    toast({
+      title: "Added to Quote Cart!",
+      description: `${product.title} has been added to your quote request.`,
+    });
+  };
+
+  const handleAddToCartAndCheckout = () => {
+    handleAddToCart();
+    navigate("/cart");
   };
 
   return (
@@ -457,7 +492,7 @@ export default function ProductDetails() {
               Request a Quote
             </h2>
 
-            <form onSubmit={handleSubmitQuote} className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-8">
               {/* Left Column - Options */}
               <div className="space-y-6">
                 <h3 className="font-display text-xl font-semibold text-foreground">Customize Your Order</h3>
@@ -580,15 +615,33 @@ export default function ProductDetails() {
                   </ul>
                 </div>
 
-                <Button type="submit" size="lg" className="w-full font-elegant tracking-wide">
-                  Request Quote
-                </Button>
+                <div className="space-y-3">
+                  <Button
+                    type="button"
+                    size="lg"
+                    className="w-full font-elegant tracking-wide"
+                    onClick={handleAddToCartAndCheckout}
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Request Quote Now
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    className="w-full font-elegant tracking-wide"
+                    onClick={handleAddToCart}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add to Cart & Continue Shopping
+                  </Button>
+                </div>
 
                 <p className="text-xs text-center text-muted-foreground font-body">
                   We'll respond within 24 hours with a detailed quote
                 </p>
               </div>
-            </form>
+            </div>
           </motion.div>
 
           {/* Back Button */}
@@ -602,6 +655,13 @@ export default function ProductDetails() {
           </div>
         </div>
       </section>
+
+      {/* Related Products */}
+      <RelatedProducts
+        currentProductId={product.id}
+        category={product.category}
+        allProducts={allProductsArray}
+      />
 
       <Footer />
     </div>
