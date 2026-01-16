@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Trash2, Mail, Shield, UserPlus } from "lucide-react";
+import { 
+  Plus, Trash2, Mail, Shield, UserPlus, Save, 
+  Building, Phone, Globe, MessageCircle, Clock,
+  FileText, Type, Image
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface AdminEmail {
   id: string;
@@ -18,6 +24,10 @@ interface AdminUser {
   email?: string;
 }
 
+interface SiteSettings {
+  [key: string]: string;
+}
+
 export default function AdminSettings() {
   const [adminEmails, setAdminEmails] = useState<AdminEmail[]>([]);
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
@@ -27,6 +37,10 @@ export default function AdminSettings() {
   const [addingEmail, setAddingEmail] = useState(false);
   const [addingAdmin, setAddingAdmin] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  
+  // Site settings
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>({});
+  const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -37,9 +51,10 @@ export default function AdminSettings() {
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUserId(user?.id || null);
 
-      const [emailsRes, rolesRes] = await Promise.all([
+      const [emailsRes, rolesRes, settingsRes] = await Promise.all([
         supabase.from("admin_emails").select("*").order("created_at", { ascending: true }),
-        supabase.from("user_roles").select("*").eq("role", "admin").order("created_at", { ascending: true })
+        supabase.from("user_roles").select("*").eq("role", "admin").order("created_at", { ascending: true }),
+        supabase.from("site_settings").select("*")
       ]);
 
       if (emailsRes.error) {
@@ -53,12 +68,55 @@ export default function AdminSettings() {
       } else {
         setAdminUsers(rolesRes.data || []);
       }
+
+      if (settingsRes.error) {
+        console.error("Error fetching site settings:", settingsRes.error);
+      } else {
+        const settings: SiteSettings = {};
+        settingsRes.data?.forEach((item: any) => {
+          settings[item.key] = item.value || "";
+        });
+        setSiteSettings(settings);
+      }
     } catch (error: any) {
       console.error("Error fetching data:", error);
       toast.error("Failed to load settings");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
+    try {
+      const updates = Object.entries(siteSettings).map(([key, value]) => ({
+        key,
+        value
+      }));
+
+      for (const update of updates) {
+        const { error } = await supabase
+          .from("site_settings")
+          .update({ value: update.value })
+          .eq("key", update.key);
+        
+        if (error) {
+          console.error("Error updating setting:", update.key, error);
+          throw error;
+        }
+      }
+
+      toast.success("Settings saved successfully!");
+    } catch (error: any) {
+      console.error("Error saving settings:", error);
+      toast.error("Failed to save settings: " + error.message);
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const updateSetting = (key: string, value: string) => {
+    setSiteSettings(prev => ({ ...prev, [key]: value }));
   };
 
   const handleAddEmail = async () => {
@@ -69,7 +127,6 @@ export default function AdminSettings() {
       return;
     }
 
-    // Check for duplicate locally first
     if (adminEmails.some(e => e.email.toLowerCase() === trimmedEmail)) {
       toast.error("This email is already added");
       return;
@@ -142,7 +199,6 @@ export default function AdminSettings() {
 
     setAddingAdmin(true);
     try {
-      // Find user by email in quote_requests (only way without admin SDK)
       const { data: quoteData, error: quoteError } = await supabase
         .from("quote_requests")
         .select("user_id")
@@ -162,7 +218,6 @@ export default function AdminSettings() {
         return;
       }
 
-      // Check if already an admin
       const existingAdmin = adminUsers.find(a => a.user_id === quoteData.user_id);
       if (existingAdmin) {
         toast.error("This user is already an admin");
@@ -236,157 +291,407 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="max-w-3xl space-y-8">
-      {/* Admin Users Management */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-card p-6 rounded-xl border border-border"
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Shield className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h2 className="font-display text-lg font-semibold">Admin Users</h2>
-            <p className="text-sm text-muted-foreground font-elegant">
-              Manage who has admin access to the dashboard
-            </p>
-          </div>
-        </div>
+    <div className="max-w-4xl">
+      <Tabs defaultValue="website" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="website" className="font-elegant">Website</TabsTrigger>
+          <TabsTrigger value="admins" className="font-elegant">Admins</TabsTrigger>
+          <TabsTrigger value="notifications" className="font-elegant">Notifications</TabsTrigger>
+        </TabsList>
 
-        <div className="space-y-4">
-          {/* Add new admin */}
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter user email to add as admin..."
-              value={newAdminEmail}
-              onChange={(e) => setNewAdminEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !addingAdmin && handleAddAdmin()}
-              disabled={addingAdmin}
-              className="touch-target"
-            />
+        {/* Website Settings */}
+        <TabsContent value="website" className="space-y-6">
+          {/* Branding */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Type className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">Branding</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Site name, tagline, and hero content
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Site Name</label>
+                <Input
+                  value={siteSettings.site_name || ""}
+                  onChange={(e) => updateSetting("site_name", e.target.value)}
+                  placeholder="Your business name"
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Tagline</label>
+                <Input
+                  value={siteSettings.site_tagline || ""}
+                  onChange={(e) => updateSetting("site_tagline", e.target.value)}
+                  placeholder="A short description of your business"
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Hero Title</label>
+                <Input
+                  value={siteSettings.hero_title || ""}
+                  onChange={(e) => updateSetting("hero_title", e.target.value)}
+                  placeholder="Main homepage headline"
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Hero Subtitle</label>
+                <Textarea
+                  value={siteSettings.hero_subtitle || ""}
+                  onChange={(e) => updateSetting("hero_subtitle", e.target.value)}
+                  placeholder="Homepage subtitle text"
+                  rows={2}
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Footer Text</label>
+                <Input
+                  value={siteSettings.footer_text || ""}
+                  onChange={(e) => updateSetting("footer_text", e.target.value)}
+                  placeholder="Footer description"
+                  className="touch-target"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Contact Information */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Building className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">Contact Information</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Business contact details shown on the website
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">
+                  <Mail className="w-4 h-4 inline mr-1" /> Contact Email
+                </label>
+                <Input
+                  type="email"
+                  value={siteSettings.contact_email || ""}
+                  onChange={(e) => updateSetting("contact_email", e.target.value)}
+                  placeholder="contact@example.com"
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">
+                  <Phone className="w-4 h-4 inline mr-1" /> Phone Number
+                </label>
+                <Input
+                  value={siteSettings.contact_phone || ""}
+                  onChange={(e) => updateSetting("contact_phone", e.target.value)}
+                  placeholder="+1 234 567 8900"
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">
+                  <MessageCircle className="w-4 h-4 inline mr-1" /> WhatsApp Number
+                </label>
+                <Input
+                  value={siteSettings.whatsapp_number || ""}
+                  onChange={(e) => updateSetting("whatsapp_number", e.target.value)}
+                  placeholder="+1234567890 (no spaces)"
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">
+                  <Clock className="w-4 h-4 inline mr-1" /> Business Hours
+                </label>
+                <Input
+                  value={siteSettings.business_hours || ""}
+                  onChange={(e) => updateSetting("business_hours", e.target.value)}
+                  placeholder="Mon-Fri: 9AM-6PM"
+                  className="touch-target"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-sm font-elegant text-foreground mb-1 block">Address</label>
+                <Textarea
+                  value={siteSettings.contact_address || ""}
+                  onChange={(e) => updateSetting("contact_address", e.target.value)}
+                  placeholder="Your business address"
+                  rows={2}
+                  className="touch-target"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Social Media */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Globe className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">Social Media Links</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Links to your social media profiles
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Facebook URL</label>
+                <Input
+                  value={siteSettings.facebook_url || ""}
+                  onChange={(e) => updateSetting("facebook_url", e.target.value)}
+                  placeholder="https://facebook.com/..."
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Instagram URL</label>
+                <Input
+                  value={siteSettings.instagram_url || ""}
+                  onChange={(e) => updateSetting("instagram_url", e.target.value)}
+                  placeholder="https://instagram.com/..."
+                  className="touch-target"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-elegant text-foreground mb-1 block">Twitter/X URL</label>
+                <Input
+                  value={siteSettings.twitter_url || ""}
+                  onChange={(e) => updateSetting("twitter_url", e.target.value)}
+                  placeholder="https://twitter.com/..."
+                  className="touch-target"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* About Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <FileText className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">About Section</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Content for your about page
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-elegant text-foreground mb-1 block">About Text</label>
+              <Textarea
+                value={siteSettings.about_text || ""}
+                onChange={(e) => updateSetting("about_text", e.target.value)}
+                placeholder="Tell visitors about your business, history, values..."
+                rows={5}
+                className="touch-target"
+              />
+            </div>
+          </motion.div>
+
+          {/* Save Button */}
+          <div className="flex justify-end">
             <Button 
-              onClick={handleAddAdmin} 
-              disabled={addingAdmin}
-              className="btn-snappy touch-target"
+              onClick={handleSaveSettings} 
+              disabled={savingSettings}
+              size="lg"
+              className="gap-2 btn-snappy"
             >
-              <UserPlus className="w-4 h-4 mr-1" />
-              {addingAdmin ? "Adding..." : "Add"}
+              <Save className="w-4 h-4" />
+              {savingSettings ? "Saving..." : "Save All Changes"}
             </Button>
           </div>
+        </TabsContent>
 
-          <p className="text-xs text-muted-foreground">
-            Note: The user must have signed up and submitted at least one quote request to be found.
-          </p>
+        {/* Admin Users Tab */}
+        <TabsContent value="admins">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Shield className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">Admin Users</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Manage who has admin access to the dashboard
+                </p>
+              </div>
+            </div>
 
-          {/* Admin list */}
-          <div className="space-y-2">
-            {adminUsers.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                No admin users configured yet
-              </p>
-            ) : (
-              adminUsers.map((adminUser) => (
-                <div
-                  key={adminUser.id}
-                  className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter user email to add as admin..."
+                  value={newAdminEmail}
+                  onChange={(e) => setNewAdminEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !addingAdmin && handleAddAdmin()}
+                  disabled={addingAdmin}
+                  className="touch-target"
+                />
+                <Button 
+                  onClick={handleAddAdmin} 
+                  disabled={addingAdmin}
+                  className="btn-snappy touch-target"
                 >
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-primary" />
-                    <span className="font-body font-mono text-sm">
-                      {adminUser.user_id.slice(0, 8)}...
-                    </span>
-                    {adminUser.user_id === currentUserId && (
-                      <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
-                        You
-                      </span>
-                    )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveAdmin(adminUser)}
-                    disabled={adminUser.user_id === currentUserId}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50 touch-target"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </motion.div>
+                  <UserPlus className="w-4 h-4 mr-1" />
+                  {addingAdmin ? "Adding..." : "Add"}
+                </Button>
+              </div>
 
-      {/* Admin Notification Emails */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="bg-card p-6 rounded-xl border border-border"
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Mail className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h2 className="font-display text-lg font-semibold">Admin Notification Emails</h2>
-            <p className="text-sm text-muted-foreground font-elegant">
-              Email addresses that receive new order notifications
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {/* Add new email */}
-          <div className="flex gap-2">
-            <Input
-              type="email"
-              placeholder="Enter notification email..."
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !addingEmail && handleAddEmail()}
-              disabled={addingEmail}
-              className="touch-target"
-            />
-            <Button 
-              onClick={handleAddEmail} 
-              disabled={addingEmail}
-              className="btn-snappy touch-target"
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              {addingEmail ? "Adding..." : "Add"}
-            </Button>
-          </div>
-
-          {/* Email list */}
-          <div className="space-y-2">
-            {adminEmails.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                No notification emails configured yet
+              <p className="text-xs text-muted-foreground">
+                Note: The user must have signed up and submitted at least one quote request to be found.
               </p>
-            ) : (
-              adminEmails.map((adminEmail) => (
-                <div
-                  key={adminEmail.id}
-                  className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
+
+              <div className="space-y-2">
+                {adminUsers.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    No admin users configured yet
+                  </p>
+                ) : (
+                  adminUsers.map((adminUser) => (
+                    <div
+                      key={adminUser.id}
+                      className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-primary" />
+                        <span className="font-body font-mono text-sm">
+                          {adminUser.user_id.slice(0, 8)}...
+                        </span>
+                        {adminUser.user_id === currentUserId && (
+                          <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                            You
+                          </span>
+                        )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveAdmin(adminUser)}
+                        disabled={adminUser.user_id === currentUserId}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50 touch-target"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </TabsContent>
+
+        {/* Notifications Tab */}
+        <TabsContent value="notifications">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card p-6 rounded-xl border border-border"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Mail className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg font-semibold">Admin Notification Emails</h2>
+                <p className="text-sm text-muted-foreground font-elegant">
+                  Email addresses that receive new order notifications
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="Enter notification email..."
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !addingEmail && handleAddEmail()}
+                  disabled={addingEmail}
+                  className="touch-target"
+                />
+                <Button 
+                  onClick={handleAddEmail} 
+                  disabled={addingEmail}
+                  className="btn-snappy touch-target"
                 >
-                  <span className="font-body">{adminEmail.email}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveEmail(adminEmail.id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 touch-target"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </motion.div>
+                  <Plus className="w-4 h-4 mr-1" />
+                  {addingEmail ? "Adding..." : "Add"}
+                </Button>
+              </div>
+
+              <div className="space-y-2">
+                {adminEmails.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    No notification emails configured yet
+                  </p>
+                ) : (
+                  adminEmails.map((adminEmail) => (
+                    <div
+                      key={adminEmail.id}
+                      className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
+                    >
+                      <span className="font-body">{adminEmail.email}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveEmail(adminEmail.id)}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 touch-target"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
