@@ -134,7 +134,7 @@ export default function Hero() {
               className="grid grid-cols-3 gap-4 md:gap-6 pt-6 md:pt-8 border-t border-white/20"
             >
               {[
-                { value: "38+", label: "Years Experience" },
+                { value: "61+", label: "Years Experience" },
                 { value: "5000+", label: "Projects Completed" },
                 { value: "100%", label: "Client Satisfaction" },
               ].map((stat, index) => (
