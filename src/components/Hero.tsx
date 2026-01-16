@@ -75,7 +75,7 @@ export default function Hero() {
               <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/25 touch-target">
                 <Sparkles className="w-4 h-4 text-white" />
                 <span className="text-sm font-body-medium text-white/90 tracking-widest uppercase">
-                  Excellence Since 1965
+                  Excellence Since 1965 • Proudly Serving Katihar, Bihar & All Over India
                 </span>
               </div>
             </motion.div>
