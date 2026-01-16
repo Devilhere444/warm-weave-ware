@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Phone, MessageCircle, LogIn, UserPlus, Shield } from "lucide-react";
+import { Menu, X, Phone, MessageCircle, LogIn, UserPlus, Shield, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import CartIcon from "@/components/CartIcon";
@@ -148,39 +148,56 @@ export default function Header() {
             {/* Cart */}
             <CartIcon />
 
-            {/* Login Button */}
-            <Link to="/auth">
-              <Button
-                variant="outline"
-                size="sm"
-                className="font-elegant text-sm gap-2 border-border text-foreground hover:bg-muted"
-              >
-                <LogIn className="w-4 h-4" />
-                Login
-              </Button>
-            </Link>
+            {/* Auth Buttons - Show based on login state */}
+            {isLoggedIn ? (
+              <>
+                {/* My Account */}
+                <Link to="/account">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="font-elegant text-sm gap-2 border-border text-foreground hover:bg-muted"
+                  >
+                    <User className="w-4 h-4" />
+                    My Account
+                  </Button>
+                </Link>
 
-            {/* Register Button */}
-            <Link to="/auth">
-              <Button
-                size="sm"
-                className="font-elegant text-sm gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5"
-              >
-                Register
-              </Button>
-            </Link>
+                {/* Admin Button */}
+                <Link to="/admin">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="font-elegant text-sm gap-1 text-muted-foreground hover:text-primary"
+                  >
+                    <Shield className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Login Button */}
+                <Link to="/auth">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="font-elegant text-sm gap-2 border-border text-foreground hover:bg-muted"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Login
+                  </Button>
+                </Link>
 
-            {/* Admin Button (only if logged in) */}
-            {isLoggedIn && (
-              <Link to="/admin">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="font-elegant text-sm gap-1 text-muted-foreground hover:text-primary"
-                >
-                  <Shield className="w-4 h-4" />
-                </Button>
-              </Link>
+                {/* Register Button */}
+                <Link to="/auth">
+                  <Button
+                    size="sm"
+                    className="font-elegant text-sm gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5"
+                  >
+                    Register
+                  </Button>
+                </Link>
+              </>
             )}
           </div>
 
@@ -248,30 +265,35 @@ export default function Header() {
                     </Button>
                   </div>
                   
-                  <div className="flex gap-2">
-                    <Link to="/auth" onClick={() => setIsOpen(false)} className="flex-1">
-                      <Button variant="outline" className="w-full font-elegant gap-2">
-                        <LogIn className="w-4 h-4" />
-                        Login
-                      </Button>
-                    </Link>
-                    <Link to="/auth" onClick={() => setIsOpen(false)} className="flex-1">
-                      <Button className="w-full font-elegant gap-2 bg-primary">
-                        Register
-                      </Button>
-                    </Link>
-                  </div>
-
-                  {isLoggedIn && (
-                    <Link to="/admin" onClick={() => setIsOpen(false)}>
-                      <Button
-                        variant="outline"
-                        className="w-full font-elegant tracking-wide gap-2"
-                      >
-                        <Shield className="w-4 h-4" />
-                        Admin Panel
-                      </Button>
-                    </Link>
+                  {isLoggedIn ? (
+                    <>
+                      <Link to="/account" onClick={() => setIsOpen(false)} className="flex-1">
+                        <Button variant="outline" className="w-full font-elegant gap-2">
+                          <User className="w-4 h-4" />
+                          My Account
+                        </Button>
+                      </Link>
+                      <Link to="/admin" onClick={() => setIsOpen(false)} className="flex-1">
+                        <Button className="w-full font-elegant gap-2 bg-primary">
+                          <Shield className="w-4 h-4" />
+                          Admin
+                        </Button>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/auth" onClick={() => setIsOpen(false)} className="flex-1">
+                        <Button variant="outline" className="w-full font-elegant gap-2">
+                          <LogIn className="w-4 h-4" />
+                          Login
+                        </Button>
+                      </Link>
+                      <Link to="/auth" onClick={() => setIsOpen(false)} className="flex-1">
+                        <Button className="w-full font-elegant gap-2 bg-primary">
+                          Register
+                        </Button>
+                      </Link>
+                    </>
                   )}
                 </div>
               </div>
