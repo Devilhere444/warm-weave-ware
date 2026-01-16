@@ -135,7 +135,7 @@ export default function Hero() {
             >
               {[
                 { value: "61+", label: "Years Experience" },
-                { value: "5000+", label: "Projects Completed" },
+                { value: "1 Lakh+", label: "Projects Completed" },
                 { value: "100%", label: "Client Satisfaction" },
               ].map((stat, index) => (
                 <div 
