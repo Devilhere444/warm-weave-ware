@@ -169,15 +169,12 @@ export default function Services() {
                     ))}
                   </div>
 
-                  <Link to={`/products?category=${service.id}`}>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="w-full justify-between font-elegant text-foreground hover:text-primary group/btn"
-                    >
-                      Explore
-                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
+                  <Link 
+                    to={`/products?category=${service.id}`}
+                    className="inline-flex items-center justify-between w-full px-3 py-2 text-sm font-elegant text-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors group/btn"
+                  >
+                    Explore
+                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </motion.div>
