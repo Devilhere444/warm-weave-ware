@@ -74,7 +74,7 @@ export default function Hero() {
             >
               <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/25 touch-target">
                 <Sparkles className="w-4 h-4 text-white" />
-                <span className="text-sm font-body text-white tracking-wide">
+                <span className="text-sm font-body-medium text-white/90 tracking-widest uppercase">
                   Excellence Since 1985
                 </span>
               </div>
@@ -84,10 +84,10 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...snappyTransition, delay: 0.1 }}
-              className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1]"
+              className="font-display-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.05] tracking-tight"
             >
               {firstPart}
-              <span className="block mt-2 lg:mt-3 text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-foreground to-orange-200">
+              <span className="block mt-2 lg:mt-3 font-display-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-foreground to-orange-200">
                 {secondPart}
               </span>
             </motion.h1>
@@ -96,7 +96,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...snappyTransition, delay: 0.2 }}
-              className="text-base sm:text-lg text-white/85 font-body leading-relaxed max-w-lg"
+              className="text-base sm:text-lg text-white/85 font-body-regular leading-relaxed max-w-lg"
             >
               {settings.hero_subtitle}
             </motion.p>
@@ -110,7 +110,7 @@ export default function Hero() {
               <Link to="/products">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto group bg-white hover:bg-white/95 text-primary font-display font-semibold tracking-wide text-base px-6 md:px-8 shadow-lg btn-snappy touch-target"
+                  className="w-full sm:w-auto group bg-white hover:bg-white/95 text-primary font-display-semibold tracking-wide text-base px-6 md:px-8 shadow-lg btn-snappy touch-target"
                 >
                   Explore Products
                   <ArrowRight className="ml-2 w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />
@@ -119,7 +119,7 @@ export default function Hero() {
               <Link to="/contact">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto font-display font-semibold tracking-wide text-base px-6 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg btn-snappy touch-target"
+                  className="w-full sm:w-auto font-display-semibold tracking-wide text-base px-6 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg btn-snappy touch-target"
                 >
                   Get a Quote
                 </Button>
@@ -142,10 +142,10 @@ export default function Hero() {
                   key={index} 
                   className="text-center card-snappy"
                 >
-                  <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+                  <div className="font-display-bold text-2xl sm:text-3xl md:text-4xl text-white">
                     {stat.value}
                   </div>
-                  <div className="text-xs sm:text-sm text-white/70 font-body mt-1">
+                  <div className="text-xs sm:text-sm text-white/70 font-body-medium mt-1">
                     {stat.label}
                   </div>
                 </div>
@@ -177,10 +177,10 @@ export default function Hero() {
                       {/* Shimmer effect on hover */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
                       <item.icon className="w-7 h-7 lg:w-8 lg:h-8 text-white mb-2 lg:mb-3 relative z-10" />
-                      <h3 className="font-display text-base lg:text-lg font-semibold text-white relative z-10">
+                      <h3 className="font-display-semibold text-base lg:text-lg text-white relative z-10">
                         {item.label}
                       </h3>
-                      <p className="text-xs lg:text-sm text-white/75 font-body mt-1 relative z-10">
+                      <p className="text-xs lg:text-sm text-white/75 font-body-regular mt-1 relative z-10">
                         {item.desc}
                       </p>
                     </div>
@@ -192,7 +192,7 @@ export default function Hero() {
               <div className="absolute -top-4 -right-4 z-30 gpu-accelerated animate-float-delayed">
                 <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-accent text-white px-5 py-2.5 rounded-2xl shadow-xl">
                   <Award className="w-5 h-5" />
-                  <span className="text-sm font-display font-semibold">ISO Certified</span>
+                  <span className="text-sm font-display-semibold">ISO Certified</span>
                 </div>
               </div>
 
@@ -226,7 +226,7 @@ export default function Hero() {
           className="flex flex-col items-center gap-2 touch-target btn-snappy"
           aria-label="Scroll down"
         >
-          <span className="text-xs text-white/60 font-body tracking-widest uppercase">Scroll</span>
+          <span className="text-xs text-white/60 font-body-medium tracking-widest uppercase">Scroll</span>
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-1">
             <div className="w-1.5 h-3 bg-white/60 rounded-full animate-bounce" />
           </div>
