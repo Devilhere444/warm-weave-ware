@@ -31,7 +31,7 @@ export default function Header() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-card/95 backdrop-blur-md shadow-lg py-3"
+          ? "bg-background/95 backdrop-blur-md shadow-lg py-3"
           : "bg-transparent py-6"
       }`}
     >
@@ -39,16 +39,24 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <span className="font-display text-xl font-bold text-primary-foreground">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105 ${
+              scrolled ? "bg-primary" : "bg-white/20 backdrop-blur-md"
+            }`}>
+              <span className={`font-display text-xl font-bold ${
+                scrolled ? "text-primary-foreground" : "text-white"
+              }`}>
                 L
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-xl font-bold text-foreground tracking-wide">
+              <span className={`font-display text-xl font-bold tracking-wide transition-colors ${
+                scrolled ? "text-foreground" : "text-white"
+              }`}>
                 Litho Art Press
               </span>
-              <span className="text-xs text-muted-foreground font-elegant tracking-widest uppercase">
+              <span className={`text-xs font-elegant tracking-widest uppercase transition-colors ${
+                scrolled ? "text-muted-foreground" : "text-white/70"
+              }`}>
                 Bihar • Since 1985
               </span>
             </div>
@@ -60,10 +68,10 @@ export default function Header() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`relative font-elegant text-lg tracking-wide transition-colors hover:text-primary ${
+                className={`relative font-elegant text-lg tracking-wide transition-colors ${
                   location.pathname === link.path
-                    ? "text-primary"
-                    : "text-foreground"
+                    ? scrolled ? "text-primary" : "text-white"
+                    : scrolled ? "text-foreground hover:text-primary" : "text-white/80 hover:text-white"
                 }`}
               >
                 {link.name}
@@ -79,7 +87,11 @@ export default function Header() {
               <Button
                 variant="outline"
                 size="sm"
-                className="font-elegant tracking-wide"
+                className={`font-elegant tracking-wide transition-all ${
+                  scrolled 
+                    ? "border-primary text-primary hover:bg-primary hover:text-primary-foreground" 
+                    : "border-white/30 text-white hover:bg-white/10"
+                }`}
               >
                 Admin
               </Button>
@@ -89,7 +101,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-foreground"
+            className={`lg:hidden p-2 ${scrolled ? "text-foreground" : "text-white"}`}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
