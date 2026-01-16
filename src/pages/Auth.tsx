@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,7 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
     const checkAdminAndRedirect = async (userId: string) => {
@@ -56,14 +57,28 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      // Role check happens in onAuthStateChange
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth`,
+          },
+        });
+        if (error) throw error;
+        toast.success("Account created! You can now log in.");
+        setIsSignUp(false);
+        setPassword("");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        // Role check happens in onAuthStateChange
+      }
     } catch (error: any) {
-      toast.error(error.message || "Invalid credentials");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -80,15 +95,19 @@ export default function Auth() {
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-4">
-              <span className="font-display text-2xl font-bold text-primary-foreground">
-                L
-              </span>
+              {isSignUp ? (
+                <User className="w-8 h-8 text-primary-foreground" />
+              ) : (
+                <span className="font-display text-2xl font-bold text-primary-foreground">
+                  L
+                </span>
+              )}
             </div>
             <h1 className="font-display text-2xl font-bold text-foreground">
-              Admin Panel
+              {isSignUp ? "Create Account" : "Admin Panel"}
             </h1>
             <p className="text-muted-foreground font-elegant mt-1">
-              Litho Art Press
+              {isSignUp ? "Register to request admin access" : "Litho Art Press"}
             </p>
           </div>
 
@@ -141,15 +160,27 @@ export default function Auth() {
               disabled={isLoading}
               className="w-full bg-primary hover:bg-primary/90 font-elegant tracking-wide"
             >
-              {isLoading ? "Please wait..." : "Login"}
+              {isLoading ? "Please wait..." : isSignUp ? "Create Account" : "Login"}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6 font-body">
-            <a href="/" className="text-accent hover:underline">
-              ← Back to website
-            </a>
-          </p>
+          <div className="text-center mt-6 space-y-3">
+            <button
+              type="button"
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                setPassword("");
+              }}
+              className="text-sm text-accent hover:underline font-body"
+            >
+              {isSignUp ? "Already have an account? Login" : "Need an account? Sign up"}
+            </button>
+            <p className="text-sm text-muted-foreground font-body">
+              <a href="/" className="text-accent hover:underline">
+                ← Back to website
+              </a>
+            </p>
+          </div>
         </div>
       </motion.div>
     </div>
