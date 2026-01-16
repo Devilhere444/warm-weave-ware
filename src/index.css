@@ -183,17 +183,70 @@
 }
 
 @layer utilities {
+  /* Outfit - Display/Heading Font */
   .font-display {
     font-family: 'Outfit', sans-serif;
   }
 
-  .font-elegant {
+  .font-display-light {
     font-family: 'Outfit', sans-serif;
     font-weight: 300;
   }
 
+  .font-display-regular {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+  }
+
+  .font-display-medium {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+  }
+
+  .font-display-semibold {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+  }
+
+  .font-display-bold {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+  }
+
+  .font-display-extrabold {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+  }
+
+  /* Space Grotesk - Body Font */
   .font-body {
     font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .font-body-regular {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+  }
+
+  .font-body-medium {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+  }
+
+  .font-body-semibold {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+  }
+
+  .font-body-bold {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+  }
+
+  /* Legacy alias */
+  .font-elegant {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
   }
 
   .text-gradient-primary {
