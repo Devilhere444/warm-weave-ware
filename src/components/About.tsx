@@ -6,7 +6,7 @@ import printingPressImage from "@/assets/printing-press.jpg";
 const features = [
   {
     icon: Award,
-    title: "38+ Years Legacy",
+    title: "61+ Years Legacy",
     description:
       "Trusted by generations of businesses across Bihar and beyond.",
   },
@@ -320,7 +320,7 @@ export default function About() {
                     <Star className="w-8 h-8 text-primary fill-primary/20" />
                   </motion.div>
                   <div>
-                    <p className="font-display-bold text-2xl text-foreground">5000+</p>
+                    <p className="font-display-bold text-2xl text-foreground">1 Lakh+</p>
                     <p className="text-xs text-muted-foreground font-body-medium">Projects Done</p>
                   </div>
                 </div>
