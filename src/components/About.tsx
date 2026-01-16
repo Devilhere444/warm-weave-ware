@@ -264,24 +264,22 @@ export default function About() {
                 />
               </motion.div>
 
-              {/* Floating Stats Cards - Glassmorphism with animations */}
+              {/* Floating Stats Cards - Optimized for performance */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: -20 }}
                 whileInView={{ opacity: 1, scale: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.4 }}
-                animate={{ y: [0, -4, 0] }}
-                whileHover={{ scale: 1.05, y: -8 }}
-                className="absolute -bottom-6 -left-6 p-5 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer"
+                className="absolute -bottom-6 -left-6 p-5 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer transition-transform duration-100 ease-out hover:scale-105 hover:-translate-y-1"
                 style={{
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  willChange: 'transform',
+                  transform: 'translateZ(0)'
                 }}
               >
                 <div className="flex items-center gap-4">
-                  <motion.div 
+                  <div 
                     className="w-14 h-14 bg-gradient-to-br from-primary to-orange-500 rounded-full flex items-center justify-center shadow-lg"
-                    animate={{ rotate: [0, 3, -3, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     style={{
                       boxShadow: '0 4px 15px rgba(var(--primary), 0.4)'
                     }}
@@ -289,7 +287,7 @@ export default function About() {
                     <span className="font-display-extrabold text-xl text-primary-foreground">
                       38
                     </span>
-                  </motion.div>
+                  </div>
                   <div>
                     <p className="font-display-semibold text-lg text-foreground">
                       Years of
@@ -301,26 +299,21 @@ export default function About() {
                 </div>
               </motion.div>
 
-              {/* Second Floating Card - Glassmorphism with animations */}
+              {/* Second Floating Card - Optimized for performance */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: 20 }}
                 whileInView={{ opacity: 1, scale: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.7, duration: 0.4 }}
-                animate={{ y: [0, -3, 0] }}
-                whileHover={{ scale: 1.05, y: -6 }}
-                className="absolute -top-4 -right-4 p-4 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer"
+                className="absolute -top-4 -right-4 p-4 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer transition-transform duration-100 ease-out hover:scale-105 hover:-translate-y-1"
                 style={{
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  willChange: 'transform',
+                  transform: 'translateZ(0)'
                 }}
               >
                 <div className="flex items-center gap-3">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Star className="w-8 h-8 text-primary fill-primary/20" />
-                  </motion.div>
+                  <Star className="w-8 h-8 text-primary fill-primary/20" />
                   <div>
                     <p className="font-display-bold text-2xl text-foreground">5000+</p>
                     <p className="text-xs text-muted-foreground font-body-medium">Projects Done</p>
