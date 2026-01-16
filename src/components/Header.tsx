@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   { name: "Home", path: "/" },
-  { name: "Services", path: "/products" },
+  { name: "Services", path: "/services" },
   { name: "Products", path: "/products" },
   { name: "Contact", path: "/contact" },
 ];

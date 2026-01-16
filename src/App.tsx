@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 // Lazy load non-critical routes
 const Products = lazy(() => import("./pages/Products"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const Services = lazy(() => import("./pages/Services"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -40,6 +41,7 @@ const App = () => (
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/services" element={<Services />} />
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/about" element={<AboutPage />} />
