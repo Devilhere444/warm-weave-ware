@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Save, Plus, Trash2, Mail, Bell, Building, Globe } from "lucide-react";
+import { Save, Plus, Trash2, Mail, Bell, Building, Shield, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -15,13 +14,23 @@ interface AdminEmail {
   email: string;
 }
 
+interface AdminUser {
+  id: string;
+  user_id: string;
+  role: string;
+  email?: string;
+}
+
 export default function AdminSettings() {
   const [adminEmails, setAdminEmails] = useState<AdminEmail[]>([]);
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [newEmail, setNewEmail] = useState("");
+  const [newAdminEmail, setNewAdminEmail] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [addingAdmin, setAddingAdmin] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // Business settings (stored in localStorage for now)
   const [businessSettings, setBusinessSettings] = useState({
     businessName: "Litho Art Press",
     tagline: "Bihar • Since 1985",
@@ -33,21 +42,27 @@ export default function AdminSettings() {
   });
 
   useEffect(() => {
-    fetchAdminEmails();
+    fetchData();
     loadBusinessSettings();
   }, []);
 
-  const fetchAdminEmails = async () => {
+  const fetchData = async () => {
     try {
-      const { data, error } = await supabase
-        .from("admin_emails")
-        .select("*")
-        .order("created_at", { ascending: true });
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
 
-      if (error) throw error;
-      setAdminEmails(data || []);
+      const [emailsRes, rolesRes] = await Promise.all([
+        supabase.from("admin_emails").select("*").order("created_at", { ascending: true }),
+        supabase.from("user_roles").select("*").eq("role", "admin").order("created_at", { ascending: true })
+      ]);
+
+      if (emailsRes.error) throw emailsRes.error;
+      if (rolesRes.error) throw rolesRes.error;
+
+      setAdminEmails(emailsRes.data || []);
+      setAdminUsers(rolesRes.data || []);
     } catch (error: any) {
-      console.error("Error fetching admin emails:", error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -108,6 +123,90 @@ export default function AdminSettings() {
     }
   };
 
+  const handleAddAdmin = async () => {
+    if (!newAdminEmail || !newAdminEmail.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setAddingAdmin(true);
+    try {
+      // First, we need to find the user by email using the admin_emails or by checking auth
+      // Since we can't query auth.users directly, we'll create a placeholder approach
+      // The admin will need to know the user_id or the user needs to sign up first
+      
+      // For now, let's check if we can find a user with this email in quote_requests
+      const { data: quoteData } = await supabase
+        .from("quote_requests")
+        .select("user_id")
+        .eq("email", newAdminEmail)
+        .not("user_id", "is", null)
+        .limit(1)
+        .single();
+
+      if (!quoteData?.user_id) {
+        toast.error("User not found. They must sign up first before being added as admin.");
+        setAddingAdmin(false);
+        return;
+      }
+
+      // Check if already an admin
+      const existingAdmin = adminUsers.find(a => a.user_id === quoteData.user_id);
+      if (existingAdmin) {
+        toast.error("This user is already an admin");
+        setAddingAdmin(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("user_roles")
+        .insert({ user_id: quoteData.user_id, role: "admin" })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setAdminUsers((prev) => [...prev, { ...data, email: newAdminEmail }]);
+      setNewAdminEmail("");
+      toast.success("Admin added successfully");
+    } catch (error: any) {
+      console.error("Error adding admin:", error);
+      if (error.code === "23505") {
+        toast.error("This user is already an admin");
+      } else {
+        toast.error("Failed to add admin. Make sure the user has signed up.");
+      }
+    } finally {
+      setAddingAdmin(false);
+    }
+  };
+
+  const handleRemoveAdmin = async (adminUser: AdminUser) => {
+    if (adminUser.user_id === currentUserId) {
+      toast.error("You cannot remove yourself as admin");
+      return;
+    }
+
+    if (adminUsers.length <= 1) {
+      toast.error("You must have at least one admin");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("id", adminUser.id);
+
+      if (error) throw error;
+
+      setAdminUsers((prev) => prev.filter((a) => a.id !== adminUser.id));
+      toast.success("Admin removed");
+    } catch (error: any) {
+      toast.error("Failed to remove admin");
+    }
+  };
+
   const handleSaveBusinessSettings = () => {
     setSaving(true);
     try {
@@ -130,10 +229,88 @@ export default function AdminSettings() {
 
   return (
     <div className="max-w-3xl space-y-8">
+      {/* Admin Users Management */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-card p-6 rounded-xl border border-border"
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <Shield className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="font-display text-lg font-semibold">Admin Users</h2>
+            <p className="text-sm text-muted-foreground font-elegant">
+              Manage who has admin access to the dashboard
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {/* Add new admin */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="Enter user email to add as admin..."
+              value={newAdminEmail}
+              onChange={(e) => setNewAdminEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !addingAdmin && handleAddAdmin()}
+              disabled={addingAdmin}
+            />
+            <Button onClick={handleAddAdmin} disabled={addingAdmin}>
+              <UserPlus className="w-4 h-4 mr-1" />
+              {addingAdmin ? "Adding..." : "Add"}
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Note: The user must have signed up and submitted at least one quote request to be found.
+          </p>
+
+          {/* Admin list */}
+          <div className="space-y-2">
+            {adminUsers.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No admin users configured yet
+              </p>
+            ) : (
+              adminUsers.map((adminUser) => (
+                <div
+                  key={adminUser.id}
+                  className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
+                >
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-primary" />
+                    <span className="font-body font-mono text-sm">
+                      {adminUser.user_id.slice(0, 8)}...
+                    </span>
+                    {adminUser.user_id === currentUserId && (
+                      <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                        You
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveAdmin(adminUser)}
+                    disabled={adminUser.user_id === currentUserId}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </motion.div>
+
       {/* Business Information */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
         className="bg-card p-6 rounded-xl border border-border"
       >
         <div className="flex items-center gap-3 mb-6">
@@ -214,7 +391,7 @@ export default function AdminSettings() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.2 }}
         className="bg-card p-6 rounded-xl border border-border"
       >
         <div className="flex items-center gap-3 mb-6">
@@ -266,7 +443,7 @@ export default function AdminSettings() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.3 }}
         className="bg-card p-6 rounded-xl border border-border"
       >
         <div className="flex items-center gap-3 mb-6">
