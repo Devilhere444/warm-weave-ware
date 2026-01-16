@@ -5,11 +5,19 @@ import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-// Snappy spring-like transition
+// Ultra-snappy mobile-optimized transition
 const snappyTransition: Transition = {
   type: "spring",
-  stiffness: 400,
-  damping: 25
+  stiffness: 500,
+  damping: 30,
+  mass: 0.8
+};
+
+// Even faster transition for mobile interactions
+const mobileTransition: Transition = {
+  type: "tween",
+  duration: 0.15,
+  ease: [0.4, 0, 0.2, 1]
 };
 
 export default function Hero() {
@@ -198,19 +206,19 @@ export default function Hero() {
               transition={{ ...snappyTransition, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
-              <Link to="/products">
+              <Link to="/products" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto group bg-white hover:bg-white/95 text-primary font-display-semibold tracking-wide text-base px-6 md:px-8 shadow-lg btn-snappy touch-target"
+                  className="w-full group bg-white hover:bg-white/95 text-primary font-display-semibold tracking-wide text-base px-6 md:px-8 shadow-lg btn-snappy touch-target active:scale-[0.97] transition-transform duration-75"
                 >
                   Explore Products
-                  <ArrowRight className="ml-2 w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />
+                  <ArrowRight className="ml-2 w-5 h-5 transition-transform duration-100 group-hover:translate-x-1 group-active:translate-x-0.5" />
                 </Button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto font-display-semibold tracking-wide text-base px-6 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg btn-snappy touch-target"
+                  className="w-full font-display-semibold tracking-wide text-base px-6 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg btn-snappy touch-target active:scale-[0.97] transition-transform duration-75"
                 >
                   Get a Quote
                 </Button>

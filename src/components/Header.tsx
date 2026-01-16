@@ -63,8 +63,8 @@ export default function Header() {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      className={`fixed top-0 left-0 right-0 z-50 safe-area-top transition-all duration-200 ${
         scrolled
           ? "bg-background/95 backdrop-blur-md shadow-lg py-2"
           : "bg-background/80 backdrop-blur-md border-b border-border/50 py-3"
@@ -205,21 +205,24 @@ export default function Header() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="py-6 space-y-2">
+              <div className="py-4 space-y-1 safe-area-bottom">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.name}
-                    initial={{ opacity: 0, x: -20 }}
+                    initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    transition={{ delay: index * 0.03, duration: 0.1 }}
                   >
                     <Link
                       to={link.path}
-                      onClick={() => setIsOpen(false)}
-                      className={`block font-body-medium text-lg tracking-wide py-3 px-2 rounded-lg touch-target ${
+                      onClick={() => {
+                        haptic.triggerLight();
+                        setIsOpen(false);
+                      }}
+                      className={`block font-body-medium text-lg tracking-wide py-3.5 px-3 rounded-xl touch-target transition-all duration-75 active:scale-[0.98] ${
                         location.pathname === link.path
                           ? "text-primary bg-primary/10"
                           : "text-foreground active:bg-muted/50"
