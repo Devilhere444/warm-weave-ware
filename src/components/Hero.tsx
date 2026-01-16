@@ -34,25 +34,62 @@ export default function Hero() {
       {/* Animated Background with Parallax - GPU Accelerated */}
       <motion.div style={{ y }} className="absolute inset-0 bg-hero-gradient gpu-accelerated" />
       
+      {/* Subtle Noise Texture Overlay */}
+      <div className="absolute inset-0 opacity-[0.03] gpu-accelerated" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        mixBlendMode: 'overlay'
+      }} />
+      
+      {/* Gradient Mesh Overlay for depth */}
+      <div className="absolute inset-0 gpu-accelerated" style={{
+        background: `
+          radial-gradient(ellipse 80% 50% at 20% 40%, hsl(35 60% 50% / 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse 60% 40% at 80% 20%, hsl(25 70% 55% / 0.12) 0%, transparent 45%),
+          radial-gradient(ellipse 50% 60% at 70% 80%, hsl(30 50% 45% / 0.1) 0%, transparent 50%),
+          radial-gradient(ellipse 40% 30% at 10% 80%, hsl(40 45% 60% / 0.08) 0%, transparent 40%)
+        `
+      }} />
+      
       {/* Static Sand Dunes Effect - Better performance */}
       <div className="absolute inset-0 gpu-accelerated">
         <svg className="absolute bottom-0 w-full h-[40%] opacity-20" viewBox="0 0 1440 400" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="duneGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="hsl(38 40% 70%)" />
+              <stop offset="50%" stopColor="hsl(35 45% 75%)" />
+              <stop offset="100%" stopColor="hsl(38 40% 70%)" />
+            </linearGradient>
+          </defs>
           <path
             d="M0,400 C360,300 720,350 1080,280 C1260,240 1380,300 1440,280 L1440,400 L0,400 Z"
-            fill="hsl(38 40% 75%)"
+            fill="url(#duneGradient1)"
           />
         </svg>
         <svg className="absolute bottom-0 w-full h-[30%] opacity-15" viewBox="0 0 1440 300" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="duneGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="hsl(30 35% 65%)" />
+              <stop offset="50%" stopColor="hsl(35 40% 72%)" />
+              <stop offset="100%" stopColor="hsl(30 35% 65%)" />
+            </linearGradient>
+          </defs>
           <path
             d="M0,300 C480,200 960,250 1440,180 L1440,300 L0,300 Z"
-            fill="hsl(35 35% 70%)"
+            fill="url(#duneGradient2)"
           />
         </svg>
       </div>
+      
+      {/* Vignette Effect */}
+      <div className="absolute inset-0 gpu-accelerated pointer-events-none" style={{
+        background: 'radial-gradient(ellipse at center, transparent 40%, hsl(25 40% 20% / 0.15) 100%)'
+      }} />
 
       {/* Simplified Orbs - CSS animations for better performance */}
-      <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/40 to-transparent blur-[100px] opacity-30 gpu-accelerated animate-pulse-slow" />
-      <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/30 to-transparent blur-[120px] opacity-25 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/40 to-transparent blur-[100px] opacity-35 gpu-accelerated animate-pulse-slow" />
+      <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/30 to-transparent blur-[120px] opacity-30 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full bg-gradient-radial from-orange-400/10 to-transparent blur-[150px] opacity-25 gpu-accelerated" />
 
       {/* Floating Geometric Shapes - CSS animations - Desktop only */}
       <div className="hidden lg:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/25 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
