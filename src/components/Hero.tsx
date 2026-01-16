@@ -70,14 +70,28 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={snappyTransition}
-              className="flex items-center gap-3"
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-3"
             >
+              {/* Excellence Badge */}
               <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/25 touch-target">
-                <Sparkles className="w-4 h-4 text-white" />
+                <Sparkles className="w-4 h-4 text-yellow-300" />
                 <span className="text-sm font-body-medium text-white/90 tracking-widest uppercase">
-                  Excellence Since 1965 • Proudly Serving Katihar, Bihar & All Over India
+                  Excellence Since 1965
                 </span>
               </div>
+              
+              {/* Serving Badge */}
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ ...snappyTransition, delay: 0.1 }}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/30 to-accent/30 backdrop-blur-md rounded-full border border-white/20 touch-target"
+              >
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-sm font-body-medium text-white/90 tracking-wide">
+                  Proudly Serving Katihar, Bihar & All Over India
+                </span>
+              </motion.div>
             </motion.div>
 
             <motion.h1
