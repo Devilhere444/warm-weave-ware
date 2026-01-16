@@ -310,6 +310,24 @@ export default function Hero() {
                 </div>
               </motion.div>
 
+              {/* Floating Projects Badge */}
+              <motion.div 
+                className="absolute -bottom-4 -left-4 z-30"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 1 }}
+              >
+                <div className="flex items-center gap-3 bg-white/95 backdrop-blur-sm text-foreground px-5 py-3 rounded-2xl shadow-xl border border-border/50 hover:scale-105 transition-transform duration-200">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-display-bold text-foreground">50k+</div>
+                    <div className="text-xs text-muted-foreground font-body-medium">Projects Done</div>
+                  </div>
+                </div>
+              </motion.div>
+
               {/* Decorative Elements */}
               <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-accent/25 rounded-full blur-3xl gpu-accelerated animate-pulse-slow" />
               <div className="absolute -top-10 -left-10 w-28 h-28 border-2 border-white/15 rounded-full gpu-accelerated" />
