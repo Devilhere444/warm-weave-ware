@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Save, Plus, Trash2, Mail, Bell, Building, Shield, UserPlus } from "lucide-react";
+import { Plus, Trash2, Mail, Shield, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -27,23 +24,12 @@ export default function AdminSettings() {
   const [newEmail, setNewEmail] = useState("");
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [addingEmail, setAddingEmail] = useState(false);
   const [addingAdmin, setAddingAdmin] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  const [businessSettings, setBusinessSettings] = useState({
-    businessName: "Litho Art Press",
-    tagline: "Bihar • Since 1985",
-    email: "contact@lithoartpress.com",
-    phone: "+91 98765 43210",
-    address: "123 Print Street, Patna, Bihar 800001",
-    enableEmailNotifications: true,
-    enableOrderConfirmations: true,
-  });
-
   useEffect(() => {
     fetchData();
-    loadBusinessSettings();
   }, []);
 
   const fetchData = async () => {
@@ -56,55 +42,73 @@ export default function AdminSettings() {
         supabase.from("user_roles").select("*").eq("role", "admin").order("created_at", { ascending: true })
       ]);
 
-      if (emailsRes.error) throw emailsRes.error;
-      if (rolesRes.error) throw rolesRes.error;
-
-      setAdminEmails(emailsRes.data || []);
-      setAdminUsers(rolesRes.data || []);
+      if (emailsRes.error) {
+        console.error("Error fetching admin emails:", emailsRes.error);
+      } else {
+        setAdminEmails(emailsRes.data || []);
+      }
+      
+      if (rolesRes.error) {
+        console.error("Error fetching admin users:", rolesRes.error);
+      } else {
+        setAdminUsers(rolesRes.data || []);
+      }
     } catch (error: any) {
       console.error("Error fetching data:", error);
+      toast.error("Failed to load settings");
     } finally {
       setLoading(false);
     }
   };
 
-  const loadBusinessSettings = () => {
-    const saved = localStorage.getItem("litho_business_settings");
-    if (saved) {
-      setBusinessSettings(JSON.parse(saved));
-    }
-  };
-
   const handleAddEmail = async () => {
-    if (!newEmail || !newEmail.includes("@")) {
+    const trimmedEmail = newEmail.trim().toLowerCase();
+    
+    if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
       toast.error("Please enter a valid email address");
       return;
     }
 
+    // Check for duplicate locally first
+    if (adminEmails.some(e => e.email.toLowerCase() === trimmedEmail)) {
+      toast.error("This email is already added");
+      return;
+    }
+
+    setAddingEmail(true);
     try {
       const { data, error } = await supabase
         .from("admin_emails")
-        .insert({ email: newEmail })
+        .insert({ email: trimmedEmail })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error adding email:", error);
+        if (error.code === "23505") {
+          toast.error("This email is already added");
+        } else if (error.code === "42501") {
+          toast.error("Permission denied. You must be an admin to add emails.");
+        } else {
+          toast.error("Failed to add email: " + error.message);
+        }
+        return;
+      }
 
       setAdminEmails((prev) => [...prev, data]);
       setNewEmail("");
-      toast.success("Admin email added successfully");
+      toast.success("Admin notification email added successfully");
     } catch (error: any) {
-      if (error.code === "23505") {
-        toast.error("This email is already added");
-      } else {
-        toast.error("Failed to add email");
-      }
+      console.error("Error adding email:", error);
+      toast.error("Failed to add email");
+    } finally {
+      setAddingEmail(false);
     }
   };
 
   const handleRemoveEmail = async (id: string) => {
     if (adminEmails.length <= 1) {
-      toast.error("You must have at least one admin email");
+      toast.error("You must have at least one admin notification email");
       return;
     }
 
@@ -114,39 +118,47 @@ export default function AdminSettings() {
         .delete()
         .eq("id", id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error removing email:", error);
+        toast.error("Failed to remove email: " + error.message);
+        return;
+      }
 
       setAdminEmails((prev) => prev.filter((e) => e.id !== id));
       toast.success("Email removed");
     } catch (error: any) {
+      console.error("Error removing email:", error);
       toast.error("Failed to remove email");
     }
   };
 
   const handleAddAdmin = async () => {
-    if (!newAdminEmail || !newAdminEmail.includes("@")) {
+    const trimmedEmail = newAdminEmail.trim().toLowerCase();
+    
+    if (!trimmedEmail || !trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
       toast.error("Please enter a valid email address");
       return;
     }
 
     setAddingAdmin(true);
     try {
-      // First, we need to find the user by email using the admin_emails or by checking auth
-      // Since we can't query auth.users directly, we'll create a placeholder approach
-      // The admin will need to know the user_id or the user needs to sign up first
-      
-      // For now, let's check if we can find a user with this email in quote_requests
-      const { data: quoteData } = await supabase
+      // Find user by email in quote_requests (only way without admin SDK)
+      const { data: quoteData, error: quoteError } = await supabase
         .from("quote_requests")
         .select("user_id")
-        .eq("email", newAdminEmail)
+        .eq("email", trimmedEmail)
         .not("user_id", "is", null)
         .limit(1)
-        .single();
+        .maybeSingle();
+
+      if (quoteError) {
+        console.error("Error finding user:", quoteError);
+        toast.error("Error looking up user");
+        return;
+      }
 
       if (!quoteData?.user_id) {
-        toast.error("User not found. They must sign up first before being added as admin.");
-        setAddingAdmin(false);
+        toast.error("User not found. They must sign up and submit a quote request first.");
         return;
       }
 
@@ -154,7 +166,6 @@ export default function AdminSettings() {
       const existingAdmin = adminUsers.find(a => a.user_id === quoteData.user_id);
       if (existingAdmin) {
         toast.error("This user is already an admin");
-        setAddingAdmin(false);
         return;
       }
 
@@ -164,18 +175,22 @@ export default function AdminSettings() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error adding admin:", error);
+        if (error.code === "23505") {
+          toast.error("This user is already an admin");
+        } else {
+          toast.error("Failed to add admin: " + error.message);
+        }
+        return;
+      }
 
-      setAdminUsers((prev) => [...prev, { ...data, email: newAdminEmail }]);
+      setAdminUsers((prev) => [...prev, { ...data, email: trimmedEmail }]);
       setNewAdminEmail("");
       toast.success("Admin added successfully");
     } catch (error: any) {
       console.error("Error adding admin:", error);
-      if (error.code === "23505") {
-        toast.error("This user is already an admin");
-      } else {
-        toast.error("Failed to add admin. Make sure the user has signed up.");
-      }
+      toast.error("Failed to add admin");
     } finally {
       setAddingAdmin(false);
     }
@@ -198,24 +213,17 @@ export default function AdminSettings() {
         .delete()
         .eq("id", adminUser.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error removing admin:", error);
+        toast.error("Failed to remove admin: " + error.message);
+        return;
+      }
 
       setAdminUsers((prev) => prev.filter((a) => a.id !== adminUser.id));
       toast.success("Admin removed");
     } catch (error: any) {
+      console.error("Error removing admin:", error);
       toast.error("Failed to remove admin");
-    }
-  };
-
-  const handleSaveBusinessSettings = () => {
-    setSaving(true);
-    try {
-      localStorage.setItem("litho_business_settings", JSON.stringify(businessSettings));
-      toast.success("Settings saved successfully");
-    } catch (error) {
-      toast.error("Failed to save settings");
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -256,8 +264,13 @@ export default function AdminSettings() {
               onChange={(e) => setNewAdminEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !addingAdmin && handleAddAdmin()}
               disabled={addingAdmin}
+              className="touch-target"
             />
-            <Button onClick={handleAddAdmin} disabled={addingAdmin}>
+            <Button 
+              onClick={handleAddAdmin} 
+              disabled={addingAdmin}
+              className="btn-snappy touch-target"
+            >
               <UserPlus className="w-4 h-4 mr-1" />
               {addingAdmin ? "Adding..." : "Add"}
             </Button>
@@ -295,7 +308,7 @@ export default function AdminSettings() {
                     size="sm"
                     onClick={() => handleRemoveAdmin(adminUser)}
                     disabled={adminUser.user_id === currentUserId}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-50 touch-target"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -306,144 +319,11 @@ export default function AdminSettings() {
         </div>
       </motion.div>
 
-      {/* Business Information */}
+      {/* Admin Notification Emails */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-card p-6 rounded-xl border border-border"
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Building className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h2 className="font-display text-lg font-semibold">Business Information</h2>
-            <p className="text-sm text-muted-foreground font-elegant">
-              Update your business details
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="businessName" className="font-elegant">Business Name</Label>
-              <Input
-                id="businessName"
-                value={businessSettings.businessName}
-                onChange={(e) =>
-                  setBusinessSettings((prev) => ({ ...prev, businessName: e.target.value }))
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="tagline" className="font-elegant">Tagline</Label>
-              <Input
-                id="tagline"
-                value={businessSettings.tagline}
-                onChange={(e) =>
-                  setBusinessSettings((prev) => ({ ...prev, tagline: e.target.value }))
-                }
-              />
-            </div>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="font-elegant">Contact Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={businessSettings.email}
-                onChange={(e) =>
-                  setBusinessSettings((prev) => ({ ...prev, email: e.target.value }))
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="font-elegant">Phone Number</Label>
-              <Input
-                id="phone"
-                value={businessSettings.phone}
-                onChange={(e) =>
-                  setBusinessSettings((prev) => ({ ...prev, phone: e.target.value }))
-                }
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="address" className="font-elegant">Business Address</Label>
-            <Textarea
-              id="address"
-              value={businessSettings.address}
-              onChange={(e) =>
-                setBusinessSettings((prev) => ({ ...prev, address: e.target.value }))
-              }
-              rows={2}
-            />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Notification Settings */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-card p-6 rounded-xl border border-border"
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Bell className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h2 className="font-display text-lg font-semibold">Notification Settings</h2>
-            <p className="text-sm text-muted-foreground font-elegant">
-              Configure email notifications
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg">
-            <div>
-              <p className="font-body font-medium">Email Notifications</p>
-              <p className="text-sm text-muted-foreground">
-                Receive email alerts for new quote requests
-              </p>
-            </div>
-            <Switch
-              checked={businessSettings.enableEmailNotifications}
-              onCheckedChange={(checked) =>
-                setBusinessSettings((prev) => ({ ...prev, enableEmailNotifications: checked }))
-              }
-            />
-          </div>
-
-          <div className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg">
-            <div>
-              <p className="font-body font-medium">Order Confirmations</p>
-              <p className="text-sm text-muted-foreground">
-                Send confirmation emails to customers
-              </p>
-            </div>
-            <Switch
-              checked={businessSettings.enableOrderConfirmations}
-              onCheckedChange={(checked) =>
-                setBusinessSettings((prev) => ({ ...prev, enableOrderConfirmations: checked }))
-              }
-            />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Admin Emails */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
         className="bg-card p-6 rounded-xl border border-border"
       >
         <div className="flex items-center gap-3 mb-6">
@@ -453,7 +333,7 @@ export default function AdminSettings() {
           <div>
             <h2 className="font-display text-lg font-semibold">Admin Notification Emails</h2>
             <p className="text-sm text-muted-foreground font-elegant">
-              Emails that receive new order notifications
+              Email addresses that receive new order notifications
             </p>
           </div>
         </div>
@@ -462,50 +342,51 @@ export default function AdminSettings() {
           {/* Add new email */}
           <div className="flex gap-2">
             <Input
-              placeholder="Enter admin email..."
+              type="email"
+              placeholder="Enter notification email..."
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAddEmail()}
+              onKeyDown={(e) => e.key === "Enter" && !addingEmail && handleAddEmail()}
+              disabled={addingEmail}
+              className="touch-target"
             />
-            <Button onClick={handleAddEmail}>
+            <Button 
+              onClick={handleAddEmail} 
+              disabled={addingEmail}
+              className="btn-snappy touch-target"
+            >
               <Plus className="w-4 h-4 mr-1" />
-              Add
+              {addingEmail ? "Adding..." : "Add"}
             </Button>
           </div>
 
           {/* Email list */}
           <div className="space-y-2">
-            {adminEmails.map((adminEmail) => (
-              <div
-                key={adminEmail.id}
-                className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
-              >
-                <span className="font-body">{adminEmail.email}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemoveEmail(adminEmail.id)}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            {adminEmails.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No notification emails configured yet
+              </p>
+            ) : (
+              adminEmails.map((adminEmail) => (
+                <div
+                  key={adminEmail.id}
+                  className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
                 >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
+                  <span className="font-body">{adminEmail.email}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveEmail(adminEmail.id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 touch-target"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </motion.div>
-
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button
-          onClick={handleSaveBusinessSettings}
-          disabled={saving}
-          className="font-elegant"
-        >
-          <Save className="w-4 h-4 mr-2" />
-          {saving ? "Saving..." : "Save Settings"}
-        </Button>
-      </div>
     </div>
   );
 }
