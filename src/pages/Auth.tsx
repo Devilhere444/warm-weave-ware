@@ -9,24 +9,42 @@ import { toast } from "sonner";
 
 export default function Auth() {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
+    const checkAdminAndRedirect = async (userId: string) => {
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .maybeSingle();
+      
+      if (data) {
+        navigate("/admin");
+      } else {
+        // User is logged in but not admin - sign them out
+        await supabase.auth.signOut();
+        toast.error("Access denied. Admin privileges required.");
+      }
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (session?.user) {
-          navigate("/admin");
+          setTimeout(() => {
+            checkAdminAndRedirect(session.user.id);
+          }, 0);
         }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        navigate("/admin");
+        checkAdminAndRedirect(session.user.id);
       }
     });
 
@@ -38,27 +56,14 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        toast.success("Welcome back!");
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/admin`,
-          },
-        });
-        if (error) throw error;
-        toast.success("Account created! You can now login.");
-        setIsLogin(true);
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      // Role check happens in onAuthStateChange
     } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      toast.error(error.message || "Invalid credentials");
     } finally {
       setIsLoading(false);
     }
@@ -85,30 +90,6 @@ export default function Auth() {
             <p className="text-muted-foreground font-elegant mt-1">
               Litho Art Press
             </p>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex bg-secondary rounded-lg p-1 mb-6">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 px-4 rounded-md font-elegant text-sm transition-all ${
-                isLogin
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Login
-            </button>
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 px-4 rounded-md font-elegant text-sm transition-all ${
-                !isLogin
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Sign Up
-            </button>
           </div>
 
           {/* Form */}
@@ -160,7 +141,7 @@ export default function Auth() {
               disabled={isLoading}
               className="w-full bg-primary hover:bg-primary/90 font-elegant tracking-wide"
             >
-              {isLoading ? "Please wait..." : isLogin ? "Login" : "Create Account"}
+              {isLoading ? "Please wait..." : "Login"}
             </Button>
           </form>
 
