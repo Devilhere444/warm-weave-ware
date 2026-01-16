@@ -3,6 +3,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog, ChevronLeft, ChevronRight } from "lucide-react";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 
 const timeline = [
   { 
@@ -67,6 +68,7 @@ export default function AboutPage() {
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const timelineItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const haptic = useHapticFeedback();
 
   // Track which timeline item is in view
   useEffect(() => {
@@ -112,7 +114,7 @@ export default function AboutPage() {
     }
   }, [activeIndex]);
 
-  // Swipe handlers for mobile
+  // Swipe handlers for mobile with haptic feedback
   const handleDragEnd = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const swipeThreshold = 50;
     const velocityThreshold = 300;
@@ -121,33 +123,52 @@ export default function AboutPage() {
       // Swiped left - go to next
       if (activeIndex < timeline.length - 1) {
         const nextIndex = activeIndex + 1;
+        haptic.triggerLight();
         setActiveIndex(nextIndex);
         scrollToItem(nextIndex);
+      } else {
+        // At the end - provide feedback
+        haptic.triggerWarning();
       }
     } else if (info.offset.x > swipeThreshold || info.velocity.x > velocityThreshold) {
       // Swiped right - go to previous
       if (activeIndex > 0) {
         const prevIndex = activeIndex - 1;
+        haptic.triggerLight();
         setActiveIndex(prevIndex);
         scrollToItem(prevIndex);
+      } else {
+        // At the beginning - provide feedback
+        haptic.triggerWarning();
       }
     }
-  }, [activeIndex, scrollToItem]);
+  }, [activeIndex, scrollToItem, haptic]);
 
   const goToNext = () => {
     if (activeIndex < timeline.length - 1) {
       const nextIndex = activeIndex + 1;
+      haptic.triggerLight();
       setActiveIndex(nextIndex);
       scrollToItem(nextIndex);
+    } else {
+      haptic.triggerWarning();
     }
   };
 
   const goToPrev = () => {
     if (activeIndex > 0) {
       const prevIndex = activeIndex - 1;
+      haptic.triggerLight();
       setActiveIndex(prevIndex);
       scrollToItem(prevIndex);
+    } else {
+      haptic.triggerWarning();
     }
+  };
+
+  const handleYearClick = (index: number) => {
+    haptic.triggerSelection();
+    scrollToItem(index);
   };
 
   return (
@@ -283,7 +304,7 @@ export default function AboutPage() {
                 {timeline.map((item, index) => (
                   <button
                     key={item.year}
-                    onClick={() => scrollToItem(index)}
+                    onClick={() => handleYearClick(index)}
                     className={`flex-shrink-0 snap-center px-3 py-1.5 rounded-full transition-all duration-200 touch-manipulation ${
                       activeIndex === index 
                         ? 'bg-primary text-primary-foreground shadow-md scale-105' 
@@ -319,7 +340,7 @@ export default function AboutPage() {
                 {timeline.map((item, index) => (
                   <button
                     key={item.year}
-                    onClick={() => scrollToItem(index)}
+                    onClick={() => handleYearClick(index)}
                     className="relative flex-1 group"
                   >
                     <div className="flex flex-col items-center gap-1">
