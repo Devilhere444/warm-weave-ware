@@ -30,7 +30,7 @@ const features = [
 
 export default function About() {
   return (
-    <section className="py-24 bg-background wood-grain-bg">
+    <section className="py-24 bg-marble-pattern">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - Content */}
@@ -52,7 +52,7 @@ export default function About() {
               className="font-display text-4xl md:text-5xl font-bold text-foreground leading-tight"
             >
               A Heritage of
-              <span className="text-gradient-gold block">Printing Excellence</span>
+              <span className="text-gradient-primary block">Printing Excellence</span>
             </motion.h2>
 
             <motion.p

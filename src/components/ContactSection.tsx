@@ -44,7 +44,7 @@ export default function ContactSection() {
               className="font-display text-4xl md:text-5xl font-bold text-foreground"
             >
               Let's Create
-              <span className="text-gradient-gold block">Something Beautiful</span>
+              <span className="text-gradient-primary block">Something Beautiful</span>
             </motion.h2>
 
             <motion.p
