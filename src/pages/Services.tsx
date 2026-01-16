@@ -116,7 +116,7 @@ export default function Services() {
             
             <p className="text-lg text-muted-foreground font-elegant max-w-2xl mx-auto mb-8">
               From books to packaging, we deliver comprehensive printing solutions with 
-              unmatched quality. Trusted by businesses across Bihar since 1965 with over 1 Lakh+ projects completed.
+              unmatched quality. Proudly serving Katihar, nearby Bihar regions, and across all over India since 1965 with over 1 Lakh+ projects completed.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
@@ -273,7 +273,7 @@ export default function Services() {
                 Ready to Start Your Project?
               </h2>
               <p className="text-primary-foreground/80 font-elegant mb-8">
-                Get a free quote today and experience the quality that has made us Bihar's trusted printing partner with 1 Lakh+ successful projects.
+                Get a free quote today and experience the quality that has made us Bihar's trusted printing partner, proudly serving Katihar and across all over India with 1 Lakh+ successful projects.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button 

@@ -128,7 +128,8 @@ export default function About() {
             >
               Founded in 1965 in the heart of Bihar, Litho Art Press has grown
               from a modest printing workshop to one of the region's most
-              respected printing houses. Our commitment to quality,
+              respected printing houses. Proudly serving Katihar and nearby Bihar regions, 
+              and across all over India. Our commitment to quality,
               craftsmanship, and customer satisfaction remains unwavering.
             </motion.p>
 
