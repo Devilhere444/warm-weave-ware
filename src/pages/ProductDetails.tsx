@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useProductOptions } from "@/hooks/useProductOptions";
 
 // Extended product data with specifications
 const productsData: Record<string, {
@@ -298,8 +300,36 @@ export default function ProductDetails() {
   const [selectedPaper, setSelectedPaper] = useState("");
   const [selectedBinding, setSelectedBinding] = useState("");
   const [notes, setNotes] = useState("");
+  const [dbProduct, setDbProduct] = useState<{ id: string } | null>(null);
 
   const product = id ? productsData[id] : null;
+  
+  // Fetch product from DB to get its UUID for options
+  useEffect(() => {
+    const fetchDbProduct = async () => {
+      if (!product) return;
+      
+      const { data } = await supabase
+        .from("products")
+        .select("id")
+        .eq("title", product.title)
+        .maybeSingle();
+      
+      if (data) {
+        setDbProduct(data);
+      }
+    };
+    
+    fetchDbProduct();
+  }, [product?.title]);
+
+  // Fetch custom options from database
+  const { options: dbOptions, loading: optionsLoading } = useProductOptions(dbProduct?.id);
+
+  // Use DB options if available, otherwise fall back to hardcoded options
+  const finishOptions = dbOptions.finishOptions.length > 0 ? dbOptions.finishOptions : product?.finishOptions || [];
+  const paperOptions = dbOptions.paperOptions.length > 0 ? dbOptions.paperOptions : product?.paperOptions || [];
+  const bindingOptions = dbOptions.bindingOptions.length > 0 ? dbOptions.bindingOptions : product?.bindingOptions || [];
 
   // Set initial quantity to min quantity
   useEffect(() => {
@@ -529,41 +559,45 @@ export default function ProductDetails() {
                 </div>
 
                 {/* Finish */}
-                <div className="space-y-2">
-                  <Label className="font-body">Finish Options</Label>
-                  <Select value={selectedFinish} onValueChange={setSelectedFinish}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select finish" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {product.finishOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {finishOptions.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="font-body">Finish Options</Label>
+                    <Select value={selectedFinish} onValueChange={setSelectedFinish}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select finish" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {finishOptions.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Paper */}
-                <div className="space-y-2">
-                  <Label className="font-body">Paper Stock</Label>
-                  <Select value={selectedPaper} onValueChange={setSelectedPaper}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select paper" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {product.paperOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {paperOptions.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="font-body">Paper Stock</Label>
+                    <Select value={selectedPaper} onValueChange={setSelectedPaper}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select paper" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {paperOptions.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Binding (if available) */}
-                {product.bindingOptions && (
+                {bindingOptions.length > 0 && (
                   <div className="space-y-2">
                     <Label className="font-body">Binding Style</Label>
                     <Select value={selectedBinding} onValueChange={setSelectedBinding}>
@@ -571,7 +605,7 @@ export default function ProductDetails() {
                         <SelectValue placeholder="Select binding" />
                       </SelectTrigger>
                       <SelectContent>
-                        {product.bindingOptions.map((option) => (
+                        {bindingOptions.map((option) => (
                           <SelectItem key={option} value={option}>
                             {option}
                           </SelectItem>

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { 
   Plus, Trash2, Mail, Shield, UserPlus, Save, 
   Building, Phone, Globe, MessageCircle, Clock,
-  FileText, Type, Image, Upload, X
+  FileText, Type, Image, Upload, X, Settings2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminProductOptions from "./AdminProductOptions";
 
 interface AdminEmail {
   id: string;
@@ -467,11 +468,17 @@ export default function AdminSettings() {
   return (
     <div className="max-w-4xl">
       <Tabs defaultValue="website" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
+        <TabsList className="grid w-full grid-cols-4 mb-6">
           <TabsTrigger value="website" className="font-elegant">Website</TabsTrigger>
+          <TabsTrigger value="quote-options" className="font-elegant">Quote Options</TabsTrigger>
           <TabsTrigger value="admins" className="font-elegant">Admins</TabsTrigger>
           <TabsTrigger value="notifications" className="font-elegant">Notifications</TabsTrigger>
         </TabsList>
+
+        {/* Quote Options Tab */}
+        <TabsContent value="quote-options">
+          <AdminProductOptions />
+        </TabsContent>
 
         {/* Website Settings */}
         <TabsContent value="website" className="space-y-6">
