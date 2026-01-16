@@ -118,9 +118,8 @@ export default function Hero() {
               </Link>
               <Link to="/contact">
                 <Button
-                  variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto font-display font-medium tracking-wide text-base px-6 md:px-8 border-2 border-white/35 text-white hover:bg-white/15 hover:text-white hover:border-white/50 btn-snappy touch-target"
+                  className="w-full sm:w-auto font-display font-semibold tracking-wide text-base px-6 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg btn-snappy touch-target"
                 >
                   Get a Quote
                 </Button>

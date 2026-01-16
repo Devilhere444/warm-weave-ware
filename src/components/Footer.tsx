@@ -84,6 +84,7 @@ export default function Footer() {
                 { name: "Home", path: "/" },
                 { name: "Products", path: "/products" },
                 { name: "About Us", path: "/about" },
+                { name: "FAQ", path: "/faq" },
                 { name: "Contact", path: "/contact" },
               ].map((link) => (
                 <li key={link.path}>
