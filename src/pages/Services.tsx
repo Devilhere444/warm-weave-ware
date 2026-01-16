@@ -116,7 +116,7 @@ export default function Services() {
             
             <p className="text-lg text-muted-foreground font-elegant max-w-2xl mx-auto mb-8">
               From books to packaging, we deliver comprehensive printing solutions with 
-              unmatched quality. Trusted by businesses across Bihar since 1985.
+              unmatched quality. Trusted by businesses across Bihar since 1965.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
