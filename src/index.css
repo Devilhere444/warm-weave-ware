@@ -301,6 +301,20 @@
     animation-delay: 2s;
   }
 
+  /* Gentle float for cards - GPU accelerated */
+  .animate-gentle-float {
+    animation: gentle-float 4s ease-in-out infinite;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  .animate-gentle-float-alt {
+    animation: gentle-float-alt 5s ease-in-out infinite;
+    animation-delay: 1s;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
   .animate-pulse-slow {
     animation: pulse-slow 4s ease-in-out infinite;
   }
@@ -434,6 +448,25 @@
   }
   50% {
     transform: translateY(-20px) translateZ(0);
+  }
+}
+
+/* Gentle float for cards - subtle and smooth */
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0px) translateZ(0);
+  }
+  50% {
+    transform: translateY(-6px) translateZ(0);
+  }
+}
+
+@keyframes gentle-float-alt {
+  0%, 100% {
+    transform: translateY(0px) translateZ(0);
+  }
+  50% {
+    transform: translateY(-4px) translateZ(0);
   }
 }
 
