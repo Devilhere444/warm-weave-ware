@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Edit2, MoreVertical, Plus, Trash2, Star, Upload, X, Image as ImageIcon } from "lucide-react";
+import { Edit2, MoreVertical, Plus, Trash2, Star, Upload, X, Image as ImageIcon, Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -53,9 +54,12 @@ export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageTab, setImageTab] = useState<"upload" | "url">("upload");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -199,6 +203,64 @@ export default function AdminProducts() {
     setImagePreview(url);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `products/${fileName}`;
+
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, image_url: publicUrl });
+      setImagePreview(publicUrl);
+      toast.success("Image uploaded successfully");
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload image: " + error.message);
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData({ ...formData, image_url: "" });
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -235,14 +297,21 @@ export default function AdminProducts() {
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-            {/* Image Preview */}
+            {/* Image Section */}
             <div className="space-y-3">
               <Label className="text-sm font-elegant text-foreground">
                 Product Image
               </Label>
+              
               <div className="flex gap-4">
-                <div className="w-32 h-32 bg-muted rounded-xl border-2 border-dashed border-border flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {imagePreview ? (
+                {/* Image Preview */}
+                <div className="w-32 h-32 bg-muted rounded-xl border-2 border-dashed border-border flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+                  {uploading ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs text-muted-foreground">Uploading...</span>
+                    </div>
+                  ) : imagePreview ? (
                     <img
                       src={imagePreview}
                       alt="Preview"
@@ -253,26 +322,65 @@ export default function AdminProducts() {
                     <ImageIcon className="w-8 h-8 text-muted-foreground" />
                   )}
                 </div>
-                <div className="flex-1 space-y-2">
-                  <Input
-                    value={formData.image_url}
-                    onChange={(e) => handleImageUrlChange(e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                    className="font-body"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Enter an image URL. The image will be displayed as a preview.
-                  </p>
+                
+                {/* Upload/URL Tabs */}
+                <div className="flex-1">
+                  <Tabs value={imageTab} onValueChange={(v) => setImageTab(v as "upload" | "url")}>
+                    <TabsList className="grid w-full grid-cols-2 mb-3">
+                      <TabsTrigger value="upload" className="gap-2">
+                        <Upload className="w-4 h-4" />
+                        Upload
+                      </TabsTrigger>
+                      <TabsTrigger value="url" className="gap-2">
+                        <Link className="w-4 h-4" />
+                        URL
+                      </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="upload" className="space-y-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                        id="product-image-upload"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        {uploading ? "Uploading..." : "Choose Image"}
+                      </Button>
+                      <p className="text-xs text-muted-foreground">
+                        Max file size: 5MB. Supported: JPG, PNG, WebP, GIF
+                      </p>
+                    </TabsContent>
+                    
+                    <TabsContent value="url" className="space-y-2">
+                      <Input
+                        value={formData.image_url}
+                        onChange={(e) => handleImageUrlChange(e.target.value)}
+                        placeholder="https://example.com/image.jpg"
+                        className="font-body"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Enter an image URL from an external source.
+                      </p>
+                    </TabsContent>
+                  </Tabs>
+                  
                   {imagePreview && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => {
-                        setFormData({ ...formData, image_url: "" });
-                        setImagePreview(null);
-                      }}
-                      className="text-destructive hover:text-destructive"
+                      onClick={handleRemoveImage}
+                      className="text-destructive hover:text-destructive mt-2"
                     >
                       <X className="w-4 h-4 mr-1" />
                       Remove Image
