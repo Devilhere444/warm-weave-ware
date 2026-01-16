@@ -14,11 +14,24 @@ interface ProductOptions {
   bindingOptions: string[];
 }
 
+interface ProductSettings {
+  minQuantity: number;
+  maxQuantity: number | null;
+  leadTime: string;
+  priceRange: string;
+}
+
 export function useProductOptions(productId: string | undefined) {
   const [options, setOptions] = useState<ProductOptions>({
     finishOptions: [],
     paperOptions: [],
     bindingOptions: [],
+  });
+  const [settings, setSettings] = useState<ProductSettings>({
+    minQuantity: 1,
+    maxQuantity: null,
+    leadTime: "",
+    priceRange: "",
   });
   const [loading, setLoading] = useState(true);
 
@@ -30,6 +43,23 @@ export function useProductOptions(productId: string | undefined) {
 
     const fetchOptions = async () => {
       try {
+        // Fetch product settings
+        const { data: productData } = await supabase
+          .from("products")
+          .select("min_quantity, max_quantity, lead_time, price_range")
+          .eq("id", productId)
+          .maybeSingle();
+
+        if (productData) {
+          setSettings({
+            minQuantity: productData.min_quantity || 1,
+            maxQuantity: productData.max_quantity || null,
+            leadTime: productData.lead_time || "",
+            priceRange: productData.price_range || "",
+          });
+        }
+
+        // Fetch customization options
         const { data, error } = await supabase
           .from("product_options")
           .select("*")
@@ -74,5 +104,5 @@ export function useProductOptions(productId: string | undefined) {
     fetchOptions();
   }, [productId]);
 
-  return { options, loading };
+  return { options, settings, loading };
 }

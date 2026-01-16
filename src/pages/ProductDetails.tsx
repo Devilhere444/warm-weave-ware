@@ -324,19 +324,22 @@ export default function ProductDetails() {
   }, [product?.title]);
 
   // Fetch custom options from database
-  const { options: dbOptions, loading: optionsLoading } = useProductOptions(dbProduct?.id);
+  const { options: dbOptions, settings: dbSettings, loading: optionsLoading } = useProductOptions(dbProduct?.id);
 
   // Use DB options if available, otherwise fall back to hardcoded options
   const finishOptions = dbOptions.finishOptions.length > 0 ? dbOptions.finishOptions : product?.finishOptions || [];
   const paperOptions = dbOptions.paperOptions.length > 0 ? dbOptions.paperOptions : product?.paperOptions || [];
   const bindingOptions = dbOptions.bindingOptions.length > 0 ? dbOptions.bindingOptions : product?.bindingOptions || [];
 
+  // Use DB settings if available, otherwise fall back to hardcoded values
+  const minQuantity = dbSettings.minQuantity > 1 ? dbSettings.minQuantity : product?.minQuantity || 1;
+  const leadTime = dbSettings.leadTime || product?.leadTime || "";
+  const priceRange = dbSettings.priceRange || product?.priceRange || "";
+
   // Set initial quantity to min quantity
   useEffect(() => {
-    if (product) {
-      setQuantity(product.minQuantity);
-    }
-  }, [product]);
+    setQuantity(minQuantity);
+  }, [minQuantity]);
 
   if (!product) {
     return (
@@ -358,7 +361,7 @@ export default function ProductDetails() {
   }
 
   const handleQuantityChange = (delta: number) => {
-    const newQty = Math.max(product.minQuantity, quantity + delta);
+    const newQty = Math.max(minQuantity, quantity + delta);
     setQuantity(newQty);
   };
 
@@ -478,17 +481,17 @@ export default function ProductDetails() {
               <div className="flex flex-wrap items-center gap-6 p-6 bg-secondary/50 rounded-2xl">
                 <div>
                   <p className="text-sm text-muted-foreground font-body">Starting Price</p>
-                  <p className="font-display text-2xl font-bold text-primary">{product.priceRange}</p>
+                  <p className="font-display text-2xl font-bold text-primary">{priceRange || product.priceRange}</p>
                 </div>
                 <div className="w-px h-12 bg-border hidden md:block" />
                 <div>
                   <p className="text-sm text-muted-foreground font-body">Lead Time</p>
-                  <p className="font-display text-xl font-semibold text-foreground">{product.leadTime}</p>
+                  <p className="font-display text-xl font-semibold text-foreground">{leadTime || product.leadTime}</p>
                 </div>
                 <div className="w-px h-12 bg-border hidden md:block" />
                 <div>
                   <p className="text-sm text-muted-foreground font-body">Min. Order</p>
-                  <p className="font-display text-xl font-semibold text-foreground">{product.minQuantity} units</p>
+                  <p className="font-display text-xl font-semibold text-foreground">{minQuantity} units</p>
                 </div>
               </div>
 
@@ -529,23 +532,23 @@ export default function ProductDetails() {
                 
                 {/* Quantity */}
                 <div className="space-y-2">
-                  <Label className="font-body">Quantity (Min: {product.minQuantity})</Label>
+                  <Label className="font-body">Quantity (Min: {minQuantity})</Label>
                   <div className="flex items-center gap-4">
                     <Button
                       type="button"
                       variant="outline"
                       size="icon"
                       onClick={() => handleQuantityChange(-10)}
-                      disabled={quantity <= product.minQuantity}
+                      disabled={quantity <= minQuantity}
                     >
                       <Minus className="w-4 h-4" />
                     </Button>
                     <Input
                       type="number"
                       value={quantity}
-                      onChange={(e) => setQuantity(Math.max(product.minQuantity, parseInt(e.target.value) || product.minQuantity))}
+                      onChange={(e) => setQuantity(Math.max(minQuantity, parseInt(e.target.value) || minQuantity))}
                       className="w-24 text-center font-display text-lg"
-                      min={product.minQuantity}
+                      min={minQuantity}
                     />
                     <Button
                       type="button"

@@ -146,7 +146,11 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean | null
+          lead_time: string | null
+          max_quantity: number | null
+          min_quantity: number | null
           price: number | null
+          price_range: string | null
           title: string
           updated_at: string
         }
@@ -157,7 +161,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          lead_time?: string | null
+          max_quantity?: number | null
+          min_quantity?: number | null
           price?: number | null
+          price_range?: string | null
           title: string
           updated_at?: string
         }
@@ -168,7 +176,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          lead_time?: string | null
+          max_quantity?: number | null
+          min_quantity?: number | null
           price?: number | null
+          price_range?: string | null
           title?: string
           updated_at?: string
         }
