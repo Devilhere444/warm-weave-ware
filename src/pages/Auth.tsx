@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail, User, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,9 @@ import { toast } from "sonner";
 
 export default function Auth() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isAdminMode = searchParams.get("admin") === "true";
+  
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -19,26 +22,34 @@ export default function Auth() {
   useEffect(() => {
     let isMounted = true;
 
-    const checkAdminAndRedirect = async (userId: string) => {
+    const checkSessionAndRedirect = async (userId: string) => {
       try {
-        const { data } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', userId)
-          .eq('role', 'admin')
-          .maybeSingle();
-        
-        if (!isMounted) return;
+        if (isAdminMode) {
+          // Check if user has admin role
+          const { data } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', userId)
+            .eq('role', 'admin')
+            .maybeSingle();
+          
+          if (!isMounted) return;
 
-        if (data) {
-          navigate("/admin", { replace: true });
+          if (data) {
+            navigate("/admin", { replace: true });
+          } else {
+            // User is logged in but not admin - sign them out for admin mode
+            await supabase.auth.signOut();
+            toast.error("Access denied. Admin privileges required.");
+          }
         } else {
-          // User is logged in but not admin - sign them out
-          await supabase.auth.signOut();
-          toast.error("Access denied. Admin privileges required.");
+          // Normal user flow - redirect to home
+          if (isMounted) {
+            navigate("/", { replace: true });
+          }
         }
       } catch (error) {
-        console.error("Error checking admin role:", error);
+        console.error("Error checking session:", error);
       } finally {
         if (isMounted) {
           setIsCheckingAuth(false);
@@ -51,20 +62,19 @@ export default function Auth() {
       if (!isMounted) return;
       
       if (session?.user) {
-        checkAdminAndRedirect(session.user.id);
+        checkSessionAndRedirect(session.user.id);
       } else {
         setIsCheckingAuth(false);
       }
     });
 
-    // Listen for auth changes (but don't trigger on initial load)
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (!isMounted) return;
         
-        // Only handle sign-in events, not initial session
         if (event === 'SIGNED_IN' && session?.user) {
-          checkAdminAndRedirect(session.user.id);
+          checkSessionAndRedirect(session.user.id);
         } else if (event === 'SIGNED_OUT') {
           setIsCheckingAuth(false);
         }
@@ -75,7 +85,7 @@ export default function Auth() {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, isAdminMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +97,7 @@ export default function Auth() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth`,
+            emailRedirectTo: `${window.location.origin}${isAdminMode ? '/auth?admin=true' : '/'}`,
           },
         });
         if (error) throw error;
@@ -150,10 +160,14 @@ export default function Auth() {
               )}
             </div>
             <h1 className="font-display text-2xl font-bold text-foreground">
-              {isSignUp ? "Create Account" : "Welcome Back"}
+              {isSignUp ? "Create Account" : isAdminMode ? "Admin Login" : "Welcome Back"}
             </h1>
             <p className="text-muted-foreground font-elegant mt-1">
-              {isSignUp ? "Register for an account" : "Sign in to continue"}
+              {isSignUp 
+                ? "Register for an account" 
+                : isAdminMode 
+                  ? "Sign in with admin credentials" 
+                  : "Sign in to continue"}
             </p>
           </div>
 
@@ -210,18 +224,32 @@ export default function Auth() {
             </Button>
           </form>
 
-          <div className="text-center mt-6">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setPassword("");
-              }}
-              className="text-sm text-primary hover:underline font-body"
-            >
-              {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
-            </button>
-          </div>
+          {/* Only show signup toggle for non-admin mode */}
+          {!isAdminMode && (
+            <div className="text-center mt-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  setPassword("");
+                }}
+                className="text-sm text-primary hover:underline font-body"
+              >
+                {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+              </button>
+            </div>
+          )}
+
+          {isAdminMode && (
+            <div className="text-center mt-6">
+              <a
+                href="/auth"
+                className="text-sm text-muted-foreground hover:text-primary font-body"
+              >
+                Not an admin? Go to regular login
+              </a>
+            </div>
+          )}
         </div>
       </motion.div>
     </div>

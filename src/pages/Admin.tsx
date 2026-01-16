@@ -50,7 +50,7 @@ export default function Admin() {
       if (error || !data) {
         toast.error("Access denied. Admin privileges required.");
         await supabase.auth.signOut();
-        navigate("/auth");
+        navigate("/auth?admin=true");
         return false;
       }
       return true;
@@ -61,7 +61,7 @@ export default function Admin() {
         setUser(session?.user ?? null);
         if (!session?.user) {
           setLoading(false);
-          navigate("/auth");
+          navigate("/auth?admin=true");
         } else {
           // Defer Supabase call to prevent deadlock
           setTimeout(() => {
@@ -78,7 +78,7 @@ export default function Admin() {
       setUser(session?.user ?? null);
       if (!session?.user) {
         setLoading(false);
-        navigate("/auth");
+        navigate("/auth?admin=true");
       } else {
         checkAdminRole(session.user.id).then((hasAccess) => {
           setIsAdmin(hasAccess);
