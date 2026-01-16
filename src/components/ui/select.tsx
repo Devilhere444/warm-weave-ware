@@ -16,6 +16,7 @@ const SelectTrigger = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
+    type="button"
     className={cn(
       "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
       className,
@@ -58,11 +59,16 @@ const SelectScrollDownButton = React.forwardRef<
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
 
+type SelectContentProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & {
+  /** Render dropdown content in a portal (default) or inline (fixes scroll/position issues in some layouts). */
+  portalled?: boolean;
+};
+
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
-  <SelectPrimitive.Portal>
+  SelectContentProps
+>(({ className, children, position = "popper", portalled = true, ...props }, ref) => {
+  const content = (
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
@@ -75,12 +81,16 @@ const SelectContent = React.forwardRef<
       avoidCollisions={true}
       sideOffset={4}
       align="start"
+      onCloseAutoFocus={(event) => {
+        props.onCloseAutoFocus?.(event);
+        if (!event.defaultPrevented) event.preventDefault();
+      }}
       {...props}
     >
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
-          "p-1",
+          "p-1 pointer-events-auto",
           position === "popper" &&
             "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
         )}
@@ -89,8 +99,10 @@ const SelectContent = React.forwardRef<
       </SelectPrimitive.Viewport>
       <SelectScrollDownButton />
     </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-));
+  );
+
+  return portalled ? <SelectPrimitive.Portal>{content}</SelectPrimitive.Portal> : content;
+});
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<
