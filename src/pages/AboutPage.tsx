@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog } from "lucide-react";
@@ -62,6 +63,41 @@ const values = [
 ];
 
 export default function AboutPage() {
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const timelineItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Track which timeline item is in view
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    
+    timelineItemRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setActiveIndex(index);
+              }
+            });
+          },
+          { threshold: 0.5, rootMargin: "-20% 0px -40% 0px" }
+        );
+        observer.observe(ref);
+        observers.push(observer);
+      }
+    });
+
+    return () => observers.forEach((obs) => obs.disconnect());
+  }, []);
+
+  const scrollToItem = (index: number) => {
+    timelineItemRefs.current[index]?.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'center' 
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -104,7 +140,7 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline */}
-      <section className="py-20">
+      <section className="py-20 relative">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -120,7 +156,68 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          <div className="relative">
+          {/* Sticky Timeline Navigation */}
+          <div className="hidden lg:block sticky top-24 z-20 mb-12">
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-4 shadow-lg max-w-4xl mx-auto"
+            >
+              <div className="flex items-center justify-between gap-2">
+                {timeline.map((item, index) => (
+                  <button
+                    key={item.year}
+                    onClick={() => scrollToItem(index)}
+                    className="relative flex-1 group"
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <motion.div
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          activeIndex === index 
+                            ? 'bg-primary scale-125' 
+                            : 'bg-muted-foreground/30 group-hover:bg-primary/50'
+                        }`}
+                        layoutId="timeline-dot"
+                      />
+                      <span className={`text-xs font-display font-semibold transition-colors duration-300 ${
+                        activeIndex === index ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                      }`}>
+                        {item.year}
+                      </span>
+                      <span className={`text-[10px] font-body transition-all duration-300 ${
+                        activeIndex === index 
+                          ? 'text-foreground opacity-100' 
+                          : 'text-muted-foreground opacity-0 group-hover:opacity-70'
+                      }`}>
+                        {item.title}
+                      </span>
+                    </div>
+                    
+                    {/* Active indicator line */}
+                    {activeIndex === index && (
+                      <motion.div
+                        layoutId="active-indicator"
+                        className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-full"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Progress bar */}
+              <div className="mt-4 h-1 bg-muted rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${((activeIndex + 1) / timeline.length) * 100}%` }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="relative" ref={timelineRef}>
             {/* Timeline Line */}
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-border hidden lg:block" />
 
@@ -128,6 +225,7 @@ export default function AboutPage() {
               {timeline.map((item, index) => (
                 <motion.div
                   key={item.year}
+                  ref={(el) => (timelineItemRefs.current[index] = el)}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
