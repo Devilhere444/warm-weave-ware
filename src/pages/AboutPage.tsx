@@ -4,11 +4,14 @@ import Footer from "@/components/Footer";
 import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog } from "lucide-react";
 
 const timeline = [
-  { year: "1965", title: "Foundation", description: "Litho Art Press was established in Patna, Bihar with a vision to bring premium printing to the region." },
+  { year: "1965", title: "Foundation", description: "Litho Art Press was established in Katihar, Bihar with a vision to bring premium printing to the region." },
   { year: "1975", title: "Expansion", description: "Expanded operations with new machinery and doubled our production capacity." },
-  { year: "1985", title: "ISO Certification", description: "Achieved ISO 9001 certification for quality management systems." },
+  { year: "1985", title: "Regional Growth", description: "Extended our services across nearby Bihar regions, building strong partnerships with local businesses." },
+  { year: "1995", title: "Quality Excellence", description: "Implemented rigorous quality control systems and earned recognition for outstanding print quality." },
   { year: "2005", title: "Digital Integration", description: "Integrated cutting-edge digital printing technology while preserving traditional techniques." },
-  { year: "2023", title: "Industry Leader", description: "Recognized as one of Bihar's leading printing presses with nationwide clientele." },
+  { year: "2015", title: "Nationwide Reach", description: "Expanded delivery network to serve customers across all of India with reliable shipping." },
+  { year: "2020", title: "1 Lakh+ Milestone", description: "Celebrated the milestone of completing over 1 Lakh printing projects for our valued customers." },
+  { year: "2024", title: "Industry Leader", description: "Recognized as one of Bihar's leading printing presses with nationwide clientele and 61+ years of excellence." },
 ];
 
 const values = [
