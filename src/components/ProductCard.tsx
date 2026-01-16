@@ -27,48 +27,45 @@ export default function ProductCard({
       transition={{ duration: 0.4, delay: index * 0.08, ease: [0.34, 1.56, 0.64, 1] }}
     >
       <Link to={`/products/${id}`} className="group block">
-        <div className="relative overflow-hidden rounded-2xl bg-card border border-border shadow-sm gpu-accelerated transition-all duration-200 ease-out hover:shadow-xl hover:border-primary/30 hover:-translate-y-2 active:scale-[0.98]">
+        <div className="relative overflow-hidden rounded-2xl bg-card border border-border shadow-sm card-snappy gpu-accelerated hover:shadow-xl hover:border-primary/20">
           {/* Image Container */}
           <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
             <img
               src={image}
               alt={title}
               loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-
-            {/* Shimmer Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
             {/* Category Badge */}
-            <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/95 backdrop-blur-md rounded-full shadow-sm transition-transform duration-200 group-hover:scale-105">
-              <span className="text-xs font-display-semibold text-primary tracking-wide uppercase">
+            <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-full">
+              <span className="text-xs font-display font-semibold text-primary tracking-wide">
                 {category}
               </span>
             </div>
 
             {/* Floating Arrow */}
-            <div className="absolute bottom-4 right-4 w-11 h-11 md:w-12 md:h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out translate-y-4 group-hover:translate-y-0 shadow-lg touch-target">
-              <ArrowUpRight className="w-5 h-5 transition-transform duration-200 group-hover:rotate-45" />
+            <div className="absolute bottom-4 right-4 w-11 h-11 md:w-12 md:h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-4 group-hover:translate-y-0 shadow-lg touch-target">
+              <ArrowUpRight className="w-5 h-5" />
             </div>
           </div>
 
           {/* Content */}
           <div className="p-5 md:p-6 space-y-2 md:space-y-3">
-            <h3 className="font-display-semibold text-lg md:text-xl text-foreground group-hover:text-primary transition-colors duration-200">
+            <h3 className="font-display text-lg md:text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-200">
               {title}
             </h3>
-            <p className="text-sm text-muted-foreground font-body-regular leading-relaxed line-clamp-2">
+            <p className="text-sm text-muted-foreground font-body leading-relaxed line-clamp-2">
               {description}
             </p>
             
             {/* Read More Link */}
-            <div className="flex items-center gap-2 text-primary font-body-medium text-sm pt-1 md:pt-2 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
+            <div className="flex items-center gap-2 text-primary font-body text-sm font-medium pt-1 md:pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <span>Learn more</span>
-              <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <ArrowUpRight className="w-4 h-4" />
             </div>
           </div>
 
