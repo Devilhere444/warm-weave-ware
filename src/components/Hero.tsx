@@ -34,30 +34,30 @@ export default function Hero() {
       {/* Animated Background with Parallax - GPU Accelerated */}
       <motion.div style={{ y }} className="absolute inset-0 bg-hero-gradient gpu-accelerated" />
       
-      {/* Static Sand Dunes Effect - Better performance */}
+      {/* Wave Pattern Effect - Blue theme */}
       <div className="absolute inset-0 gpu-accelerated">
         <svg className="absolute bottom-0 w-full h-[40%] opacity-20" viewBox="0 0 1440 400" preserveAspectRatio="none">
           <path
             d="M0,400 C360,300 720,350 1080,280 C1260,240 1380,300 1440,280 L1440,400 L0,400 Z"
-            fill="hsl(38 40% 75%)"
+            fill="hsl(217 70% 65%)"
           />
         </svg>
         <svg className="absolute bottom-0 w-full h-[30%] opacity-15" viewBox="0 0 1440 300" preserveAspectRatio="none">
           <path
             d="M0,300 C480,200 960,250 1440,180 L1440,300 L0,300 Z"
-            fill="hsl(35 35% 70%)"
+            fill="hsl(217 60% 55%)"
           />
         </svg>
       </div>
 
-      {/* Simplified Orbs - CSS animations for better performance */}
-      <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/40 to-transparent blur-[100px] opacity-30 gpu-accelerated animate-pulse-slow" />
-      <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/30 to-transparent blur-[120px] opacity-25 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      {/* Animated Orbs - Primary Blue and Accent Green */}
+      <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/50 to-transparent blur-[100px] opacity-40 gpu-accelerated animate-pulse-slow" />
+      <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/40 to-transparent blur-[120px] opacity-35 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
 
       {/* Floating Geometric Shapes - CSS animations */}
-      <div className="hidden md:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/25 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
-      <div className="hidden md:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-white/20 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
-      <div className="hidden lg:block absolute top-1/3 right-[8%] w-14 h-14 bg-white/15 rounded-xl rotate-45 backdrop-blur-sm gpu-accelerated animate-float" style={{ animationDelay: '1s' }} />
+      <div className="hidden md:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/30 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
+      <div className="hidden md:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-accent/40 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
+      <div className="hidden lg:block absolute top-1/3 right-[8%] w-14 h-14 bg-accent/20 rounded-xl rotate-45 backdrop-blur-sm gpu-accelerated animate-float" style={{ animationDelay: '1s' }} />
 
       <motion.div 
         style={{ opacity, scale }} 
@@ -87,7 +87,7 @@ export default function Hero() {
               className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1]"
             >
               {firstPart}
-              <span className="block mt-2 lg:mt-3 text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-foreground to-orange-200">
+              <span className="block mt-2 lg:mt-3 text-transparent bg-clip-text bg-gradient-to-r from-white via-accent to-emerald-200">
                 {secondPart}
               </span>
             </motion.h1>
@@ -165,10 +165,10 @@ export default function Hero() {
               <div className="relative z-20 bg-white/12 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border border-white/25 shadow-2xl gpu-accelerated animate-float">
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { icon: BookOpen, label: "Book Printing", desc: "Premium quality books", color: "from-orange-400/20 to-orange-600/20" },
-                    { icon: Package, label: "Packaging", desc: "Custom solutions", color: "from-amber-400/20 to-amber-600/20" },
-                    { icon: FileText, label: "Commercial", desc: "Business materials", color: "from-red-400/20 to-red-600/20" },
-                    { icon: Sparkles, label: "Specialty", desc: "Unique finishes", color: "from-yellow-400/20 to-yellow-600/20" },
+                    { icon: BookOpen, label: "Book Printing", desc: "Premium quality books", color: "from-primary/30 to-primary/10" },
+                    { icon: Package, label: "Packaging", desc: "Custom solutions", color: "from-accent/30 to-accent/10" },
+                    { icon: FileText, label: "Commercial", desc: "Business materials", color: "from-sky-400/20 to-sky-600/20" },
+                    { icon: Sparkles, label: "Specialty", desc: "Unique finishes", color: "from-emerald-400/20 to-emerald-600/20" },
                   ].map((item, index) => (
                     <div
                       key={index}
@@ -190,14 +190,14 @@ export default function Hero() {
 
               {/* Floating Award Badge */}
               <div className="absolute -top-4 -right-4 z-30 gpu-accelerated animate-float-delayed">
-                <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-accent text-white px-5 py-2.5 rounded-2xl shadow-xl">
+                <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground px-5 py-2.5 rounded-2xl shadow-xl">
                   <Award className="w-5 h-5" />
                   <span className="text-sm font-display font-semibold">ISO Certified</span>
                 </div>
               </div>
 
               {/* Decorative Elements */}
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-accent/25 rounded-full blur-3xl gpu-accelerated animate-pulse-slow" />
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-accent/30 rounded-full blur-3xl gpu-accelerated animate-pulse-slow" />
               <div className="absolute -top-10 -left-10 w-28 h-28 border-2 border-white/15 rounded-full gpu-accelerated" />
             </div>
           </motion.div>
@@ -209,7 +209,7 @@ export default function Hero() {
         <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
           <path 
             d="M0 120L60 105C120 90 240 75 360 70C480 65 600 70 720 78C840 86 960 96 1080 98C1200 100 1320 94 1380 91L1440 88V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
-            fill="hsl(35 30% 96%)"
+            fill="hsl(var(--background))"
           />
         </svg>
       </div>
