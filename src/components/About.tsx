@@ -192,17 +192,6 @@ export default function About() {
             className="relative"
           >
             <div className="relative">
-              {/* Animated Floating Frame */}
-              <motion.div
-                className="absolute -inset-4 rounded-3xl border-2 border-primary/20"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div
-                className="absolute -inset-8 rounded-3xl border border-accent/15"
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              />
               
               {/* Glowing Orbs */}
               <motion.div
