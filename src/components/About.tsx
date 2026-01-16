@@ -264,15 +264,17 @@ export default function About() {
                 />
               </motion.div>
 
-              {/* Floating Stats Cards - CSS animations for smooth performance */}
+              {/* Floating Stats Cards - Optimized for performance */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: -20 }}
                 whileInView={{ opacity: 1, scale: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.4 }}
-                className="absolute -bottom-6 -left-6 p-5 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer animate-gentle-float hover:scale-105 hover:-translate-y-2 transition-transform duration-100 ease-out"
+                className="absolute -bottom-6 -left-6 p-5 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer transition-transform duration-100 ease-out hover:scale-105 hover:-translate-y-1"
                 style={{
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  willChange: 'transform',
+                  transform: 'translateZ(0)'
                 }}
               >
                 <div className="flex items-center gap-4">
@@ -297,15 +299,17 @@ export default function About() {
                 </div>
               </motion.div>
 
-              {/* Second Floating Card - CSS animations for smooth performance */}
+              {/* Second Floating Card - Optimized for performance */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8, x: 20 }}
                 whileInView={{ opacity: 1, scale: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.7, duration: 0.4 }}
-                className="absolute -top-4 -right-4 p-4 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer animate-gentle-float-alt hover:scale-105 hover:-translate-y-2 transition-transform duration-100 ease-out"
+                className="absolute -top-4 -right-4 p-4 rounded-xl shadow-2xl backdrop-blur-xl bg-card/80 border border-white/20 dark:border-white/10 cursor-pointer transition-transform duration-100 ease-out hover:scale-105 hover:-translate-y-1"
                 style={{
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  willChange: 'transform',
+                  transform: 'translateZ(0)'
                 }}
               >
                 <div className="flex items-center gap-3">
