@@ -21,6 +21,49 @@ interface QuoteNotificationRequest {
   }>;
 }
 
+// HTML escape function to prevent XSS attacks
+function escapeHtml(text: string): string {
+  if (!text) return "";
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return String(text).replace(/[&<>"']/g, (m) => map[m]);
+}
+
+// Input validation
+function validateInput(data: QuoteNotificationRequest): string | null {
+  if (!data.quoteId || typeof data.quoteId !== 'string') {
+    return 'Invalid quoteId';
+  }
+  if (!data.customerName || typeof data.customerName !== 'string' || data.customerName.length > 200) {
+    return 'Invalid customerName (max 200 characters)';
+  }
+  if (!data.customerEmail || typeof data.customerEmail !== 'string' || data.customerEmail.length > 255) {
+    return 'Invalid customerEmail (max 255 characters)';
+  }
+  // Basic email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(data.customerEmail)) {
+    return 'Invalid email format';
+  }
+  if (!Array.isArray(data.items) || data.items.length === 0) {
+    return 'Items array is required';
+  }
+  for (const item of data.items) {
+    if (!item.title || typeof item.title !== 'string' || item.title.length > 500) {
+      return 'Invalid item title (max 500 characters)';
+    }
+    if (typeof item.quantity !== 'number' || item.quantity < 1) {
+      return 'Invalid item quantity';
+    }
+  }
+  return null;
+}
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -28,15 +71,85 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { quoteId, customerName, customerEmail, items }: QuoteNotificationRequest = 
-      await req.json();
+    // Authentication check - verify the request has a valid JWT
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      console.error("Missing or invalid Authorization header");
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Create Supabase client with user's auth token for verification
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    
+    // Use anon key with user's token to verify authentication
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Verify the user's token is valid
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !user) {
+      console.error("Authentication failed:", authError?.message || "No user found");
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    console.log("Authenticated user:", user.id);
+
+    const requestData: QuoteNotificationRequest = await req.json();
+    
+    // Validate input data
+    const validationError = validateInput(requestData);
+    if (validationError) {
+      console.error("Validation error:", validationError);
+      return new Response(
+        JSON.stringify({ error: validationError }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const { quoteId, customerName, customerEmail, items } = requestData;
+
+    // Use service role client for admin operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Verify the quote exists and belongs to this user (or user is admin)
+    const { data: quote, error: quoteError } = await supabase
+      .from('quote_requests')
+      .select('id, user_id, email')
+      .eq('id', quoteId)
+      .single();
+
+    if (quoteError || !quote) {
+      console.error("Quote not found:", quoteError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Quote not found' }),
+        { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Check if user owns the quote or is an admin
+    const { data: isAdmin } = await supabase.rpc('has_role', { 
+      _user_id: user.id, 
+      _role: 'admin' 
+    });
+
+    if (quote.user_id !== user.id && !isAdmin) {
+      console.error("User does not own this quote and is not admin");
+      return new Response(
+        JSON.stringify({ error: 'Forbidden' }),
+        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     console.log("Processing quote notification for:", quoteId);
-
-    // Create Supabase client to fetch admin emails
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Fetch admin emails
     const { data: adminEmails, error: adminError } = await supabase
@@ -49,25 +162,30 @@ const handler = async (req: Request): Promise<Response> => {
 
     const adminEmailList = adminEmails?.map((a: { email: string }) => a.email) || ["admin@lithoartpress.com"];
 
-    // Build items HTML
+    // Build items HTML with escaped values to prevent XSS
     const itemsHtml = items
       .map(
         (item) => `
         <tr>
           <td style="padding: 12px; border-bottom: 1px solid #eee;">
-            <strong>${item.title}</strong><br>
+            <strong>${escapeHtml(item.title)}</strong><br>
             <span style="color: #666; font-size: 14px;">
-              ${item.finish ? `Finish: ${item.finish}` : ""} 
-              ${item.paper ? `| Paper: ${item.paper}` : ""}
+              ${item.finish ? `Finish: ${escapeHtml(item.finish)}` : ""} 
+              ${item.paper ? `| Paper: ${escapeHtml(item.paper)}` : ""}
             </span>
           </td>
           <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">
-            ${item.quantity}
+            ${Number(item.quantity)}
           </td>
         </tr>
       `
       )
       .join("");
+
+    // Escape all user-provided values
+    const safeCustomerName = escapeHtml(customerName);
+    const safeCustomerEmail = escapeHtml(customerEmail);
+    const safeQuoteIdShort = escapeHtml(quoteId.slice(0, 8));
 
     const adminEmailHtml = `
       <!DOCTYPE html>
@@ -80,13 +198,13 @@ const handler = async (req: Request): Promise<Response> => {
         <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
           <div style="background: linear-gradient(135deg, #C4846C, #D4A574); padding: 30px; border-radius: 16px 16px 0 0; text-align: center;">
             <h1 style="color: white; margin: 0; font-size: 24px;">New Quote Request</h1>
-            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0;">Quote ID: ${quoteId.slice(0, 8)}...</p>
+            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0;">Quote ID: ${safeQuoteIdShort}...</p>
           </div>
           
           <div style="background: white; padding: 30px; border-radius: 0 0 16px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
             <h2 style="color: #333; margin-top: 0;">Customer Details</h2>
-            <p style="color: #666; margin: 8px 0;"><strong>Name:</strong> ${customerName}</p>
-            <p style="color: #666; margin: 8px 0;"><strong>Email:</strong> ${customerEmail}</p>
+            <p style="color: #666; margin: 8px 0;"><strong>Name:</strong> ${safeCustomerName}</p>
+            <p style="color: #666; margin: 8px 0;"><strong>Email:</strong> ${safeCustomerEmail}</p>
             
             <h2 style="color: #333; margin-top: 30px;">Requested Items</h2>
             <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
@@ -124,7 +242,7 @@ const handler = async (req: Request): Promise<Response> => {
       <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f5f0;">
         <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
           <div style="background: linear-gradient(135deg, #C4846C, #D4A574); padding: 30px; border-radius: 16px 16px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">Thank You, ${customerName}!</h1>
+            <h1 style="color: white; margin: 0; font-size: 24px;">Thank You, ${safeCustomerName}!</h1>
             <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0;">Your quote request has been received</p>
           </div>
           
@@ -149,7 +267,7 @@ const handler = async (req: Request): Promise<Response> => {
             
             <div style="margin-top: 30px; padding: 20px; background-color: #f9f5f0; border-radius: 8px;">
               <p style="color: #666; margin: 0; line-height: 1.6;">
-                <strong>Reference:</strong> ${quoteId.slice(0, 8)}<br>
+                <strong>Reference:</strong> ${safeQuoteIdShort}<br>
                 If you have any questions, feel free to reply to this email.
               </p>
             </div>
@@ -173,7 +291,7 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         from: "Litho Art Press <onboarding@resend.dev>",
         to: adminEmailList,
-        subject: `New Quote Request from ${customerName}`,
+        subject: `New Quote Request from ${safeCustomerName}`,
         html: adminEmailHtml,
       }),
     });
@@ -209,7 +327,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in send-quote-notification:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "An error occurred processing your request" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
