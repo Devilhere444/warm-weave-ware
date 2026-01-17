@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   Package,
+  PlaySquare,
   Plus,
   Settings,
   Users,
@@ -21,10 +22,12 @@ import AdminDashboard from "@/components/admin/AdminDashboard";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminCustomers from "@/components/admin/AdminCustomers";
 import AdminSettings from "@/components/admin/AdminSettings";
+import AdminInvites from "@/components/admin/AdminInvites";
 
 const sidebarLinks = [
   { name: "Dashboard", icon: BarChart3, id: "dashboard" },
   { name: "Products", icon: Package, id: "products" },
+  { name: "Invites", icon: PlaySquare, id: "invites" },
   { name: "Orders", icon: Box, id: "orders" },
   { name: "Customers", icon: Users, id: "customers" },
   { name: "Settings", icon: Settings, id: "settings" },
@@ -233,6 +236,7 @@ export default function Admin() {
           >
             {activeTab === "dashboard" && <AdminDashboard />}
             {activeTab === "products" && <AdminProducts />}
+            {activeTab === "invites" && <AdminInvites />}
             {activeTab === "orders" && <AdminOrders />}
             {activeTab === "customers" && <AdminCustomers />}
             {activeTab === "settings" && <AdminSettings />}
