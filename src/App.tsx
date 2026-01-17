@@ -13,6 +13,7 @@ import Index from "./pages/Index";
 // Lazy load non-critical routes
 const Products = lazy(() => import("./pages/Products"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const Invites = lazy(() => import("./pages/Invites"));
 const Services = lazy(() => import("./pages/Services"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const Contact = lazy(() => import("./pages/Contact"));
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/invites" element={<Invites />} />
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<Contact />} />
