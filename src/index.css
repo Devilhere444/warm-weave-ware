@@ -4,132 +4,136 @@
 
 @layer base {
   :root {
-    /* Warm Terracotta & Sand Theme */
-    --background: 0 0% 96%;
-    --foreground: 0 0% 9%;
+    /* Sand Dunes & Warm Wood Theme */
+    --background: 40 30% 96%;
+    --foreground: 25 35% 15%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 9%;
+    --card: 42 35% 98%;
+    --card-foreground: 25 35% 15%;
 
-    --popover: 0 0% 89%;
-    --popover-foreground: 0 0% 9%;
+    --popover: 40 25% 92%;
+    --popover-foreground: 25 35% 15%;
 
-    /* Warm Terracotta */
-    --primary: 20 90% 48%;
-    --primary-foreground: 33 100% 96%;
+    /* Warm Wood Brown */
+    --primary: 28 65% 35%;
+    --primary-foreground: 42 40% 97%;
 
-    /* Light Sand */
-    --secondary: 0 0% 32%;
-    --secondary-foreground: 0 0% 98%;
+    /* Desert Sand */
+    --secondary: 35 30% 75%;
+    --secondary-foreground: 25 40% 18%;
 
-    --muted: 0 0% 63%;
-    --muted-foreground: 0 0% 9%;
+    /* Muted Sand - better contrast */
+    --muted: 38 25% 88%;
+    --muted-foreground: 25 30% 35%;
 
-    /* Deep Terracotta Accent */
-    --accent: 47 100% 96%;
-    --accent-foreground: 37 92% 50%;
+    /* Golden Accent */
+    --accent: 45 70% 55%;
+    --accent-foreground: 25 40% 15%;
 
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 85% 97%;
 
-    --border: 0 0% 83%;
-    --input: 0 0% 83%;
-    --ring: 20 90% 48%;
+    --border: 35 20% 82%;
+    --input: 35 20% 82%;
+    --ring: 28 65% 35%;
 
     --radius: 0.75rem;
 
-    /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(18 70% 50%), hsl(12 75% 40%));
-    --gradient-accent: linear-gradient(135deg, hsl(12 75% 45%), hsl(8 80% 35%));
-    --gradient-hero: linear-gradient(145deg, hsl(25 45% 25%), hsl(18 60% 35%), hsl(35 40% 45%));
-    --gradient-subtle: linear-gradient(180deg, hsl(35 30% 96%), hsl(38 35% 92%));
-    --gradient-sand: linear-gradient(135deg, hsl(38 40% 92%), hsl(35 30% 88%));
+    /* Premium Gradients - Sand Dunes */
+    --gradient-primary: linear-gradient(135deg, hsl(28 65% 40%), hsl(25 55% 30%));
+    --gradient-accent: linear-gradient(135deg, hsl(45 70% 55%), hsl(35 60% 45%));
+    --gradient-hero: linear-gradient(145deg, hsl(25 40% 20%), hsl(30 50% 28%), hsl(40 45% 38%));
+    --gradient-subtle: linear-gradient(180deg, hsl(40 35% 97%), hsl(38 30% 93%));
+    --gradient-sand: linear-gradient(135deg, hsl(42 40% 95%), hsl(38 35% 90%));
+    --gradient-wood: linear-gradient(135deg, hsl(25 50% 25%), hsl(30 45% 35%));
 
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(25 40% 20% / 0.08);
-    --shadow-medium: 0 8px 30px -6px hsl(25 40% 20% / 0.12);
-    --shadow-strong: 0 20px 50px -12px hsl(25 40% 20% / 0.2);
-    --shadow-glow: 0 0 40px hsl(18 70% 50% / 0.25);
+    /* Shadows - Warm tones */
+    --shadow-soft: 0 4px 20px -4px hsl(25 40% 20% / 0.1);
+    --shadow-medium: 0 8px 30px -6px hsl(25 40% 20% / 0.15);
+    --shadow-strong: 0 20px 50px -12px hsl(25 40% 20% / 0.25);
+    --shadow-glow: 0 0 40px hsl(45 70% 55% / 0.3);
 
-    --sidebar-background: 35 25% 95%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 20 90% 48%;
-    --sidebar-primary-foreground: 33 100% 96%;
-    --sidebar-accent: 0 0% 32%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 83%;
-    --sidebar-ring: 20 90% 48%;
-    --chart-1: 27 95% 60%;
-    --chart-2: 43 96% 56%;
-    --chart-3: 47 95% 53%;
-    --chart-4: 24 94% 53%;
-    --chart-5: 0 0% 45%;
-    --sidebar: 0 0% 98%;
+    --sidebar-background: 40 28% 95%;
+    --sidebar-foreground: 25 35% 15%;
+    --sidebar-primary: 28 65% 35%;
+    --sidebar-primary-foreground: 42 40% 97%;
+    --sidebar-accent: 45 70% 55%;
+    --sidebar-accent-foreground: 25 40% 15%;
+    --sidebar-border: 35 20% 82%;
+    --sidebar-ring: 28 65% 35%;
+    --chart-1: 28 70% 50%;
+    --chart-2: 45 75% 55%;
+    --chart-3: 35 60% 45%;
+    --chart-4: 20 55% 40%;
+    --chart-5: 38 30% 60%;
+    --sidebar: 42 35% 98%;
     --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    --shadow-2xs: 0 1px 3px 0px hsl(25 30% 15% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(25 30% 15% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(25 30% 15% / 0.1), 0 1px 2px -1px hsl(25 30% 15% / 0.1);
+    --shadow: 0 1px 3px 0px hsl(25 30% 15% / 0.1), 0 1px 2px -1px hsl(25 30% 15% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(25 30% 15% / 0.1), 0 2px 4px -1px hsl(25 30% 15% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(25 30% 15% / 0.1), 0 4px 6px -1px hsl(25 30% 15% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(25 30% 15% / 0.1), 0 8px 10px -1px hsl(25 30% 15% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(25 30% 15% / 0.25);
     --tracking-normal: 0em;
     --spacing: 0.25rem;
   }
 
   .dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
+    --background: 25 25% 8%;
+    --foreground: 40 25% 95%;
 
-    --card: 0 0% 14%;
-    --card-foreground: 0 0% 98%;
+    --card: 25 22% 12%;
+    --card-foreground: 40 25% 95%;
 
-    --popover: 0 0% 25%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 25 20% 15%;
+    --popover-foreground: 40 25% 95%;
 
-    --primary: 27 95% 60%;
-    --primary-foreground: 12 81% 14%;
+    /* Warm Wood - lighter in dark mode */
+    --primary: 35 60% 50%;
+    --primary-foreground: 25 30% 10%;
 
-    --secondary: 0 0% 45%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 30 25% 30%;
+    --secondary-foreground: 40 25% 92%;
 
-    --muted: 0 0% 45%;
-    --muted-foreground: 0 0% 98%;
+    --muted: 28 20% 22%;
+    --muted-foreground: 38 20% 65%;
 
-    --accent: 20 91% 14%;
-    --accent-foreground: 43 96% 56%;
+    /* Golden Accent */
+    --accent: 45 65% 50%;
+    --accent-foreground: 25 30% 10%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 85% 97%;
 
-    --border: 0 0% 32%;
-    --input: 0 0% 32%;
-    --ring: 27 95% 60%;
+    --border: 28 18% 25%;
+    --input: 28 18% 25%;
+    --ring: 35 60% 50%;
 
-    --sidebar-background: 25 25% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 27 95% 60%;
-    --sidebar-primary-foreground: 12 81% 14%;
-    --sidebar-accent: 43 96% 56%;
-    --sidebar-accent-foreground: 20 91% 14%;
-    --sidebar-border: 0 0% 32%;
-    --sidebar-ring: 27 95% 60%;
-    --chart-1: 30 97% 72%;
-    --chart-2: 45 96% 64%;
-    --chart-3: 48 96% 76%;
-    --chart-4: 27 95% 60%;
-    --chart-5: 0 0% 45%;
-    --sidebar: 0 0% 14%;
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    --sidebar-background: 25 22% 10%;
+    --sidebar-foreground: 40 25% 95%;
+    --sidebar-primary: 35 60% 50%;
+    --sidebar-primary-foreground: 25 30% 10%;
+    --sidebar-accent: 45 65% 50%;
+    --sidebar-accent-foreground: 25 30% 10%;
+    --sidebar-border: 28 18% 25%;
+    --sidebar-ring: 35 60% 50%;
+    --chart-1: 35 70% 60%;
+    --chart-2: 45 75% 60%;
+    --chart-3: 30 55% 50%;
+    --chart-4: 25 60% 55%;
+    --chart-5: 38 30% 50%;
+    --sidebar: 25 22% 12%;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.15);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.15);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.2), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.2), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.2), 0 2px 4px -1px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.2), 0 4px 6px -1px hsl(0 0% 0% / 0.2);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.2), 0 8px 10px -1px hsl(0 0% 0% / 0.2);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.35);
   }
 }
 
@@ -256,41 +260,56 @@
   }
 
   .text-gradient-primary {
-    background: linear-gradient(135deg, hsl(18 70% 50%), hsl(12 75% 45%));
+    background: linear-gradient(135deg, hsl(28 65% 40%), hsl(25 55% 30%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .text-gradient-accent {
-    background: linear-gradient(135deg, hsl(12 75% 50%), hsl(8 80% 40%));
+    background: linear-gradient(135deg, hsl(45 70% 55%), hsl(35 60% 45%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-wood {
+    background: linear-gradient(135deg, hsl(25 50% 35%), hsl(30 45% 25%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .bg-hero-gradient {
-    background: linear-gradient(145deg, hsl(25 45% 22%) 0%, hsl(18 55% 32%) 40%, hsl(35 40% 42%) 100%);
+    background: linear-gradient(145deg, hsl(25 40% 18%) 0%, hsl(30 45% 28%) 40%, hsl(40 40% 40%) 100%);
   }
 
   .bg-sand-pattern {
-    background-color: hsl(35 30% 96%);
+    background-color: hsl(40 30% 96%);
     background-image: 
-      radial-gradient(ellipse at 20% 30%, hsl(38 40% 92% / 0.8) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, hsl(25 35% 90% / 0.6) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, hsl(35 25% 94% / 0.9) 0%, transparent 70%);
+      radial-gradient(ellipse at 20% 30%, hsl(42 40% 94% / 0.9) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(35 35% 92% / 0.7) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, hsl(40 28% 95% / 0.9) 0%, transparent 70%);
   }
 
   .bg-dunes-pattern {
     background: 
-      linear-gradient(180deg, transparent 0%, hsl(35 30% 96%) 100%),
+      linear-gradient(180deg, transparent 0%, hsl(40 30% 96%) 100%),
       repeating-linear-gradient(
-        45deg,
-        hsl(38 35% 93%) 0px,
-        hsl(38 35% 93%) 2px,
-        transparent 2px,
-        transparent 12px
+        25deg,
+        hsl(42 35% 94%) 0px,
+        hsl(42 35% 94%) 3px,
+        transparent 3px,
+        transparent 20px
       );
+  }
+
+  .bg-wood-grain {
+    background: 
+      linear-gradient(90deg, hsl(28 50% 30% / 0.03) 1px, transparent 1px),
+      linear-gradient(hsl(28 50% 30% / 0.02) 1px, transparent 1px),
+      hsl(var(--background));
+    background-size: 20px 20px, 20px 20px;
   }
 
   .bg-gradient-radial {
@@ -325,14 +344,22 @@
 
   .glass-effect {
     backdrop-filter: blur(20px);
-    background: hsl(35 30% 98% / 0.85);
-    border: 1px solid hsl(35 25% 88% / 0.5);
+    background: hsl(42 35% 98% / 0.88);
+    border: 1px solid hsl(35 25% 85% / 0.6);
+    box-shadow: 0 4px 30px hsl(25 40% 20% / 0.08);
   }
 
   .glass-effect-dark {
     backdrop-filter: blur(20px);
-    background: hsl(25 30% 15% / 0.85);
-    border: 1px solid hsl(25 25% 30% / 0.5);
+    background: hsl(25 25% 12% / 0.88);
+    border: 1px solid hsl(28 20% 28% / 0.5);
+    box-shadow: 0 4px 30px hsl(0 0% 0% / 0.3);
+  }
+
+  .glass-sand {
+    backdrop-filter: blur(16px);
+    background: linear-gradient(135deg, hsl(42 40% 98% / 0.9), hsl(38 35% 95% / 0.85));
+    border: 1px solid hsl(35 30% 80% / 0.4);
   }
 
   /* Interactive hover effects - GPU accelerated with smoother easing */
