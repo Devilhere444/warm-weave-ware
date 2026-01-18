@@ -5,11 +5,18 @@ import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-// Snappy spring-like transition
-const snappyTransition: Transition = {
+// Smooth spring transition with natural feel
+const smoothTransition: Transition = {
   type: "spring",
-  stiffness: 400,
-  damping: 25
+  stiffness: 260,
+  damping: 30,
+  mass: 1
+};
+
+// Smooth ease for simpler animations
+const easeTransition: Transition = {
+  duration: 0.6,
+  ease: [0.25, 0.46, 0.45, 0.94]
 };
 
 export default function Hero() {
@@ -69,7 +76,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={snappyTransition}
+              transition={smoothTransition}
               className="flex items-center gap-3"
             >
               <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/25 touch-target">
@@ -83,7 +90,7 @@ export default function Hero() {
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ ...snappyTransition, delay: 0.1 }}
+              transition={{ ...smoothTransition, delay: 0.15 }}
               className="font-display-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.05] tracking-tight"
             >
               {firstPart}
@@ -95,7 +102,7 @@ export default function Hero() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ ...snappyTransition, delay: 0.2 }}
+              transition={{ ...easeTransition, delay: 0.3 }}
               className="text-base sm:text-lg text-white/85 font-body-regular leading-relaxed max-w-lg"
             >
               {settings.hero_subtitle}
@@ -104,7 +111,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ ...snappyTransition, delay: 0.3 }}
+              transition={{ ...easeTransition, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-3 sm:gap-4"
             >
               <Link to="/products">
@@ -130,7 +137,7 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ ...snappyTransition, delay: 0.4 }}
+              transition={{ ...easeTransition, delay: 0.5 }}
               className="grid grid-cols-3 gap-4 md:gap-6 pt-6 md:pt-8 border-t border-white/20"
             >
               {[
@@ -157,7 +164,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.35 }}
             className="relative hidden lg:block"
           >
             <div className="relative">
