@@ -1,8 +1,19 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useRef, useState, useEffect, memo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Award, Heart, Shield, Target, Users, Sparkles, Palette, Cog } from "lucide-react";
+import { Heart, Shield, Target, Users, Sparkles, Palette, Cog, Award } from "lucide-react";
+
+// Optimized animation variants for faster page loads
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
+};
 
 const timeline = [
   { 
@@ -106,24 +117,15 @@ export default function AboutPage() {
       <section className="pt-28 pb-20 relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl will-change-transform" />
+        <div className="absolute bottom-0 left-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl will-change-transform" />
         
         <div className="container mx-auto px-4 lg:px-8 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6"
-            >
+          <div className="text-center max-w-3xl mx-auto animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6">
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-sm font-elegant text-primary">Our Story</span>
-            </motion.div>
+            </div>
             
             <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Crafting Excellence
@@ -135,7 +137,7 @@ export default function AboutPage() {
               A legacy of quality, innovation, and unwavering commitment to the
               art of printing.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
