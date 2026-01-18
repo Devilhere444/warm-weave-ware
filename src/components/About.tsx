@@ -109,7 +109,7 @@ export default function About() {
             >
               A Heritage of
               <motion.span 
-                className="block font-display-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-500 to-accent"
+                className="block font-display-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent"
                 initial={{ backgroundPosition: "0% 50%" }}
                 animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "linear" }}

@@ -69,8 +69,8 @@ export default function ProductCard({
             </div>
           </div>
 
-          {/* Bottom Accent Line */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          {/* Bottom Accent Line - Blue gradient */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
         </div>
       </Link>
     </motion.div>
