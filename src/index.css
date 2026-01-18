@@ -140,6 +140,8 @@
     -webkit-tap-highlight-color: transparent;
     /* Faster touch feedback on Android */
     touch-action: manipulation;
+    /* Smooth transitions on all properties by default */
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   html {
@@ -150,6 +152,8 @@
     text-size-adjust: 100%;
     /* Improve Android touch responsiveness */
     touch-action: manipulation;
+    /* Smoother scroll behavior */
+    scroll-behavior: smooth;
   }
 
   body {
@@ -163,6 +167,8 @@
     overscroll-behavior: none;
     /* Hardware acceleration for smoother scrolling */
     transform: translateZ(0);
+    /* Smooth color transitions */
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -329,9 +335,9 @@
     border: 1px solid hsl(25 25% 30% / 0.5);
   }
 
-  /* Interactive hover effects - GPU accelerated */
+  /* Interactive hover effects - GPU accelerated with smoother easing */
   .hover-lift {
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
     transform: translateZ(0);
   }
@@ -343,14 +349,25 @@
 
   .hover-lift:active {
     transform: translateY(-4px) translateZ(0);
+    transition-duration: 0.15s;
   }
 
   .hover-glow {
-    transition: box-shadow 0.2s ease;
+    transition: box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .hover-glow:hover {
     box-shadow: var(--shadow-glow);
+  }
+
+  /* Smooth image loading */
+  img {
+    transition: opacity 0.4s ease-out;
+  }
+
+  /* Smooth link transitions */
+  a {
+    transition: color 0.25s ease, opacity 0.25s ease;
   }
 
   /* GPU-accelerated utility */
@@ -366,11 +383,11 @@
     min-width: 44px;
   }
 
-  /* Snappy button interactions - optimized for Android */
+  /* Smooth button interactions */
   .btn-snappy {
-    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.1s ease,
-                background-color 0.1s ease;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.2s ease;
     will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -378,18 +395,18 @@
   }
 
   .btn-snappy:hover {
-    transform: scale(1.02) translateZ(0);
+    transform: scale(1.03) translateZ(0);
   }
 
   .btn-snappy:active {
-    transform: scale(0.96) translateZ(0);
-    transition-duration: 0.05s;
+    transform: scale(0.97) translateZ(0);
+    transition-duration: 0.1s;
   }
 
-  /* Faster card interactions - optimized for Android */
+  /* Smooth card interactions */
   .card-snappy {
-    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
-                box-shadow 0.15s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
@@ -402,17 +419,24 @@
 
   .card-snappy:active {
     transform: translateY(-2px) translateZ(0);
-    transition-duration: 0.05s;
+    transition-duration: 0.1s;
   }
 
-  /* Mobile-specific fast tap response */
+  /* Smooth focus states */
+  button:focus-visible, a:focus-visible, input:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    transition: outline-offset 0.2s ease;
+  }
+
+  /* Mobile-specific responsive feel */
   @media (pointer: coarse) {
-    .btn-snappy, .card-snappy, button, a {
-      transition-duration: 0.08s !important;
+    .btn-snappy, .card-snappy {
+      transition-duration: 0.15s !important;
     }
     
     .btn-snappy:active, .card-snappy:active {
-      transition-duration: 0.03s !important;
+      transition-duration: 0.08s !important;
     }
   }
 }
