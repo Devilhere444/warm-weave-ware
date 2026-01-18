@@ -8,7 +8,8 @@ import InviteCard from "@/components/invites/InviteCard";
 import InviteCategoryFilter from "@/components/invites/InviteCategoryFilter";
 import InviteHero from "@/components/invites/InviteHero";
 import ShareButton from "@/components/invites/ShareButton";
-import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, Search, X } from "lucide-react";
 
 interface InviteTemplate {
   id: string;
@@ -40,6 +41,7 @@ export default function Invites() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
   const [categories, setCategories] = useState<string[]>(["all"]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchTemplates();
@@ -85,9 +87,13 @@ export default function Invites() {
     setSearchParams(searchParams);
   };
 
-  const filteredTemplates = activeCategory === "all" 
-    ? templates 
-    : templates.filter((t) => t.category === activeCategory);
+  const filteredTemplates = templates.filter((t) => {
+    const matchesCategory = activeCategory === "all" || t.category === activeCategory;
+    const matchesSearch = searchQuery === "" || 
+      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
 
   const pageUrl = window.location.href;
 
@@ -97,9 +103,27 @@ export default function Invites() {
       
       <InviteHero />
       
-      {/* Share Button */}
+      {/* Search and Share */}
       <div className="container mx-auto px-4 py-4">
-        <div className="flex justify-end">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="relative w-full sm:max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search invites by title or description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
           <ShareButton 
             url={pageUrl} 
             title="Check out these amazing video invitations!" 
