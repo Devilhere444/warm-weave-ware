@@ -41,30 +41,32 @@ export default function Hero() {
       {/* Animated Background with Parallax - GPU Accelerated */}
       <motion.div style={{ y }} className="absolute inset-0 bg-hero-gradient gpu-accelerated" />
       
-      {/* Static Sand Dunes Effect - Better performance */}
-      <div className="absolute inset-0 gpu-accelerated">
-        <svg className="absolute bottom-0 w-full h-[40%] opacity-20" viewBox="0 0 1440 400" preserveAspectRatio="none">
+      {/* Abstract Wave Shapes */}
+      <div className="absolute inset-0 gpu-accelerated overflow-hidden">
+        <svg className="absolute bottom-0 w-full h-[45%] opacity-15" viewBox="0 0 1440 400" preserveAspectRatio="none">
           <path
-            d="M0,400 C360,300 720,350 1080,280 C1260,240 1380,300 1440,280 L1440,400 L0,400 Z"
-            fill="hsl(38 40% 75%)"
+            d="M0,400 C240,320 480,360 720,300 C960,240 1200,280 1440,240 L1440,400 L0,400 Z"
+            fill="hsl(199 89% 48%)"
           />
         </svg>
-        <svg className="absolute bottom-0 w-full h-[30%] opacity-15" viewBox="0 0 1440 300" preserveAspectRatio="none">
+        <svg className="absolute bottom-0 w-full h-[35%] opacity-10" viewBox="0 0 1440 300" preserveAspectRatio="none">
           <path
-            d="M0,300 C480,200 960,250 1440,180 L1440,300 L0,300 Z"
-            fill="hsl(35 35% 70%)"
+            d="M0,300 C360,220 720,260 1080,200 C1260,160 1380,220 1440,200 L1440,300 L0,300 Z"
+            fill="hsl(187 85% 53%)"
           />
         </svg>
       </div>
 
-      {/* Simplified Orbs - CSS animations for better performance */}
-      <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full bg-gradient-radial from-primary/40 to-transparent blur-[100px] opacity-30 gpu-accelerated animate-pulse-slow" />
-      <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-accent/30 to-transparent blur-[120px] opacity-25 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      {/* Gradient Orbs - Blue/Cyan */}
+      <div className="absolute top-20 right-20 w-[300px] h-[300px] md:w-[450px] md:h-[450px] rounded-full bg-gradient-radial from-blue-500/30 to-transparent blur-[100px] opacity-40 gpu-accelerated animate-pulse-slow" />
+      <div className="absolute bottom-20 left-20 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full bg-gradient-radial from-cyan-400/25 to-transparent blur-[120px] opacity-35 gpu-accelerated animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-radial from-primary/20 to-transparent blur-[150px] opacity-25 gpu-accelerated" />
 
-      {/* Floating Geometric Shapes - CSS animations */}
-      <div className="hidden md:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/25 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
-      <div className="hidden md:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-white/20 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
-      <div className="hidden lg:block absolute top-1/3 right-[8%] w-14 h-14 bg-white/15 rounded-xl rotate-45 backdrop-blur-sm gpu-accelerated animate-float" style={{ animationDelay: '1s' }} />
+      {/* Floating Geometric Shapes - Blue theme */}
+      <div className="hidden md:block absolute top-24 left-[12%] w-16 h-16 border-2 border-white/30 rounded-2xl backdrop-blur-sm gpu-accelerated animate-float" />
+      <div className="hidden md:block absolute bottom-32 right-[18%] w-24 h-24 border-2 border-cyan-300/25 rounded-full backdrop-blur-sm gpu-accelerated animate-float-delayed" />
+      <div className="hidden lg:block absolute top-1/3 right-[8%] w-14 h-14 bg-white/10 rounded-xl rotate-45 backdrop-blur-sm gpu-accelerated animate-float" style={{ animationDelay: '1s' }} />
+      <div className="hidden lg:block absolute bottom-1/4 left-[6%] w-10 h-10 border-2 border-blue-300/20 rounded-lg rotate-12 backdrop-blur-sm gpu-accelerated animate-float" style={{ animationDelay: '1.5s' }} />
 
       <motion.div 
         style={{ opacity, scale }} 
@@ -94,7 +96,7 @@ export default function Hero() {
               className="font-display-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.05] tracking-tight"
             >
               {firstPart}
-              <span className="block mt-2 lg:mt-3 font-display-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-foreground to-orange-200">
+              <span className="block mt-2 lg:mt-3 font-display-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-200 to-white">
                 {secondPart}
               </span>
             </motion.h1>
@@ -220,7 +222,7 @@ export default function Hero() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.8 }}
               >
-                <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-orange-500 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-white/20 hover:scale-105 transition-transform duration-200">
+                <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-cyan-500 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-white/20 hover:scale-105 transition-transform duration-200">
                   <Truck className="w-5 h-5 animate-[bounce_2s_ease-in-out_infinite]" style={{ animationDuration: '2s' }} />
                   <span className="text-sm font-display-semibold">Shipping All Over India</span>
                 </div>
@@ -234,12 +236,12 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* Static Bottom Wave - No animation for better performance */}
+      {/* Bottom Wave - Blue theme */}
       <div className="absolute bottom-0 left-0 right-0">
         <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
           <path 
             d="M0 120L60 105C120 90 240 75 360 70C480 65 600 70 720 78C840 86 960 96 1080 98C1200 100 1320 94 1380 91L1440 88V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
-            fill="hsl(35 30% 96%)"
+            fill="hsl(210 40% 98%)"
           />
         </svg>
       </div>

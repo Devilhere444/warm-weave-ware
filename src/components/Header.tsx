@@ -81,12 +81,12 @@ export default function Header() {
               />
             ) : (
               <div className="flex items-center gap-1">
-                {/* Colorful leaf icon similar to reference */}
+                {/* Modern blue geometric icon */}
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className="transition-transform group-hover:scale-105">
-                  <path d="M20 8L26 20L20 32" fill="#10B981" />
-                  <path d="M20 8L14 20L20 32" fill="#3B82F6" />
-                  <path d="M12 14L20 20L12 26" fill="#F59E0B" />
-                  <path d="M28 14L20 20L28 26" fill="#EC4899" />
+                  <rect x="6" y="6" width="12" height="12" rx="2" fill="#3B82F6" />
+                  <rect x="22" y="6" width="12" height="12" rx="2" fill="#06B6D4" />
+                  <rect x="6" y="22" width="12" height="12" rx="2" fill="#0EA5E9" />
+                  <rect x="22" y="22" width="12" height="12" rx="2" fill="#1E40AF" />
                 </svg>
               </div>
             )}

@@ -54,22 +54,28 @@ export default function FeaturedProducts() {
       {/* Animated Background */}
       <motion.div 
         style={{ y: backgroundY }}
-        className="absolute inset-0 bg-sand-pattern"
+        className="absolute inset-0 bg-ocean-pattern"
       />
       
-      {/* Decorative Elements */}
+      {/* Decorative Elements - Blue theme */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 0.2, scale: 1 }}
+        viewport={{ once: true }}
+        className="absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/25 blur-[100px]"
+      />
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 0.15, scale: 1 }}
         viewport={{ once: true }}
-        className="absolute top-20 right-10 w-72 h-72 rounded-full bg-primary/30 blur-[100px]"
+        transition={{ delay: 0.2 }}
+        className="absolute bottom-20 left-10 w-96 h-96 rounded-full bg-cyan-400/15 blur-[120px]"
       />
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 0.1, scale: 1 }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 0.1 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.2 }}
-        className="absolute bottom-20 left-10 w-96 h-96 rounded-full bg-accent/20 blur-[120px]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-secondary/20 blur-[150px]"
       />
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">

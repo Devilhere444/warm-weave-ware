@@ -129,7 +129,7 @@ export default function AboutPage() {
             
             <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
               Crafting Excellence
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
                 Since 1965
               </span>
             </h1>
@@ -344,7 +344,7 @@ export default function AboutPage() {
           >
             <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-6">
               A Team of
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
                 Master Craftsmen
               </span>
             </h2>

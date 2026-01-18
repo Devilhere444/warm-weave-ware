@@ -11,7 +11,7 @@ const services = [
     title: "Book Printing",
     description: "Premium quality book printing for publishers, authors, and educational institutions.",
     features: ["Offset & Digital", "Custom Binding", "Premium Paper"],
-    gradient: "from-blue-500 to-indigo-600",
+    gradient: "from-blue-500 to-blue-700",
     image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&q=80",
   },
   {
@@ -19,7 +19,7 @@ const services = [
     title: "Packaging",
     description: "Custom packaging that protects your products and elevates your brand.",
     features: ["Custom Design", "Eco-Friendly", "Food-Grade"],
-    gradient: "from-amber-500 to-orange-600",
+    gradient: "from-cyan-500 to-blue-600",
     image: "https://images.unsplash.com/photo-1607166452427-7e4477079cb9?w=600&q=80",
   },
   {
@@ -27,7 +27,7 @@ const services = [
     title: "Commercial",
     description: "High-volume commercial printing for businesses and marketing.",
     features: ["Fast Turnaround", "Large Format", "Bulk Orders"],
-    gradient: "from-emerald-500 to-teal-600",
+    gradient: "from-sky-500 to-cyan-600",
     image: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=600&q=80",
   },
   {
@@ -35,7 +35,7 @@ const services = [
     title: "Stationery",
     description: "Professional business stationery and corporate identity materials.",
     features: ["Letterheads", "Business Cards", "Envelopes"],
-    gradient: "from-violet-500 to-purple-600",
+    gradient: "from-indigo-500 to-blue-600",
     image: "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?w=600&q=80",
   },
   {
@@ -43,7 +43,7 @@ const services = [
     title: "Invitations",
     description: "Beautifully crafted wedding invitations and special occasion cards.",
     features: ["Foil Stamping", "Embossing", "Custom Design"],
-    gradient: "from-pink-500 to-rose-600",
+    gradient: "from-blue-400 to-indigo-600",
     image: "https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=600&q=80",
   },
   {
@@ -51,7 +51,7 @@ const services = [
     title: "Labels & Stickers",
     description: "Custom labels and stickers for products and promotional use.",
     features: ["Die-Cut", "Waterproof", "Roll Labels"],
-    gradient: "from-cyan-500 to-sky-600",
+    gradient: "from-teal-500 to-cyan-600",
     image: "https://images.unsplash.com/photo-1635405074683-96d6921a2a68?w=600&q=80",
   },
 ];
