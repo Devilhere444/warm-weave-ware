@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import { CartProvider } from "@/contexts/CartContext";
 import { DynamicFavicon } from "@/components/DynamicFavicon";
 import { PageTracker } from "@/components/PageTracker";
@@ -34,39 +35,41 @@ const PageLoader = () => (
 );
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <CartProvider>
-      <TooltipProvider>
-        <DynamicFavicon />
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <PageTracker />
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/invites" element={<Invites />} />
-              <Route path="/products/:id" element={<ProductDetails />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/faq" element={<FAQ />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-          <CookieConsent />
-        </BrowserRouter>
-      </TooltipProvider>
-    </CartProvider>
-  </QueryClientProvider>
+  <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+    <QueryClientProvider client={queryClient}>
+      <CartProvider>
+        <TooltipProvider>
+          <DynamicFavicon />
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <PageTracker />
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/invites" element={<Invites />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/faq" element={<FAQ />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+            <CookieConsent />
+          </BrowserRouter>
+        </TooltipProvider>
+      </CartProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;

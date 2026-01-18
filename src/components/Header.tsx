@@ -4,6 +4,7 @@ import { Menu, X, Phone, MessageCircle, LogIn, UserPlus, Shield } from "lucide-r
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import CartIcon from "@/components/CartIcon";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -142,9 +143,12 @@ export default function Header() {
               onClick={handleWhatsApp}
               className="font-body-semibold text-sm gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white rounded-full px-4"
             >
-              <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-4 h-4" />
               WhatsApp
             </Button>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Cart */}
             <CartIcon />
@@ -246,6 +250,12 @@ export default function Header() {
                       <MessageCircle className="w-4 h-4" />
                       WhatsApp
                     </Button>
+                  </div>
+
+                  {/* Mobile Theme Toggle */}
+                  <div className="flex items-center justify-between py-2">
+                    <span className="font-body-medium text-foreground">Dark Mode</span>
+                    <ThemeToggle />
                   </div>
                   
                   <div className="flex gap-2">
