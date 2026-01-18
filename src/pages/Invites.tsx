@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,10 @@ import InviteCategoryFilter from "@/components/invites/InviteCategoryFilter";
 import InviteHero from "@/components/invites/InviteHero";
 import ShareButton from "@/components/invites/ShareButton";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Loader2, Search, X } from "lucide-react";
+
+const ITEMS_PER_PAGE = 12;
 
 interface InviteTemplate {
   id: string;
@@ -42,6 +45,9 @@ export default function Invites() {
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
   const [categories, setCategories] = useState<string[]>(["all"]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchTemplates();
@@ -79,6 +85,7 @@ export default function Invites() {
 
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
+    setVisibleCount(ITEMS_PER_PAGE); // Reset pagination on category change
     if (category === "all") {
       searchParams.delete("category");
     } else {
@@ -87,6 +94,11 @@ export default function Invites() {
     setSearchParams(searchParams);
   };
 
+  // Reset visible count when search changes
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchQuery]);
+
   const filteredTemplates = templates.filter((t) => {
     const matchesCategory = activeCategory === "all" || t.category === activeCategory;
     const matchesSearch = searchQuery === "" || 
@@ -94,6 +106,36 @@ export default function Invites() {
       (t.description && t.description.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
+
+  const visibleTemplates = filteredTemplates.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredTemplates.length;
+
+  const loadMore = useCallback(() => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+      setLoadingMore(false);
+    }, 300);
+  }, [loadingMore, hasMore]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, loadMore]);
 
   const pageUrl = window.location.href;
 
@@ -149,20 +191,47 @@ export default function Invites() {
           ) : filteredTemplates.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-muted-foreground text-lg">
-                No invitations found in this category yet.
+                {searchQuery ? "No invitations match your search." : "No invitations found in this category yet."}
               </p>
             </div>
           ) : (
-            <motion.div 
-              layout
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6"
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredTemplates.map((template) => (
-                  <InviteCard key={template.id} template={template} />
-                ))}
-              </AnimatePresence>
-            </motion.div>
+            <>
+              <motion.div 
+                layout
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6"
+              >
+                <AnimatePresence mode="popLayout">
+                  {visibleTemplates.map((template) => (
+                    <InviteCard key={template.id} template={template} />
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+
+              {/* Load More / Infinite Scroll Trigger */}
+              {hasMore && (
+                <div 
+                  ref={loaderRef}
+                  className="flex flex-col items-center justify-center py-8 gap-4"
+                >
+                  {loadingMore ? (
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      onClick={loadMore}
+                      className="min-w-[140px]"
+                    >
+                      Load More
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {/* Results count */}
+              <div className="text-center text-sm text-muted-foreground mt-4">
+                Showing {visibleTemplates.length} of {filteredTemplates.length} invites
+              </div>
+            </>
           )}
         </div>
       </section>
