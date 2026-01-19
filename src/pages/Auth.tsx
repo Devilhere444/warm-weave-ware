@@ -38,6 +38,8 @@ export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isSendingReset, setIsSendingReset] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -148,6 +150,32 @@ export default function Auth() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    setIsSendingReset(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success("Password reset link sent! Check your email.");
+      setShowForgotPassword(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send reset email");
+    } finally {
+      setIsSendingReset(false);
+    }
+  };
+
   // Show loading state while checking auth
   if (isCheckingAuth) {
     return (
@@ -177,126 +205,204 @@ export default function Auth() {
         </a>
 
         <div className="bg-card p-8 rounded-2xl shadow-xl border border-border">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mx-auto mb-4">
-              {isSignUp ? (
-                <User className="w-8 h-8 text-primary-foreground" />
-              ) : (
-                <span className="font-display text-2xl font-bold text-primary-foreground">
-                  L
-                </span>
-              )}
-            </div>
-            <h1 className="font-display text-2xl font-bold text-foreground">
-              {isSignUp ? "Create Account" : "Welcome Back"}
-            </h1>
-            <p className="text-muted-foreground font-elegant mt-1">
-              {isSignUp ? "Register for an account" : "Sign in to continue"}
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-elegant text-foreground">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="pl-10 font-body"
-                  required
-                />
+          {/* Forgot Password View */}
+          {showForgotPassword ? (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+            >
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mx-auto mb-4">
+                  <Mail className="w-8 h-8 text-primary-foreground" />
+                </div>
+                <h1 className="font-display text-2xl font-bold text-foreground">
+                  Reset Password
+                </h1>
+                <p className="text-muted-foreground font-elegant mt-1">
+                  Enter your email to receive a reset link
+                </p>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-elegant text-foreground">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="pl-10 pr-10 font-body"
-                  required
-                  minLength={6}
-                />
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-elegant text-foreground">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="pl-10 font-body"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isSendingReset}
+                  className="w-full bg-primary hover:bg-primary/90 font-elegant tracking-wide"
+                >
+                  {isSendingReset ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending reset link...
+                    </>
+                  ) : (
+                    "Send Reset Link"
+                  )}
+                </Button>
+              </form>
+
+              <div className="text-center mt-6">
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowForgotPassword(false)}
+                  className="text-sm text-primary hover:underline font-body"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  ← Back to login
                 </button>
               </div>
-            </div>
+            </motion.div>
+          ) : (
+            <>
+              {/* Logo */}
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mx-auto mb-4">
+                  {isSignUp ? (
+                    <User className="w-8 h-8 text-primary-foreground" />
+                  ) : (
+                    <span className="font-display text-2xl font-bold text-primary-foreground">
+                      L
+                    </span>
+                  )}
+                </div>
+                <h1 className="font-display text-2xl font-bold text-foreground">
+                  {isSignUp ? "Create Account" : "Welcome Back"}
+                </h1>
+                <p className="text-muted-foreground font-elegant mt-1">
+                  {isSignUp ? "Register for an account" : "Sign in to continue"}
+                </p>
+              </div>
 
-            <Button
-              type="submit"
-              disabled={isLoading || isGoogleLoading}
-              className="w-full bg-primary hover:bg-primary/90 font-elegant tracking-wide"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Please wait...
-                </>
-              ) : isSignUp ? "Create Account" : "Sign In"}
-            </Button>
-          </form>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-elegant text-foreground">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="pl-10 font-body"
+                      required
+                    />
+                  </div>
+                </div>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-            </div>
-          </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-elegant text-foreground">
+                      Password
+                    </label>
+                    {!isSignUp && (
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(true)}
+                        className="text-xs text-primary hover:underline font-body"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="pl-10 pr-10 font-body"
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
 
-          {/* Google Sign In Button */}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleGoogleSignIn}
-            disabled={isLoading || isGoogleLoading}
-            className="w-full font-elegant tracking-wide border-border hover:bg-accent/50"
-          >
-            {isGoogleLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Connecting to Google...
-              </>
-            ) : (
-              <>
-                <GoogleIcon />
-                <span className="ml-2">Continue with Google</span>
-              </>
-            )}
-          </Button>
+                <Button
+                  type="submit"
+                  disabled={isLoading || isGoogleLoading}
+                  className="w-full bg-primary hover:bg-primary/90 font-elegant tracking-wide"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait...
+                    </>
+                  ) : isSignUp ? "Create Account" : "Sign In"}
+                </Button>
+              </form>
 
-          <div className="text-center mt-6">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setPassword("");
-              }}
-              className="text-sm text-primary hover:underline font-body"
-            >
-              {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
-            </button>
-          </div>
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                </div>
+              </div>
+
+              {/* Google Sign In Button */}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGoogleSignIn}
+                disabled={isLoading || isGoogleLoading}
+                className="w-full font-elegant tracking-wide border-border hover:bg-accent/50"
+              >
+                {isGoogleLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Connecting to Google...
+                  </>
+                ) : (
+                  <>
+                    <GoogleIcon />
+                    <span className="ml-2">Continue with Google</span>
+                  </>
+                )}
+              </Button>
+
+              <div className="text-center mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(!isSignUp);
+                    setPassword("");
+                  }}
+                  className="text-sm text-primary hover:underline font-body"
+                >
+                  {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </motion.div>
     </div>
